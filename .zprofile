@@ -20,6 +20,10 @@ source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/dotfiles/alias.sh
 export EDITOR=emacs
 
+function select_env {
+    eval $(~/code/tools-and-infrastructure/scripts/developer/select_env_menu.sh)
+}
+
 # source ~/.zshrc
 
-# WORDCHARS='~!#$%^&*(){}[]<>?.+;-_/\|=@`'
+WORDCHARS='~!#$%^&*(){}[]<>?.+;-_\|@`'

@@ -1,0 +1,225 @@
+Emacs shortcuts:
+    C-w is like cut
+    M-w is like copy
+    C-y is paste from kill ring
+    C-x C-f find file
+    M-g g goto line number
+    M-m brings up the main menu in Holy mode, h for help, T for tutorial
+    C-h is the help character
+    C-h x previous-line
+    C-h k C-p (describes what shortcut is linked to)
+    C-j executes current line in scratch
+    C-. highlights current word
+
+    M-: (eval-expression): Prompts you to type a Lisp expression in the minibuffer, which is then evaluated.
+    M-x describe-mode
+    ✔ map move-line-up @done(25-10-01 22:32)
+        ✔ can we get a multi-line version? @done(25-10-11 18:41)
+    ✔ map move-line-down @done(25-10-01 22:32)
+        ✔ can we get a multi-line version? @done(25-10-11 18:41)
+    Buffers:
+        C-x b switch to buffer; now bound to helm-buffers-list
+        C-x C-b list all buffers
+        C-x k kill buffer
+    Windows:
+        C-x 1 delete other windows; toggle maximize window
+        C-x 2 split pane horizontally
+        C-x 3 split pane vertically
+            M-x split-root-window-<right/below>
+        C-x o to move between windows
+
+    Troubleshooting:
+        See that no emacs are running in the background:
+        ps aux | grep emacs
+        C-x b to Messages to see errors that may have occurred
+
+    ☐ try jtsx; apparently is supports better commenting in tsx files
+
+    ☐ pipe file to emacs
+        how come when I 'xargs emacs' to pass a file name, it errors with "emacs: standard input is not a tty"
+        xargs emacsclient -nw -a '' # works, but doesn't load any of my config stuff
+        https://mdk.fr/en/blog/emacs-standard-input-is-not-a-tty.html
+            xargs sh -c 'emacs "$@" < /dev/tty' emacs # play more with alias
+            xargs sh -c 'emacs "$@" < /dev/tty' emacs # try as a bash file
+
+  ☐ ;; If Emacs was started with files, don't show the Spacemacs home buffer
+  (when (> (length command-line-args-left) 0)
+    (setq inhibit-startup-screen t)
+    (advice-add 'spacemacs-buffer/goto-buffer :override #'ignore))
+
+    delete-other-windows
+            under File -> Remove other windows
+            Can find it under the M-x commands
+    ✔ map delete-other-windows @done(25-10-11 18:42)
+        ✔ check the keybinding on C-x 1 @done(25-10-11 18:42)
+    True color:
+        Run commands with M-: #
+        (getenv "COLORTERM")
+        # should show "truecolor"
+        (display-color-cells)
+        # should show 16777216
+        'Doom One' or 'Dracula' takes advantage of true color?
+        (load-theme 'doom-one t)   ;; or doom-dracula, doom-solarized-light, etc.
+        M-x load-theme RET doom-one RET
+        doom-dracula
+        doom-gruvbox
+        doom-nord
+        doom-solarized-dark
+        doom-tokyo-night
+
+
+    Treemacs:
+        M-m p t (now C-o p t) to display file browser pane
+        y r copies file and path to clipboard
+
+    Dired:
+        launch with C-x d or M-x dired
+        go up a directory with ^
+        create directory with +
+        delete with d and executes delete with x
+        sort with o
+        close with q
+
+    Flycheck/EsLint:
+        leader e l to view all flycheck errors
+        leader e n jumps cursor to next error
+        leader e p jumps cursor to previous error
+        leader e x explains error at current position
+
+☐ Could try out the Inconsolata nerd font
+
+Starship:
+    ~/.config/starship.toml
+    ${env_var.DEPLOY_ENV}\
+    [env_var.DEPLOY_ENV]
+    variable = "DEPLOY_ENV"
+    default = ""
+    format = '[ ($env_value)](fg:#090c0c bg:#a3aed2)'
+
+
+FZF:
+    nvim $(fzf -m --preview="bat --color=always {}") # -m means multiple that you can mark in fzf
+    random ** at commandline tells fzf we want to open a fuzzy finder here (use tab not enter to engage)
+    export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -l -g""'
+    https://www.youtube.com/watch?v=MvLQor1Ck3M
+    fzf --preview 'bat --style=numbers --color=always {}'
+    ☐ How do I toggle folder mode in FZF?
+
+Tmux:
+    prefix+n for next window
+    prefix+p for previous window
+    prefix+S for session manager
+    prefix+z for zooming in/out
+    prefix+c creates new window
+    prefix+< renames window
+    ctrl+space starts highlight in copy-mode
+    prefix+space cycles orientation of pane
+    prefix+: (command prompt) resize-pane
+        ☐ should map prefix+> to change size in increments of 10
+    prefix+I to reload conf
+    prefix+U to force reload. Type 'all' at prompt
+    ✔ Get panes to start in same directory (envoy-web), windows always at home @done(25-10-09 20:49)
+    ☐ set shortcut to resize panes
+    Tmux hack for anytime it intercepts a keystroke:
+        # Show a short message in the status line whenever tmux intercepts any key
+        set -g display-time 500  # Message lasts half a second
+        # Generic catch-all for testing: prints key + key table
+        bind -n C-t run-shell 'tmux display-message "You pressed: C-t (table=#{key_table})"'
+    https://www.youtube.com/watch?v=UtINDdy-xBc has a sweet statusbar
+    .tmux on github has lots of snazzy goodies
+    tmux-powerline is the statusbar one
+    SessionX
+        set -g @plugin 'omerxx/tmux-sessionx'
+        tmux display-popup -E "tmux-sessionx"
+        tmux display-popup -E "env | grep SHELL; echo \$PATH; command -v fzf; tmux-sessionx; sleep 10"
+        tmux source-file ~/.config/tmux/plugins/tmux-sessionx/sessionx.tmux
+        ls /Users/michaelschneider/.config/tmux/plugins/
+        echo $TMUX_PLUGIN_MANAGER_PATH
+        you can set custom-paths. These will auto attach or create at these paths from sessionX
+
+Yassnippets:
+    Run with M-shift-: #
+    (message "Snippet dir: ~/.emacs.d/private/snippets/%s/" major-mode)
+    M-x yas-reload-all
+    ~/.emacs.d/private/snippets/js2-mode/
+    M-x yas-describe-tables
+    M-x yas-expand forces snippet instead TAB key
+    clg for console.log() snippet
+
+☐ Start Magit (vs lazygit)
+☐ One day, start ORG mode
+
+VsCode:
+    C-K C-S to see shortcut tool
+
+dump dev to local:
+    mongodump --out=/client/dump/dump_7_21_2025 --excludeCollection=ImportRow --excludeCollection=HouseLogRow --excludeCollection=Event --excludeCollection=EventAggregate --excludeCollection=CardConnectIntegration --uri=$MONGO_CONNECTION_STRING
+    aws secretsmanager get-secret-value --secret-id "envoy-dev-na-cf-bauer-na_CONNECTION_STRING" | jq -r '.SecretString'
+
+Ghostty:
+    https://www.youtube.com/watch?v=enwDjM7pNNE (cursor trails)
+        https://github.com/ghostty-org/ghostty/releases
+    ghostty +list-themes
+    ghostty +list-keybinds
+    ghostty show-config --default --docs
+    macos-icon-frame
+        docs are: https://ghostty.org/docs/config/reference
+    currently keeping shaders in: ~/.config/ghostty
+
+RipGrep:
+    rg -F looks for exact text matches instead of regex
+    rg -F -C5 gives 5 lines context around the match
+    rg -i goes case insensitive
+
+entr:
+    ls *.rg | entr ruby main.rb
+☐ mc (midnight commander) vs yazi?
+
+On integration server, to see the envoy-web codebase in docker:
+    docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash
+    or use the $DOCKER_RUN_ONE to run commands like from cron
+    Chad might make a $DOCKER_RUN to make it even easier, so we don't need to fiddle with the lock
+    /client is mounted inside docker containers at /client.  So it can do work on integration files
+    ~/utilities_parent/utilities/scripts/docker_shell.sh
+
+Handy for pausing in scripts:
+    import readline from 'readline';
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    return new Promise((resolve) => {
+        rl.question('Press Enter to continue... (or Ctrl+c to exit)', () => {
+            resolve();
+        });
+    }).then(() => {rl.close()});
+
+Take notes on 7 Essential command line tools:
+    grep "search term" file.txt
+    grep -i subResource # makes it case insensitive
+    grep -iv subResource # flips to exclude instead of include
+    | jq ".status.statusBar[1]"
+    | jqp # to a GUI like interface
+    sed 's/one/omerxx/g' my.json # /g is for global
+    gsed -i 's/one/omerxx/g' my.json # -i writes back to the file
+    cat my.json --style plain
+    bat also works as a pager (replaces more and less)
+    awk '{print $1$2}' text.txt
+    awk '$2 >=200 {print $1}' data.txt
+    | cut -d ':' -f 1,3
+
+Jira UI:
+    To filter and use JQL:
+        click Search bar at top
+        click "view all work items"
+
+Jira API:
+    https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+
+Dump Dev Database:
+    Log into shared dev server in Studio 3T
+        find your db. Right click or Cmd+c
+        Right-click localhost or select and Cmd+v
+
+Scripting ideas:
+    I've moved around symlinks, what about unaliasing and re-aliasing?

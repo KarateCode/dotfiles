@@ -5,6 +5,7 @@
 (defun dotspacemacs/layers ()
   "Layer configuration:
 This function should only modify configuration layer settings."
+
   (setq-default
    ;; Base distribution to use. This is a layer contained in the directory
    ;; `+distribution'. For now available distributions are `spacemacs-base'
@@ -32,7 +33,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(typescript
+   '(toml
+     html
+     typescript
      javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -40,10 +43,12 @@ This function should only modify configuration layer settings."
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      (auto-completion :variables
-       auto-completion-enable-snippets-in-popup t)
+        auto-completion-enable-snippets-in-popup t)
      ;; better-defaults
      emacs-lisp
-     ;; git
+     (git :variables
+        git-enable-magit-delta-plugin t
+        git-enable-code-review nil)
      helm
      ;; lsp
      ;; markdown
@@ -57,12 +62,17 @@ This function should only modify configuration layer settings."
      ;; version-control
      treemacs
 
-    (typescript :variables
-                typescript-backend 'lsp)
-    (javascript :variables
-                javascript-backend 'lsp)
-    (syntax-checking)
-)
+     (typescript :variables
+        typescript-backend 'lsp)
+     (javascript :variables
+        javascript-backend 'lsp)
+     (syntax-checking)
+
+     ;;  (doom-themes :variables ;; This was throwing an error in *Messages*
+     ;;               doom-themes-enable-bold t
+     ;;               doom-themes-enable-italic t
+     ;;               )
+     )
 
 
    ;; List of additional packages that will be installed without being wrapped
@@ -73,13 +83,17 @@ This function should only modify configuration layer settings."
    ;; `dotspacemacs/user-config'. To use a local version of a package, use the
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+      doom-themes ;; this ones legit
+      web-mode
+      move-text
+   )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(code-review)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -88,7 +102,8 @@ This function should only modify configuration layer settings."
    ;; installs only the used packages but won't delete unused ones. `all'
    ;; installs *all* packages supported by Spacemacs and never uninstalls them.
    ;; (default is `used-only')
-   dotspacemacs-install-packages 'used-only))
+   dotspacemacs-install-packages 'used-only)
+  )
 
 (defun dotspacemacs/init ()
   "Initialization:
@@ -149,7 +164,7 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil show the version string in the Spacemacs buffer. It will
    ;; appear as (spacemacs version)@(emacs version)
    ;; (default t)
-   dotspacemacs-startup-buffer-show-version t
+   dotspacemacs-startup-buffer-show-version nil
 
    ;; Specify the startup banner. Default value is `official', it displays
    ;; the official spacemacs logo. An integer value is the index of text
@@ -157,7 +172,7 @@ It should only modify the values of Spacemacs settings."
    ;; directory. A string value must be a path to an image format supported
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
-   dotspacemacs-startup-banner 'official
+   dotspacemacs-startup-banner nil
 
    ;; Scale factor controls the scaling (size) of the startup banner. Default
    ;; value is `auto' for scaling the logo automatically to fit all buffer
@@ -176,14 +191,13 @@ It should only modify the values of Spacemacs settings."
    ;; pair of numbers, e.g. `(recents-by-project . (7 .  5))', where the first
    ;; number is the project limit and the second the limit on the recent files
    ;; within a project.
-   dotspacemacs-startup-lists '((recents . 5)
-                                (projects . 7))
+   dotspacemacs-startup-lists '()
 
    ;; True if the home buffer should respond to resize events. (default t)
-   dotspacemacs-startup-buffer-responsive t
+   dotspacemacs-startup-buffer-responsive nil
 
    ;; Show numbers before the startup list lines. (default t)
-   dotspacemacs-show-startup-list-numbers t
+   dotspacemacs-show-startup-list-numbers nil
 
    ;; The minimum delay in seconds between number key presses. (default 0.4)
    dotspacemacs-startup-buffer-multi-digit-delay 0.4
@@ -260,7 +274,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
-   dotspacemacs-emacs-leader-key "C-o"
+   dotspacemacs-emacs-leader-key "C-,"
 
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
@@ -553,7 +567,11 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-enable-clipboard t
 
    ;; If non-nil then byte-compile some of Spacemacs files.
-   dotspacemacs-byte-compile nil))
+   dotspacemacs-byte-compile nil)
+
+  (setq inhibit-startup-screen t)
+  (setq initial-buffer-choice t)
+  )
 
 (defun dotspacemacs/user-env ()
   "Environment variables setup.
@@ -572,15 +590,6 @@ It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
   )
 
-(defun custom-join-lines (arg)
-  "My personal better join lines method"
-	(interactive "p")
-	(end-of-line)
-	(delete-char 1)
-	(delete-horizontal-space)
-	; (insert " ")
-)
-
 (defun dotspacemacs/user-config ()
   "Configuration for user code:
 This function is called at the very end of Spacemacs startup, after layer
@@ -588,14 +597,24 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; --- Disable code-review entirely (Spacemacs bug workaround) ---
+  (with-eval-after-load 'core-configuration-layer
+    (advice-add 'configuration-layer//install-package
+                :around
+                (lambda (orig-fun pkg &rest args)
+                  (unless (eq pkg 'code-review)
+                    (apply orig-fun pkg args)))))
+
   (defun copy-to-osx (text &optional push)
     (let ((process-connection-type nil))
       (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
         (process-send-string proc text)
-        (process-send-eof proc))))
+        (process-send-eof proc)))
+    )
 
   (defun paste-from-osx ()
-    (shell-command-to-string "pbpaste"))
+    (shell-command-to-string "pbpaste")
+    )
 
   (setq interprogram-cut-function 'copy-to-osx)
   (setq interprogram-paste-function 'paste-from-osx)
@@ -609,8 +628,6 @@ before packages are loaded."
   (define-key input-decode-map "\e[113;9z" [cmd-shift-f])
   ;; Bind it to helm-projectile-grep
   (global-set-key [cmd-shift-f] #'helm-projectile-rg)
-
-  (global-set-key (kbd "M-z") 'comment-line)
 
   ;; The only way to get an actual command/super is to use GUI Emacs
   ;; We can't map to Esc as a prefix, because that is Alt's default mapping
@@ -647,184 +664,411 @@ before packages are loaded."
   ;; Bind Cmd+D to duplicate-line
   (global-set-key [cmd-d] #'duplicate-line)
 
+
   ;; Decode Ghostty sequence for Cmd+Ctrl+Up
   (define-key input-decode-map "\e[115;9z" [cmd-ctrl-up])
-  ;; Bind it to move-line-up (built-in in Spacemacs)
-  (global-set-key [cmd-ctrl-up] #'move-line-up)
-
   ;; Decode Ghostty sequence for Cmd+Ctrl+Down
   (define-key input-decode-map "\e[116;9z" [cmd-ctrl-down])
-  ;; Bind it to move-line-down
-  (global-set-key [cmd-ctrl-down] #'move-line-down)
+  (use-package move-text
+    :config
+    ;; Move current line or region up/down
+    (global-set-key [cmd-ctrl-up] 'move-text-up)
+    (global-set-key [cmd-ctrl-down] 'move-text-down))
 
   (with-eval-after-load 'flycheck
-  ;; disable jshint since we prefer eslint checking
-  (setq-default flycheck-disabled-checkers
-                (append flycheck-disabled-checkers
-                        '(javascript-jshint)))
+    ;; disable jshint since we prefer eslint checking
+    (setq-default flycheck-disabled-checkers
+                  (append flycheck-disabled-checkers
+                          '(javascript-jshint)))
 
-  ;; use eslint with js-mode, rjsx-mode, and tsx
-  (flycheck-add-mode 'javascript-eslint 'js-mode)
-  (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-  (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
+    ;; use eslint with js-mode, rjsx-mode, and tsx
+    (flycheck-add-mode 'javascript-eslint 'js-mode)
+    (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+    (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
 
-  ;; point flycheck at project-local eslint if available
-  (defun my/use-eslint-from-node-modules ()
-    (let* ((root (locate-dominating-file
-                  (or (buffer-file-name) default-directory)
-                  "node_modules"))
-           (eslint (and root
-                        (expand-file-name "node_modules/.bin/eslint"
-                                          root))))
-      (when (and eslint (file-executable-p eslint))
-        (setq-local flycheck-javascript-eslint-executable eslint))))
-  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules))
-
-  ;; (global-set-key (kbd "C-W") #'select-current-word)
+    ;; point flycheck at project-local eslint if available
+    (defun my/use-eslint-from-node-modules ()
+      (let* ((root (locate-dominating-file
+                    (or (buffer-file-name) default-directory)
+                    "node_modules"))
+             (eslint (and root
+                          (expand-file-name "node_modules/.bin/eslint"
+                                            root))))
+        (when (and eslint (file-executable-p eslint))
+          (setq-local flycheck-javascript-eslint-executable eslint))))
+    (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules))
 
   ;; Center the screen on the current match after isearch jumps
   (add-hook 'isearch-update-post-hook
-          (lambda ()
-            (recenter)))
+            (lambda ()
+              (recenter)))
 
   (set-default 'truncate-lines t)
 
-
-  ;; Replace TAB in relevant maps
-  (with-eval-after-load 'company
-    (define-key company-active-map (kbd "<tab>") 'my/tab-action)
-    (define-key company-active-map (kbd "TAB") 'my/tab-action))
-
-  (with-eval-after-load 'yasnippet
-    (define-key yas-minor-mode-map (kbd "<tab>") 'my/tab-action)
-    (define-key yas-minor-mode-map (kbd "TAB") 'my/tab-action))
-
-  (global-set-key (kbd "TAB") 'my/tab-action)
-  (global-set-key (kbd "<tab>") 'my/tab-action)
-
-  (define-key prog-mode-map (kbd "C-M-p") #'my/insert-console-log-util)
+  (define-key prog-mode-map (kbd "M-p") #'my/insert-console-log-util)
+  (global-set-key (kbd "M-p") #'my/insert-console-log-util)
 
   ;; Decode Ghostty sequence for Ctrl+Shift+Backspace
   (define-key input-decode-map "\e[117;9z" [C-S-backspace])
   ;; Bind it to delete-current-line
   (global-set-key [C-S-backspace] #'delete-current-line)
 
+  ;; Force Emacs to assume truecolor in terminal
+  (setenv "COLORTERM" "truecolor")
+  (setq xterm-term-name "xterm-256color")
+
+  (require 'doom-themes)
+
+  ;; Optional but nice:
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+
+  ;; Load one immediately
+  (load-theme 'doom-one t)
+
+  ;; Enable Doom's improved org-mode & visual bell tweaks (safe even if you don't use org)
+  (doom-themes-org-config)
+
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (set-face-attribute 'italic nil :slant 'italic)
+  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+
+  (doom-themes-visual-bell-config)
+  (doom-themes-org-config)
+
+  ;; (setq cursor-type '(bar . 2))
+  ;; (set-cursor-color "#0000ff") ;; gold/yellow
+  ;; (add-hook 'after-load-theme-hook
+  ;;         (lambda ()
+  ;; (set-cursor-color "#00ffff")))
+
+  (blink-cursor-mode 1)
+  ;; (setq blink-cursor-interval 0.3)
+
+  (spacemacs/set-leader-keys "bk" 'kill-this-buffer)
+  (define-key global-map (kbd "C-x k")
+              (lambda ()
+                (interactive)
+                (kill-buffer (current-buffer))))
+
+  ;; Decode Ghostty Cmd+C sequence
+  (define-key input-decode-map "\e[118;9z" [cmd-c])
+  ;; Make Cmd+C behave like M-w
+  ;; (global-set-key [cmd-c] #'kill-ring-save)
+  (global-set-key [cmd-c] 'custom-copy-line-or-region)
+
+  (define-key input-decode-map "\e[119;9z" [cmd-s])
+  (global-set-key [cmd-s]
+                  (lambda () (interactive) (execute-kbd-macro (kbd "C-x C-s"))))
+
+  ;; Decode the Ghostty Cmd+X escape sequence
+  (define-key input-decode-map "\e[120;9z" [cmd-x])
+  ;; Map it to the same thing as C-w (kill-region)
+  ;; (global-set-key [cmd-x] (key-binding (kbd "C-w")))
+  (global-set-key [cmd-x] 'custom-cut-line-or-region)
+
+  ;; Map Ghostty's custom Ctrl-, escape to real C-, in terminal Emacs
+  (define-key input-decode-map "\e[121;9z" (kbd "C-,"))
+
+  (global-set-key (kbd "C-y") 'custom-smart-yank)
+
+  (global-set-key (kbd "M-<up>") 'custom-move-up-7-lines)
+  (global-set-key (kbd "M-<down>") 'custom-move-down-7-lines)
+  (global-set-key (kbd "M-}") 'custom-move-down-7-lines)
+  (global-set-key (kbd "M-{") 'custom-move-up-7-lines)
+
+  (defun my/insert-console-log-util ()
+    "Insert my console.log util snippet."
+    (interactive)
+    (yas-expand-snippet
+     "console.log('$1:');\nconsole.log(require('util').inspect($1, false, null));"))
+
+  (global-unset-key (kbd "M-z"))
+  (global-set-key (kbd "M-z") #'my/comment-or-region)
+
+  ;; Remap C-d to our smarter delete function
+  (global-set-key (kbd "C-d") #'my/delete-or-region)
+
+  (with-eval-after-load 'web-mode
+    ;; Set specific comment formats for different contexts within web-mode.
+    (setq web-mode-comment-formats
+          '(("java" . "/*")
+            ("javascript" . "//")
+            ("jsx" . "//")
+            ("tsx" . "//")
+            ("php" . "/*")))
+
+    ;; Ensure that `comment-dwim` works correctly for JSX elements.
+    (add-hook 'web-mode-hook
+              (lambda ()
+                (setq-local comment-start "//")
+                (setq-local comment-end "")
+                (setq-local comment-start-skip "//[ \t]*")))
+    )
+
+  (global-set-key (kbd "C-S-<up>") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-S-<down>") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-.") #'select-current-word)
+
+  (with-eval-after-load 'js2-mode
+    ;; Disable all built-in js2-mode warnings and strict checks
+    (setq js2-mode-show-parse-errors nil)
+    (setq js2-mode-show-strict-warnings nil)
+    (setq js2-strict-missing-semi-warning nil)
+    )
+
+  (with-eval-after-load 'yasnippet
+    (define-key yas-minor-mode-map (kbd "<tab>") 'my/tab-action)
+    (define-key yas-minor-mode-map (kbd "TAB") 'my/tab-action)
+  )
+
+  ;; (with-eval-after-load 'magit
+  ;;   (dolist (map (list
+  ;;                 magit-mode-map
+  ;;                 magit-status-mode-map
+  ;;                 magit-log-mode-map
+  ;;                 magit-diff-mode-map
+  ;;                 magit-revision-mode-map))
+  ;;     (when map
+  ;;       (define-key map (kbd "<tab>") 'magit-section-toggle)
+  ;;       (define-key map (kbd "TAB") 'magit-section-toggle)
+  ;;       (define-key map (kbd "<backtab>") 'magit-section-cycle-global)))
+  ;; )
+  ;; (define-key js2-mode-map (kbd "C-M-p") #'my/insert-console-log-util)
+  ;; (define-key typescript-mode-map (kbd "C-M-p") #'my/insert-console-log-util)
 )
 
+(defun custom-join-lines (arg)
+  "My personal better join lines method"
+  (interactive "p")
+  (end-of-line)
+  (delete-char 1)
+  (delete-horizontal-space)
+  )
+
+(defun my/tsx-comment-style ()
+  "Use line comments (//) in TSX and JSX regions."
+  (when (derived-mode-p 'web-mode)
+    ;; Use 'line' comments instead of block
+    (setq-local comment-style 'indent)
+    ;; Force comment string to //
+    (setq-local comment-start "// ")
+    (setq-local comment-end "")))
+
+(defun my/delete-or-region ()
+  "Delete selected region if active; otherwise delete the character at point."
+  (interactive)
+  (if (use-region-p)
+      (delete-region (region-beginning) (region-end))
+    (delete-char 1))
+  )
+
+(defun my/comment-or-region ()
+  "Comment only the active region if one exists; otherwise comment the current line."
+  (interactive)
+  (if (use-region-p)
+      ;; Comment or uncomment the active region only
+      (comment-or-uncomment-region (region-beginning) (region-end))
+    ;; Otherwise, fall back to commenting the current line
+    (comment-line 1))
+  )
+
+(defun custom-move-down-7-lines ()
+  "Move cursor down exactly 7 lines."
+  (interactive)
+  (next-line 7)
+  )
+
+(defun custom-move-up-7-lines ()
+  "Move cursor up exactly 7 lines."
+  (interactive)
+  (previous-line 7)
+  )
+
+(defun custom-smart-yank ()
+  "If region is active, replace it with the last yanked text.
+Otherwise, just yank as usual."
+  (interactive)
+  (if (use-region-p)
+      (progn
+        (delete-region (region-beginning) (region-end))
+        (yank))
+    (yank))
+  )
+
+(defun custom-copy-line-or-region ()
+  "If region is active, copy it. Otherwise, copy the current line."
+  (interactive)
+  (if (use-region-p)
+      (kill-ring-save (region-beginning) (region-end))
+    (kill-ring-save (line-beginning-position)
+                    (line-beginning-position 2))
+    (message "Line copied"))
+  )
+
+(defun custom-cut-line-or-region ()
+  "If region is active, kill it. Otherwise, kill the current line."
+  (interactive)
+  (if (use-region-p)
+      (kill-region (region-beginning) (region-end))
+    (kill-whole-line))
+  )
+
+(defun my/kill-buffer-no-prompt-if-saved ()
+  "Kill buffer without prompting if it is not modified."
+  (interactive)
+  (if (buffer-modified-p)
+      (kill-buffer)
+    (let ((kill-buffer-query-functions nil))
+      (kill-buffer)))
+  )
+
+;; (defun my/tab-action ()
+;;   "Try to expand a snippet. In Magit, toggle section.
+;; If none found, insert a literal tab or indent as appropriate."
+;;   (interactive)
+;;   (cond
+;;    ;; Case 1: Magit buffer
+;;    ((derived-mode-p 'magit-mode)
+;;     (let ((section (magit-current-section)))
+;;       (when section
+;;         (magit-section-toggle section))))
+
+;;    ;; Case 2: snippet expansion succeeds
+;;    ((yas-expand)
+;;     t)
+
+;;    ;; Case 3: normal indentation fallback
+;;    (t
+;;     (indent-for-tab-command)))
+;;   )
 (defun my/tab-action ()
-  "Expand snippet, complete with company, or indent."
+  "Try to expand a snippet. If none found, do the right thing for the current mode."
   (interactive)
   (cond
-  ;; 1. Try yasnippet
-  ((yas-expand))
-  ;; 2. If company popup is active
-  ((company-explicit-action-p)
-    (company-complete-selection))
-  ((company-manual-begin)
-    (company-complete-common))
-  ;; 3. Fall back to indent
-  (t
-    (indent-for-tab-command))))
+   ;; If we're in Magit and at a section, toggle it.
+   ((and (derived-mode-p 'magit-mode)
+         (ignore-errors (magit-current-section)))
+    (call-interactively #'magit-section-toggle))
+
+   ;; Otherwise, try a yasnippet expansion.
+   ((yas-expand)
+    t)
+
+   ;; Default fallback: indent or insert spaces.
+   (t
+    (indent-for-tab-command)))
+)
 
 (defun my/insert-console-log-util ()
   "Insert my console.log util snippet."
   (interactive)
   (yas-expand-snippet
-  "console.log('$1:');\nconsole.log(require('util').inspect($1, false, null));"))
+   "console.log('$1:');\nconsole.log(require('util').inspect($1, false, null));")
+  )
 
-;; Define a duplicate-line command
 (defun duplicate-line ()
-  "Duplicate the current line."
+  "Duplicate the current line, or the active region if one is selected.
+If a region is active, duplicates the selected text right after it.
+If no region is active, duplicates the current line below it and keeps cursor column."
   (interactive)
-  (save-excursion
-    (let ((col (current-column)))
-      (move-beginning-of-line 1)
-      (kill-line)
-      (yank)
-      (open-line 1)
-      (forward-line 1)
-      (yank)
-      (move-to-column col))))
+  (if (use-region-p)
+      ;; --- Duplicate the region ---
+      (let* ((start (region-beginning))
+             (end (region-end))
+             (text (buffer-substring start end)))
+        (goto-char end)
+        (insert text))
+    ;; --- Duplicate the current line ---
+    (save-excursion
+      (let ((col (current-column)))
+        (move-beginning-of-line 1)
+        (kill-line)
+        (yank)
+        (open-line 1)
+        (forward-line 1)
+        (yank)
+        (move-to-column col))))
+  )
 
 (defun select-current-word (arg)
-	"Select current word. If already a selection, match another word"
+  "Select current word. If already a selection, match another word"
 
-	(interactive "p")
-	(when (use-region-p)
-		(mc/mark-next-like-this (point))
-	)
-	(when (not (use-region-p))
-		(left-word)
-		(mark-word)
-	)
-)
+  (interactive "p")
+  (when (use-region-p)
+    (mc/mark-next-like-this (point))
+    )
+  (when (not (use-region-p))
+    (left-word)
+    (mark-word)
+    )
+  )
 
 (defun move-line-up ()
-	"Move up the current line."
-	(interactive)
-	(transpose-lines 1)
-	(forward-line -2)
-	(indent-according-to-mode))
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode)
+  (deactivate-mark)
+  )
+
 (defun move-line-down ()
-	"Move down the current line."
-	(interactive)
-	(forward-line 1)
-	(transpose-lines 1)
-	(forward-line -1)
-	(indent-according-to-mode))
-;; Define insert-line
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode)
+  )
+
 (defun insert-line ()
   "Insert a new line below the current one and move point to it."
   (interactive)
   (end-of-line)
-  (newline-and-indent))
+  (newline-and-indent)
+  )
 
 (defun my/select-current-line-and-forward-line (arg)
-	"Select the current line and move the cursor by ARG lines IF
-	no region is selected.
-	If a region is already selected when calling this command, only move
-	the cursor by ARG lines."
+  "Select the current line and move the cursor by ARG lines IF
+  no region is selected.
+  If a region is already selected when calling this command, only move
+  the cursor by ARG lines."
 
-	(interactive "p")
-	(when (not (use-region-p))
-		(forward-line 0)
-		(set-mark-command nil)
-	)
-	(forward-line arg)
-)
+  (interactive "p")
+  (when (not (use-region-p))
+    (forward-line 0)
+    (set-mark-command nil)
+    )
+  (forward-line arg)
+  )
 
 (add-hook 'prog-mode-hook
-	(lambda ()
-	(local-set-key (kbd "M-q") #'delete-current-line))
-)
-(defun delete-current-line (arg)
-	"If there's a selection, delete it, otherwise delete current line"
+          (lambda ()
+            (local-set-key (kbd "M-q") #'delete-current-line))
+          )
 
-	(interactive "p")
-	(when (not (use-region-p))
-		(kill-whole-line)
-	)
-	(when (use-region-p)
-		(delete-region (mark) (point))
-	)
-)
+(defun delete-current-line (arg)
+  "If there's a selection, delete it, otherwise delete current line"
+
+  (interactive "p")
+  (when (not (use-region-p))
+    (kill-whole-line)
+    )
+  (when (use-region-p)
+    (delete-region (mark) (point))
+    )
+  )
 
 (with-eval-after-load 'dired
   (define-key dired-mode-map (kbd "C-t") #'helm-projectile-find-file)
-)
-
-(with-eval-after-load 'yasnippet
-  (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map (kbd "<tab>") nil)
-  (define-key yas-minor-mode-map (kbd "C-c y") #'yas-expand)
-)
+  )
 
 ;; Mike's customer stuff:
 ;; Make mouse wheel scroll normally
 (global-set-key (kbd "<wheel-up>")   #'scroll-down-line)
 (global-set-key (kbd "<wheel-down>") #'scroll-up-line)
-;; (global-set-key (kbd "C-t") 'helm-projectile-find-file)
-
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -833,43 +1077,46 @@ before packages are loaded."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(ace-link add-node-modules-path aggressive-indent all-the-icons auto-compile
-              auto-highlight-symbol avy-jump-helm-line centered-cursor-mode
-              clean-aindent-mode column-enforce-mode company define-word devdocs
-              diminish dired-quick-sort disable-mouse dotenv-mode drag-stuff
-              dumb-jump elisp-def elisp-demos elisp-slime-nav emmet-mode emr
-              eval-sexp-fu evil-anzu evil-args evil-cleverparens evil-escape
-              evil-evilified-state evil-exchange evil-goggles evil-iedit-state
-              evil-indent-plus evil-lion evil-lisp-state evil-matchit evil-mc
-              evil-nerd-commenter evil-numbers evil-surround evil-textobj-line
-              evil-tutor evil-unimpaired evil-visual-mark-mode evil-visualstar
-              expand-region eyebrowse fancy-battery flycheck golden-ratio
-              google-translate grizzl helm-ag helm-comint helm-descbinds
-              helm-make helm-mode-manager helm-org helm-projectile helm-purpose
-              helm-swoop helm-xref hide-comnt highlight-indentation
-              highlight-numbers highlight-parentheses hl-todo holy-mode
-              hungry-delete hybrid-mode import-js indent-guide info+ inspector
-              js-doc js2-refactor json-mode json-navigator json-reformat
-              link-hint livid-mode lorem-ipsum macrostep multi-line nameless
-              nodejs-repl npm-mode open-junk-file org-superstar origami overseer
-              page-break-lines paradox password-generator pcre2el popwin
-              prettier-js quickrun rainbow-delimiters restart-emacs space-doc
-              spaceline spacemacs-purpose-popwin spacemacs-whitespace-cleanup
-              string-edit-at-point string-inflection symbol-overlay symon
-              term-cursor toc-org treemacs-icons-dired treemacs-persp
-              treemacs-projectile typescript-mode undo-fu undo-fu-session
-              uuidgen vi-tilde-fringe volatile-highlights vundo web-beautify
-              web-mode wgrep winum writeroom-mode ws-butler)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-)
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(custom-safe-themes
+     '("d481904809c509641a1a1f1b1eb80b94c58c210145effc2631c1a7f2e4a2fdf4" default))
+   '(package-selected-packages
+     '(ace-link add-node-modules-path aggressive-indent all-the-icons auto-compile
+                auto-highlight-symbol avy-jump-helm-line centered-cursor-mode
+                clean-aindent-mode column-enforce-mode company define-word devdocs
+                diminish dired-quick-sort disable-mouse dotenv-mode drag-stuff
+                dumb-jump elisp-def elisp-demos elisp-slime-nav emmet-mode emr
+                eval-sexp-fu evil-anzu evil-args evil-cleverparens evil-escape
+                evil-evilified-state evil-exchange evil-goggles evil-iedit-state
+                evil-indent-plus evil-lion evil-lisp-state evil-matchit evil-mc
+                evil-nerd-commenter evil-numbers evil-surround evil-textobj-line
+                evil-tutor evil-unimpaired evil-visual-mark-mode evil-visualstar
+                ewal-doom-themes expand-region eyebrowse fancy-battery flycheck
+                golden-ratio google-translate grizzl helm-ag helm-comint
+                helm-descbinds helm-make helm-mode-manager helm-org
+                helm-projectile helm-purpose helm-swoop helm-xref hide-comnt
+                highlight-indentation highlight-numbers highlight-parentheses
+                hl-todo holy-mode hungry-delete hybrid-mode import-js indent-guide
+                info+ inspector js-doc js2-refactor json-mode json-navigator
+                json-reformat link-hint livid-mode lorem-ipsum macrostep
+                multi-line nameless nodejs-repl npm-mode open-junk-file
+                org-superstar origami overseer page-break-lines paradox
+                password-generator pcre2el popwin prettier-js quickrun
+                rainbow-delimiters restart-emacs space-doc spaceline
+                spacemacs-purpose-popwin spacemacs-whitespace-cleanup
+                string-edit-at-point string-inflection symbol-overlay symon
+                term-cursor toc-org treemacs-icons-dired treemacs-persp
+                treemacs-projectile typescript-mode undo-fu undo-fu-session
+                uuidgen vi-tilde-fringe volatile-highlights vundo web-beautify
+                web-mode wgrep winum writeroom-mode ws-butler)))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
+  )
