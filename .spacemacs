@@ -809,7 +809,6 @@ before packages are loaded."
 
   (global-set-key (kbd "C-S-<up>") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-S-<down>") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-.") #'select-current-word)
 
   (with-eval-after-load 'js2-mode
     ;; Disable all built-in js2-mode warnings and strict checks
@@ -823,20 +822,26 @@ before packages are loaded."
     (define-key yas-minor-mode-map (kbd "TAB") 'my/tab-action)
   )
 
-  ;; (with-eval-after-load 'magit
-  ;;   (dolist (map (list
-  ;;                 magit-mode-map
-  ;;                 magit-status-mode-map
-  ;;                 magit-log-mode-map
-  ;;                 magit-diff-mode-map
-  ;;                 magit-revision-mode-map))
-  ;;     (when map
-  ;;       (define-key map (kbd "<tab>") 'magit-section-toggle)
-  ;;       (define-key map (kbd "TAB") 'magit-section-toggle)
-  ;;       (define-key map (kbd "<backtab>") 'magit-section-cycle-global)))
-  ;; )
-  ;; (define-key js2-mode-map (kbd "C-M-p") #'my/insert-console-log-util)
-  ;; (define-key typescript-mode-map (kbd "C-M-p") #'my/insert-console-log-util)
+  (define-key input-decode-map "\e[122;9z" [cmd-e])
+  (global-set-key [cmd-e] 'my/search-region)
+  (define-key input-decode-map "\e[123;9z" [cmd-l])
+  (global-set-key [cmd-l] 'select-current-word)
+)
+
+(defun my/search-region ()
+  "Search forward for the current region or symbol at point."
+  (interactive)
+  (let* ((text (
+    if (use-region-p)
+      (buffer-substring-no-properties (region-beginning) (region-end))
+      (thing-at-point 'symbol t)
+    )))
+    (when text
+      (deactivate-mark)
+      (isearch-mode t)
+      (isearch-yank-string text)
+    )
+  )
 )
 
 (defun custom-join-lines (arg)

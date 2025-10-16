@@ -146,7 +146,14 @@ Yassnippets:
     M-x yas-expand forces snippet instead TAB key
     clg for console.log() snippet
 
-☐ Start Magit (vs lazygit)
+Magit:
+    C-, g s # starts magit
+    s to stage files
+    k to delete untracked files
+    b c # similar to git checkout -b
+    c c to commit
+        C-c C-c to save commit message and proceed
+    P p to push
 ☐ One day, start ORG mode
 
 VsCode:
