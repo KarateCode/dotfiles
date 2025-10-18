@@ -62,10 +62,8 @@ This function should only modify configuration layer settings."
      ;; version-control
      treemacs
 
-     (typescript :variables
-        typescript-backend 'lsp)
-     (javascript :variables
-        javascript-backend 'lsp)
+    ;;  (typescript)
+    ;;  (javascript)
      (syntax-checking)
 
      ;;  (doom-themes :variables ;; This was throwing an error in *Messages*
@@ -93,7 +91,10 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(code-review)
+   dotspacemacs-excluded-packages '(
+    code-review
+    typescript-ts-mode
+  )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -588,7 +589,20 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
-  )
+  ;; Prevent Emacs 29+ tree-sitter from remapping TS modes
+  (setq major-mode-remap-alist nil)
+
+  ;; Force .ts and .tsx to classic modes before Spacemacs loads its layers
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+
+  ;; Double-check mode mapping after layers are loaded
+  (setq major-mode-remap-alist
+        '((typescript-tsx-mode . web-mode)
+          (tsx-ts-mode . web-mode)
+          (typescript-ts-mode . typescript-mode)))
+
+)
 
 (defun dotspacemacs/user-config ()
   "Configuration for user code:
@@ -826,6 +840,69 @@ before packages are loaded."
   (global-set-key [cmd-e] 'my/search-region)
   (define-key input-decode-map "\e[123;9z" [cmd-l])
   (global-set-key [cmd-l] 'select-current-word)
+
+
+  ;; Disable tree-sitter TypeScript-tsx mode completely
+  ;; (when (fboundp 'typescript-tsx-mode)
+  ;; (fmakunbound 'typescript-tsx-mode))
+
+  ;; Prefer classic web-mode and typescript-mode over tree-sitter variants
+  (setq major-mode-remap-alist
+        '((typescript-tsx-mode . web-mode)
+          (tsx-ts-mode . web-mode)
+          (typescript-ts-mode . typescript-mode)))
+  ;; (setq major-mode-remap-alist nil)
+
+  ;; Ensure tide and web-mode are installed
+  ;; (setq dotspacemacs-additional-packages '(tide web-mode))
+
+  ;; Use web-mode for TSX and JSX
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+
+  ;; (defun my/setup-tide-mode ()
+  ;;   "Set up Tide mode for TypeScript or TSX buffers."
+  ;;   (interactive)
+  ;;   (tide-setup)
+  ;;   (tide-hl-identifier-mode +1)
+  ;;   (flycheck-mode +1)
+  ;;   (eldoc-mode +1)
+  ;;   (company-mode +1))
+
+  ;; (defun my/setup-web-mode-for-tsx ()
+  ;;   "Enable tide inside web-mode when editing TSX files."
+  ;;   (when (string-equal "tsx" (file-name-extension buffer-file-name))
+  ;;     (my/setup-tide-mode)))
+
+  ;; (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
+  ;; (add-hook 'web-mode-hook #'my/setup-web-mode-for-tsx)
+
+  ;; ;; Make sure web-mode treats .tsx as JSX for highlighting
+  ;; (setq web-mode-content-type-alist '(("tsx" . "jsx")))
+
+  ;; ;; Disable js2-mode and LSP noise
+  ;; (setq js2-mode-show-parse-errors nil
+  ;;       js2-mode-show-strict-warnings nil)
+
+  ;; (use-package tide
+  ;;   :ensure t
+  ;;   :after (typescript-mode web-mode company flycheck)
+  ;;   :hook ((typescript-mode . my/setup-tide-mode)
+  ;;         (web-mode . my/conditionally-setup-tide))
+  ;;   :config
+  ;;   (defun my/setup-tide-mode ()
+  ;;     (tide-setup)
+  ;;     (tide-hl-identifier-mode +1)
+  ;;     (flycheck-mode +1)
+  ;;     (eldoc-mode +1)
+  ;;     (company-mode +1))
+
+  ;;   (defun my/conditionally-setup-tide ()
+  ;;     (when (string-equal "tsx" (file-name-extension buffer-file-name))
+  ;;       (my/setup-tide-mode)))
+
+  ;;   (setq web-mode-content-type-alist '(("tsx" . "jsx"))))
 )
 
 (defun my/search-region ()

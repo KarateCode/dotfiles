@@ -1,0 +1,162 @@
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   /Users/michaelschneider/Library/Application Support/com.mitchellh.ghostty/config
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+
+background = "#000000"
+# key-encoding = xterm
+# keybind = ctrl+,=text:\x1b[27;5;44~
+# keybind = ctrl+, send_text "\x1b[27;5;44~"
+
+cursor-style = bar
+cursor-style-blink = true
+cursor-color = #ff8800
+
+keybind = ctrl+,=text:\x1b[121;9z
+
+# Tmux can't handle random byte strings.
+# It must be an actual key on the keyboard
+# So here, we're generating the F1 key
+keybind = "cmd+k=text:\x1bOP"
+
+# unset, so that I can use it as duplicate line in emacs
+keybind = cmd+d=unbind
+
+keybind = super+alt+left=previous_tab
+keybind = super+alt+right=next_tab
+
+keybind = PageUp=text:\x1b[5~
+keybind = PageDown=text:\x1b[6~
+
+keybind = cmd+c=text:\x1b[118;9z
+keybind = "cmd+s=unbind"
+keybind = cmd+s=text:\x1b[119;9z
+
+keybind = cmd+x=text:\x1b[120;9z
+
+keybind = shift+PageUp=scroll_page_up
+keybind = shift+PageDown=scroll_page_down
+keybind = shift+home=scroll_to_top
+keybind = shift+end=scroll_to_bottom
+# Plain keys → send escapes to tmux
+keybind = home=text:\x1b[H
+keybind = end=text:\x1b[F
+
+# Prevent the default Cmd+J behavior if any
+keybind = "cmd+j=unbind"
+keybind = cmd+j=text:\x1b[114;9z
+
+# Prevent Cmd+Z from being handled by Ghostty itself
+keybind = "cmd+z=unbind"
+
+# Send ESC+z when Cmd+Z is pressed
+# The only way to get an actual command/super is to use GUI Emacs
+# We can't map to Esc as a prefix, because that is Alt's default mapping
+# So instead, we're going to map to a uniq charater string
+keybind = cmd+z=text:\x1b[108;9z
+keybind = "cmd+shift+z=unbind"
+keybind = cmd+shift+z=text:\x1b[109;9z
+keybind = cmd+d=text:\x1b[110;9z
+keybind = "cmd+enter=unbind"
+keybind = cmd+enter=text:\x1b[111;9z
+keybind = cmd+shift+f=text:\x1b[113;9z
+keybind = cmd+e=text:\x1b[122;9z
+keybind = cmd+l=text:\x1b[123;9z
+
+keybind = "cmd+alt+up=unbind"
+keybind = cmd+alt+up=text:\x1b[115;9z
+keybind = "cmd+alt+down=unbind"
+keybind = cmd+alt+down=text:\x1b[116;9z
+
+keybind = ctrl+shift+backspace=text:\x1b[117;9z
+
+# Some shaders can be found in this repo, they're usually uploaded to discord
+# https://github.com/hackrmomo/ghostty-shaders
+# custom-shader = shaders/animated-gradient-shader.glsl
+# custom-shader = shaders/bettercrt.glsl
+# custom-shader = shaders/bloom.glsl
+# custom-shader = shaders/bloom1.glsl
+# custom-shader = shaders/bloom075.glsl
+# custom-shader = shaders/bloom060.glsl
+# custom-shader = shaders/bloom050.glsl
+# custom-shader = shaders/bloom025.glsl
+# custom-shader = shaders/bloom050.glsl
+# custom-shader = shaders/bloom060.glsl
+# custom-shader = shaders/bloom075.glsl
+# custom-shader = /Users/michaelschneider/.config/ghostty/shaders/bloom.glsl
+# custom-shader = shaders/bloom1.glsl
+# custom-shader = shaders/crt.glsl
+# custom-shader = shaders/cubes.glsl
+# custom-shader = shaders/dither.glsl
+# custom-shader = shaders/drunkard.glsl
+# custom-shader = shaders/fireworks-rockets.glsl
+# custom-shader = shaders/fireworks.glsl
+# custom-shader = shaders/gears-and-belts.glsl
+# custom-shader = shaders/glitchy.glsl
+# custom-shader = shaders/glow-rgbsplit-twitchy.glsl
+# custom-shader = shaders/gradient-background.glsl
+# custom-shader = shaders/inside-the-matrix.glsl
+# custom-shader = shaders/just-snow.glsl
+# custom-shader = shaders/matrix-hallway.glsl
+# custom-shader = shaders/negative.glsl
+# custom-shader = shaders/retro-terminal.glsl
+# custom-shader = shaders/smoke-and-ghost.glsl
+# custom-shader = shaders/sparks-from-fire.glsl
+# custom-shader = shaders/spotlight.glsl
+# custom-shader = shaders/starfield-colors.glsl
+# custom-shader = shaders/starfield.glsl
+# custom-shader = shaders/tft.glsl
+# custom-shader = shaders/underwater.glsl
+# custom-shader = shaders/water.glsl
+# custom-shader = shaders/cursor_blaze.glsl
+# custom-shader = shaders/cursor_blaze_no_trail.glsl
+# custom-shader = /Users/michaelschneider/.config/ghostty/shaders/spotlight.glsl
+custom-shader = /Users/michaelschneider/.config/ghostty/shaders/cursor_blaze.glsl
+custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playground/shaders/cursor_smear.glsl
+# custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playground/shaders/cursor_frozen.glsl
+custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playground/shaders/chad_frozen.glsl
+
+# The following command checks if tmux is installed.
+# If tmux is installed, it automatically attaches to an existing tmux session.
+# If no tmux session exists, a new one is created.
+# If tmux is not installed, it simply starts zsh without tmux.
+#
+# For this to work properly, you need to make sure that your shell is configured
+# for homebrew, so you should have this line:
+# eval "$(/opt/homebrew/bin/brew shellenv)"
+# In your ~/.zprofile file
+# If you don't have that line, or if the file doesn't exist, run this:
+# echo '' >>~/.zprofile && echo '# Configure shell for brew' >>~/.zprofile && echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile && eval "$(/opt/homebrew/bin/brew shellenv)"
+#
+# This assumes you installed tmux through brew if using macos
+# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
+# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then $HOME/github/dotfiles-latest/tmux/tools/prime/tmux-sessionizer.sh $HOME/github/dotfiles-latest || (tmux attach 2>/dev/null || tmux); else exec zsh; fi"
+
+window-padding-x = 4,2
+window-padding-y = 40
+window-padding-y = 6,0
+
+font-family = "JetBrainsMono Nerd Font Mono"
+font-style = bold
+font-size = 14
+
+confirm-close-surface = false
+
+quick-terminal-animation-duration = 0.08
+
+keybind = super+i=inspector:toggle
+keybind = super+r=reload_config
+
+macos-icon = official
+
+# On macOS, background opacity is disabled when the terminal enters native
+# fullscreen. This is because the background becomes gray and it can cause
+# widgets to show through which isn't generally desirable.
+background-opacity = 0.78
+unfocused-split-opacity = 0.7

@@ -103,6 +103,7 @@ FZF:
     export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -l -g""'
     https://www.youtube.com/watch?v=MvLQor1Ck3M
     fzf --preview 'bat --style=numbers --color=always {}'
+    fzf --preview 'bat --style=numbers --color=always {}' --bind 'enter:execute(tmux new-window "vim {}" || tmux split-window "vim {}")'
     ☐ How do I toggle folder mode in FZF?
 
 Tmux:
@@ -153,7 +154,15 @@ Magit:
     b c # similar to git checkout -b
     c c to commit
         C-c C-c to save commit message and proceed
+    F p to pull
     P p to push
+    g refreshes magit after resolving conflicts
+    A A to git cherry-pick continue
+        C-c C-c to save commit message and proceed
+    A a to cherry-pick abort
+    r r for git rebase continue
+        C-c C-c to save commit message and proceed
+
 ☐ One day, start ORG mode
 
 VsCode:
@@ -181,6 +190,9 @@ RipGrep:
 entr:
     ls *.rg | entr ruby main.rb
 ☐ mc (midnight commander) vs yazi?
+
+mongosh:
+    mongosh wwwinc-stag-eu-cf --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
 
 On integration server, to see the envoy-web codebase in docker:
     docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash
