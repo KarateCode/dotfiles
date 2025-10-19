@@ -13,6 +13,7 @@ Emacs shortcuts:
 
     M-: (eval-expression): Prompts you to type a Lisp expression in the minibuffer, which is then evaluated.
     M-x describe-mode
+    M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
     ✔ map move-line-up @done(25-10-01 22:32)
         ✔ can we get a multi-line version? @done(25-10-11 18:41)
     ✔ map move-line-down @done(25-10-01 22:32)
@@ -137,6 +138,10 @@ Tmux:
         ls /Users/michaelschneider/.config/tmux/plugins/
         echo $TMUX_PLUGIN_MANAGER_PATH
         you can set custom-paths. These will auto attach or create at these paths from sessionX
+
+Tide:
+    M-x tide-documentation-at-point
+    (setq tide-always-show-documentation t)
 
 Yassnippets:
     Run with M-shift-: #

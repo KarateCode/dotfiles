@@ -7,103 +7,103 @@
 This function should only modify configuration layer settings."
 
   (setq-default
-   ;; Base distribution to use. This is a layer contained in the directory
-   ;; `+distribution'. For now available distributions are `spacemacs-base'
-   ;; or `spacemacs'. (default 'spacemacs)
-   dotspacemacs-distribution 'spacemacs
+    ;; Base distribution to use. This is a layer contained in the directory
+    ;; `+distribution'. For now available distributions are `spacemacs-base'
+    ;; or `spacemacs'. (default 'spacemacs)
+    dotspacemacs-distribution 'spacemacs
 
-   ;; Lazy installation of layers (i.e. layers are installed only when a file
-   ;; with a supported type is opened). Possible values are `all', `unused'
-   ;; and `nil'. `unused' will lazy install only unused layers (i.e. layers
-   ;; not listed in variable `dotspacemacs-configuration-layers'), `all' will
-   ;; lazy install any layer that support lazy installation even the layers
-   ;; listed in `dotspacemacs-configuration-layers'. `nil' disable the lazy
-   ;; installation feature and you have to explicitly list a layer in the
-   ;; variable `dotspacemacs-configuration-layers' to install it.
-   ;; (default 'unused)
-   dotspacemacs-enable-lazy-installation 'unused
+    ;; Lazy installation of layers (i.e. layers are installed only when a file
+    ;; with a supported type is opened). Possible values are `all', `unused'
+    ;; and `nil'. `unused' will lazy install only unused layers (i.e. layers
+    ;; not listed in variable `dotspacemacs-configuration-layers'), `all' will
+    ;; lazy install any layer that support lazy installation even the layers
+    ;; listed in `dotspacemacs-configuration-layers'. `nil' disable the lazy
+    ;; installation feature and you have to explicitly list a layer in the
+    ;; variable `dotspacemacs-configuration-layers' to install it.
+    ;; (default 'unused)
+    dotspacemacs-enable-lazy-installation 'unused
 
-   ;; If non-nil then Spacemacs will ask for confirmation before installing
-   ;; a layer lazily. (default t)
-   dotspacemacs-ask-for-lazy-installation t
+    ;; If non-nil then Spacemacs will ask for confirmation before installing
+    ;; a layer lazily. (default t)
+    dotspacemacs-ask-for-lazy-installation t
 
-   ;; List of additional paths where to look for configuration layers.
-   ;; Paths must have a trailing slash (i.e. "~/.mycontribs/")
-   dotspacemacs-configuration-layer-path '()
+    ;; List of additional paths where to look for configuration layers.
+    ;; Paths must have a trailing slash (i.e. "~/.mycontribs/")
+    dotspacemacs-configuration-layer-path '()
 
-   ;; List of configuration layers to load.
-   dotspacemacs-configuration-layers
-   '(toml
-     html
-     typescript
-     javascript
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
-     ;; `M-m f e R' (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
-     (auto-completion :variables
-        auto-completion-enable-snippets-in-popup t)
-     ;; better-defaults
-     emacs-lisp
-     (git :variables
-        git-enable-magit-delta-plugin t
-        git-enable-code-review nil)
-     helm
-     ;; lsp
-     ;; markdown
-     multiple-cursors
-     ;; org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
-     ;; spell-checking
-     ;; syntax-checking
-     ;; version-control
-     treemacs
-
-    ;;  (typescript)
-    ;;  (javascript)
-     (syntax-checking)
-
-     ;;  (doom-themes :variables ;; This was throwing an error in *Messages*
-     ;;               doom-themes-enable-bold t
-     ;;               doom-themes-enable-italic t
-     ;;               )
-     )
-
-
-   ;; List of additional packages that will be installed without being wrapped
-   ;; in a layer (generally the packages are installed only and should still be
-   ;; loaded using load/require/use-package in the user-config section below in
-   ;; this file). If you need some configuration for these packages, then
-   ;; consider creating a layer. You can also put the configuration in
-   ;; `dotspacemacs/user-config'. To use a local version of a package, use the
-   ;; `:location' property: '(your-package :location "~/path/to/your-package/")
-   ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '(
-      doom-themes ;; this ones legit
+    ;; List of configuration layers to load.
+    dotspacemacs-configuration-layers
+    '(
+      toml
+      html
       web-mode
+      (typescript :variables
+        typescript-backend 'tide)
+      (javascript :variables
+        javascript-backend 'tide)
+      syntax-checking
+      ;; ----------------------------------------------------------------
+      ;; Example of useful layers you may want to use right away.
+      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
+      ;; `M-m f e R' (Emacs style) to install them.
+      ;; ----------------------------------------------------------------
+      (auto-completion :variables
+         auto-completion-enable-snippets-in-popup t)
+      ;; better-defaults
+      emacs-lisp
+      (git :variables
+         git-enable-magit-delta-plugin t
+         git-enable-code-review nil)
+      helm
+      ;; lsp
+      ;; markdown
+      multiple-cursors
+      ;; org
+      ;; (shell :variables
+      ;;        shell-default-height 30
+      ;;        shell-default-position 'bottom)
+      ;; spell-checking
+      ;; version-control
+      treemacs
+
+      ;;  (doom-themes :variables ;; This was throwing an error in *Messages*
+      ;;               doom-themes-enable-bold t
+      ;;               doom-themes-enable-italic t
+      ;;               )
+      )
+
+
+    ;; List of additional packages that will be installed without being wrapped
+    ;; in a layer (generally the packages are installed only and should still be
+    ;; loaded using load/require/use-package in the user-config section below in
+    ;; this file). If you need some configuration for these packages, then
+    ;; consider creating a layer. You can also put the configuration in
+    ;; `dotspacemacs/user-config'. To use a local version of a package, use the
+    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
+    ;; Also include the dependencies as they will not be resolved automatically.
+    dotspacemacs-additional-packages '(
+      doom-themes ;; this ones legit
+      ;; web-mode
       move-text
-   )
+    )
 
-   ;; A list of packages that cannot be updated.
-   dotspacemacs-frozen-packages '()
+    ;; A list of packages that cannot be updated.
+    dotspacemacs-frozen-packages '()
 
-   ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(
-    code-review
-    typescript-ts-mode
-  )
+    ;; A list of packages that will not be installed and loaded.
+    dotspacemacs-excluded-packages '(
+      code-review
+      typescript-ts-mode
+    )
 
-   ;; Defines the behaviour of Spacemacs when installing packages.
-   ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
-   ;; `used-only' installs only explicitly used packages and deletes any unused
-   ;; packages as well as their unused dependencies. `used-but-keep-unused'
-   ;; installs only the used packages but won't delete unused ones. `all'
-   ;; installs *all* packages supported by Spacemacs and never uninstalls them.
-   ;; (default is `used-only')
-   dotspacemacs-install-packages 'used-only)
+    ;; Defines the behaviour of Spacemacs when installing packages.
+    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
+    ;; `used-only' installs only explicitly used packages and deletes any unused
+    ;; packages as well as their unused dependencies. `used-but-keep-unused'
+    ;; installs only the used packages but won't delete unused ones. `all'
+    ;; installs *all* packages supported by Spacemacs and never uninstalls them.
+    ;; (default is `used-only')
+    dotspacemacs-install-packages 'used-only)
   )
 
 (defun dotspacemacs/init ()
@@ -689,16 +689,26 @@ before packages are loaded."
     (global-set-key [cmd-ctrl-up] 'move-text-up)
     (global-set-key [cmd-ctrl-down] 'move-text-down))
 
+  ;; (with-eval-after-load 'flycheck
+  ;;   ;; disable jshint since we prefer eslint checking
+  ;;   (setq-default flycheck-disabled-checkers
+  ;;                 (append flycheck-disabled-checkers
+  ;;                         '(javascript-jshint)))
   (with-eval-after-load 'flycheck
-    ;; disable jshint since we prefer eslint checking
     (setq-default flycheck-disabled-checkers
-                  (append flycheck-disabled-checkers
-                          '(javascript-jshint)))
+                (append flycheck-disabled-checkers
+                        '(javascript-jshint
+                          javascript-standard
+                          javascript-eslint-ember
+                          json-jsonlint
+                          typescript-tslint)))
 
     ;; use eslint with js-mode, rjsx-mode, and tsx
-    (flycheck-add-mode 'javascript-eslint 'js-mode)
-    (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
-    (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
+    (flycheck-add-mode 'javascript-eslint 'web-mode)
+    (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+    ;; (flycheck-add-mode 'javascript-eslint 'js-mode)
+    ;; (flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+    ;; (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
 
     ;; point flycheck at project-local eslint if available
     (defun my/use-eslint-from-node-modules ()
@@ -710,7 +720,8 @@ before packages are loaded."
                                             root))))
         (when (and eslint (file-executable-p eslint))
           (setq-local flycheck-javascript-eslint-executable eslint))))
-    (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules))
+    (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+  )
 
   ;; Center the screen on the current match after isearch jumps
   (add-hook 'isearch-update-post-hook
@@ -853,56 +864,30 @@ before packages are loaded."
           (typescript-ts-mode . typescript-mode)))
   ;; (setq major-mode-remap-alist nil)
 
-  ;; Ensure tide and web-mode are installed
-  ;; (setq dotspacemacs-additional-packages '(tide web-mode))
-
   ;; Use web-mode for TSX and JSX
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
 
-  ;; (defun my/setup-tide-mode ()
-  ;;   "Set up Tide mode for TypeScript or TSX buffers."
-  ;;   (interactive)
-  ;;   (tide-setup)
-  ;;   (tide-hl-identifier-mode +1)
-  ;;   (flycheck-mode +1)
-  ;;   (eldoc-mode +1)
-  ;;   (company-mode +1))
+  (defun setup-tide-mode ()
+    "Set up Tide for TypeScript and TSX files, including Eldoc support."
+    (interactive)
+    (tide-setup)
+    (tide-hl-identifier-mode +1)
+    (eldoc-mode +1)
+    (company-mode +1)
+    ;; Force Tide to handle documentation
+    (setq-local eldoc-documentation-function #'tide-eldoc-function)
+    ;; Show type info faster
+    (setq eldoc-idle-delay 0.2)
+    (setq tide-always-show-documentation t))
 
-  ;; (defun my/setup-web-mode-for-tsx ()
-  ;;   "Enable tide inside web-mode when editing TSX files."
-  ;;   (when (string-equal "tsx" (file-name-extension buffer-file-name))
-  ;;     (my/setup-tide-mode)))
-
-  ;; (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
-  ;; (add-hook 'web-mode-hook #'my/setup-web-mode-for-tsx)
-
-  ;; ;; Make sure web-mode treats .tsx as JSX for highlighting
-  ;; (setq web-mode-content-type-alist '(("tsx" . "jsx")))
-
-  ;; ;; Disable js2-mode and LSP noise
-  ;; (setq js2-mode-show-parse-errors nil
-  ;;       js2-mode-show-strict-warnings nil)
-
-  ;; (use-package tide
-  ;;   :ensure t
-  ;;   :after (typescript-mode web-mode company flycheck)
-  ;;   :hook ((typescript-mode . my/setup-tide-mode)
-  ;;         (web-mode . my/conditionally-setup-tide))
-  ;;   :config
-  ;;   (defun my/setup-tide-mode ()
-  ;;     (tide-setup)
-  ;;     (tide-hl-identifier-mode +1)
-  ;;     (flycheck-mode +1)
-  ;;     (eldoc-mode +1)
-  ;;     (company-mode +1))
-
-  ;;   (defun my/conditionally-setup-tide ()
-  ;;     (when (string-equal "tsx" (file-name-extension buffer-file-name))
-  ;;       (my/setup-tide-mode)))
-
-  ;;   (setq web-mode-content-type-alist '(("tsx" . "jsx"))))
+  ;; For .tsx files
+  (add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode)))
+  )
 )
 
 (defun my/search-region ()
