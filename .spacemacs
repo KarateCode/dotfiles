@@ -629,6 +629,16 @@ before packages are loaded."
 	(setq interprogram-cut-function 'copy-to-osx)
 	(setq interprogram-paste-function 'paste-from-osx)
 
+	;; Disable auto-save files (#...#)
+	(setq auto-save-default nil)
+	(setq auto-save-list-file-prefix nil)
+	;; Disable backup files (filename~)
+	(setq make-backup-files nil)
+	(setq backup-inhibited t)
+	(setq create-lockfiles nil) ;; no .#lock files either
+	;; Optional: disable autosave for visited files
+	(setq auto-save-visited-mode nil)
+
 	;; Unset Spacemacs' default C-t binding
 	(global-unset-key (kbd "C-t"))
 	;; Rebind C-t to helm-projectile-find-file
