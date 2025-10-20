@@ -36,11 +36,13 @@ This function should only modify configuration layer settings."
 		'(
 			toml
 			html
-			web-mode
+			;; web-mode
+			lsp
+			web
 			(typescript :variables
-				typescript-backend 'tide)
+				typescript-backend 'lsp)
 			(javascript :variables
-				javascript-backend 'tide)
+				javascript-backend 'lsp)
 			syntax-checking
 			;; ----------------------------------------------------------------
 			;; Example of useful layers you may want to use right away.
@@ -875,44 +877,26 @@ before packages are loaded."
 	(define-key input-decode-map "\e[123;9z" [cmd-l])
 	(global-set-key [cmd-l] 'select-current-word)
 
-
-	;; Disable tree-sitter TypeScript-tsx mode completely
-	;; (when (fboundp 'typescript-tsx-mode)
-	;; (fmakunbound 'typescript-tsx-mode))
-
 	;; Prefer classic web-mode and typescript-mode over tree-sitter variants
 	(setq major-mode-remap-alist
 		'((typescript-tsx-mode . web-mode)
 			(tsx-ts-mode . web-mode)
 			(typescript-ts-mode . typescript-mode))
 	)
-	;; (setq major-mode-remap-alist nil)
 
 	;; Use web-mode for TSX and JSX
 	(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 	(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 	(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+	(add-hook 'web-mode-hook #'lsp-deferred)
 
-	(defun setup-tide-mode ()
-		"Set up Tide for TypeScript and TSX files, including Eldoc support."
-		(interactive)
-		(tide-setup)
-		(tide-hl-identifier-mode +1)
-		(eldoc-mode +1)
-		(company-mode +1)
-		;; Force Tide to handle documentation
-		(setq-local eldoc-documentation-function #'tide-eldoc-function)
-		;; Show type info faster
-		(setq eldoc-idle-delay 0.2)
-		(setq tide-always-show-documentation t)
+	(dolist (pattern '("\\.sh\\'" "\\.zsh\\'" "\\.bash\\'" "\\.env\\'" "zlogin\\'" "zprofile\\'"))
+		(add-to-list 'auto-mode-alist (cons pattern 'sh-mode))
 	)
-
-	;; For .tsx files
-	(add-hook 'web-mode-hook
-		(lambda ()
-			(when (string-equal "tsx" (file-name-extension buffer-file-name))
-				(setup-tide-mode)))
+	(defun my-sh-mode-setup ()
+		(sh-set-shell "zsh")
 	)
+	(add-hook 'sh-mode-hook 'my-sh-mode-setup)
 )
 
 (defun my/search-region ()

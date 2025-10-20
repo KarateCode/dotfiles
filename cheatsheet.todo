@@ -14,6 +14,8 @@ Emacs shortcuts:
     M-: (eval-expression): Prompts you to type a Lisp expression in the minibuffer, which is then evaluated.
     M-x describe-mode
     M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
+    (message "### Adding tide-eldoc-function to eldoc-documentation-functions.")
+M-RET h h lsp-describe-thing-at-point
     ✔ map move-line-up @done(25-10-01 22:32)
         ✔ can we get a multi-line version? @done(25-10-11 18:41)
     ✔ map move-line-down @done(25-10-01 22:32)
@@ -198,6 +200,7 @@ entr:
 
 mongosh:
     mongosh wwwinc-stag-eu-cf --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
+    mongosh $NAMING_PREFIX --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
 
 On integration server, to see the envoy-web codebase in docker:
     docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash
