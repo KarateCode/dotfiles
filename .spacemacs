@@ -626,19 +626,6 @@ before packages are loaded."
 					(apply orig-fun pkg args))))
 	)
 
-	(defun copy-to-osx (text &optional push)
-		(let ((process-connection-type nil))
-			(let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-				(process-send-string proc text)
-				(process-send-eof proc)
-			)
-		)
-	)
-
-	(defun paste-from-osx ()
-		(shell-command-to-string "pbpaste")
-	)
-
 	(setq interprogram-cut-function 'copy-to-osx)
 	(setq interprogram-paste-function 'paste-from-osx)
 
@@ -723,20 +710,6 @@ before packages are loaded."
 		;; (flycheck-add-mode 'javascript-eslint 'typescript-tsx-mode)
 
 		;; point flycheck at project-local eslint if available
-		(defun my/use-eslint-from-node-modules ()
-			(let* ((root (locate-dominating-file
-				(or (buffer-file-name) default-directory)
-				"node_modules"))
-					(eslint (and root
-						(expand-file-name "node_modules/.bin/eslint"
-						root))
-					)
-				)
-				(when (and eslint (file-executable-p eslint))
-					(setq-local flycheck-javascript-eslint-executable eslint)
-				)
-			)
-		)
 		(add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
 	)
 
@@ -779,15 +752,7 @@ before packages are loaded."
 
 	(doom-themes-visual-bell-config)
 	(doom-themes-org-config)
-
-	;; (setq cursor-type '(bar . 2))
-	;; (set-cursor-color "#0000ff") ;; gold/yellow
-	;; (add-hook 'after-load-theme-hook
-	;;         (lambda ()
-	;; (set-cursor-color "#00ffff")))
-
 	(blink-cursor-mode 1)
-	;; (setq blink-cursor-interval 0.3)
 
 	(spacemacs/set-leader-keys "bk" 'kill-this-buffer)
 	(define-key global-map (kbd "C-x k")
@@ -818,23 +783,12 @@ before packages are loaded."
 	(define-key input-decode-map "\e[121;9z" (kbd "C-,"))
 
 	(global-set-key (kbd "C-y") 'custom-smart-yank)
-
 	(global-set-key (kbd "M-<up>") 'custom-move-up-7-lines)
 	(global-set-key (kbd "M-<down>") 'custom-move-down-7-lines)
 	(global-set-key (kbd "M-}") 'custom-move-down-7-lines)
 	(global-set-key (kbd "M-{") 'custom-move-up-7-lines)
-
-	(defun my/insert-console-log-util ()
-		"Insert my console.log util snippet."
-		(interactive)
-		(yas-expand-snippet
-		"console.log('$1:');\nconsole.log(require('util').inspect($1, false, null));")
-	)
-
 	(global-unset-key (kbd "M-z"))
 	(global-set-key (kbd "M-z") #'my/comment-or-region)
-
-	;; Remap C-d to our smarter delete function
 	(global-set-key (kbd "C-d") #'my/delete-or-region)
 
 	(with-eval-after-load 'web-mode
@@ -893,10 +847,39 @@ before packages are loaded."
 	(dolist (pattern '("\\.sh\\'" "\\.zsh\\'" "\\.bash\\'" "\\.env\\'" "zlogin\\'" "zprofile\\'"))
 		(add-to-list 'auto-mode-alist (cons pattern 'sh-mode))
 	)
-	(defun my-sh-mode-setup ()
-		(sh-set-shell "zsh")
-	)
 	(add-hook 'sh-mode-hook 'my-sh-mode-setup)
+)
+
+(defun my/use-eslint-from-node-modules ()
+	(let* ((root (locate-dominating-file
+		(or (buffer-file-name) default-directory)
+		"node_modules"))
+			(eslint (and root
+				(expand-file-name "node_modules/.bin/eslint"
+				root))
+			)
+		)
+		(when (and eslint (file-executable-p eslint))
+			(setq-local flycheck-javascript-eslint-executable eslint)
+		)
+	)
+)
+
+(defun my-sh-mode-setup ()
+	(sh-set-shell "zsh")
+)
+
+(defun copy-to-osx (text &optional push)
+	(let ((process-connection-type nil))
+		(let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+			(process-send-string proc text)
+			(process-send-eof proc)
+		)
+	)
+)
+
+(defun paste-from-osx ()
+	(shell-command-to-string "pbpaste")
 )
 
 (defun my/search-region ()
@@ -1010,25 +993,6 @@ Otherwise, just yank as usual."
 	)
 )
 
-;; (defun my/tab-action ()
-;;   "Try to expand a snippet. In Magit, toggle section.
-;; If none found, insert a literal tab or indent as appropriate."
-;;   (interactive)
-;;   (cond
-;;    ;; Case 1: Magit buffer
-;;    ((derived-mode-p 'magit-mode)
-;;     (let ((section (magit-current-section)))
-;;       (when section
-;;         (magit-section-toggle section))))
-
-;;    ;; Case 2: snippet expansion succeeds
-;;    ((yas-expand)
-;;     t)
-
-;;    ;; Case 3: normal indentation fallback
-;;    (t
-;;     (indent-for-tab-command)))
-;;   )
 (defun my/tab-action ()
 	"Try to expand a snippet. If none found, do the right thing for the current mode."
 	(interactive)
@@ -1159,7 +1123,7 @@ If no region is active, duplicates the current line below it and keeps cursor co
 	(define-key dired-mode-map (kbd "C-t") #'helm-projectile-find-file)
 )
 
-;; Mike's customer stuff:
+;; Mike's custom stuff:
 ;; Make mouse wheel scroll normally
 (global-set-key (kbd "<wheel-up>")   #'scroll-down-line)
 (global-set-key (kbd "<wheel-down>") #'scroll-up-line)
