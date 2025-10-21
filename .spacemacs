@@ -57,7 +57,6 @@ This function should only modify configuration layer settings."
 				 git-enable-magit-delta-plugin t
 				 git-enable-code-review nil)
 			helm
-			;; lsp
 			;; markdown
 			multiple-cursors
 			;; org
@@ -87,6 +86,7 @@ This function should only modify configuration layer settings."
 			doom-themes ;; this ones legit
 			;; web-mode
 			move-text
+			helm-rg
 		)
 
 		;; A list of packages that cannot be updated.
@@ -644,10 +644,8 @@ before packages are loaded."
 	;; Rebind C-t to helm-projectile-find-file
 	(global-set-key (kbd "C-t") #'helm-projectile-find-file)
 
-	;; Decode Ghostty's custom Cmd+Shift+F sequence
 	(define-key input-decode-map "\e[113;9z" [cmd-shift-f])
-	;; Bind it to helm-projectile-grep
-	(global-set-key [cmd-shift-f] #'helm-projectile-rg)
+	(global-set-key [cmd-shift-f] #'my/helm-rg-empty)
 
 	;; The only way to get an actual command/super is to use GUI Emacs
 	;; We can't map to Esc as a prefix, because that is Alt's default mapping
@@ -858,6 +856,14 @@ before packages are loaded."
 		(add-to-list 'auto-mode-alist (cons pattern 'sh-mode))
 	)
 	(add-hook 'sh-mode-hook 'my-sh-mode-setup)
+)
+
+(defun my/helm-rg-empty ()
+	"Call helm-rg with an empty prompt in the current projectile root."
+	(interactive)
+	(let ((default-directory (projectile-project-root)))
+		(helm-rg "" default-directory)
+	)
 )
 
 (defun my/use-eslint-from-node-modules ()
