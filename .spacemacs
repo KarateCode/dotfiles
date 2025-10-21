@@ -852,11 +852,6 @@ before packages are loaded."
 	(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
 	(add-hook 'web-mode-hook #'lsp-deferred)
 
-	(dolist (pattern '("\\.sh\\'" "\\.zsh\\'" "\\.bash\\'" "\\.env\\'" "zlogin\\'" "zprofile\\'"))
-		(add-to-list 'auto-mode-alist (cons pattern 'sh-mode))
-	)
-	(add-hook 'sh-mode-hook 'my-sh-mode-setup)
-
 	;; Add lsp to web-mode for TSX files
 	(add-hook 'web-mode-hook #'lsp-deferred)
 
@@ -892,10 +887,6 @@ before packages are loaded."
 			(setq-local flycheck-javascript-eslint-executable eslint)
 		)
 	)
-)
-
-(defun my-sh-mode-setup ()
-	(sh-set-shell "zsh")
 )
 
 (defun copy-to-osx (text &optional push)
