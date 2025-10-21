@@ -4,6 +4,7 @@ export NVM_DIR="$HOME/.nvm"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 unsetopt share_history
+bindkey -e
 
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 # export PATH="/opt/homebrew/bin:$PATH"

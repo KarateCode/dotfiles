@@ -856,6 +856,19 @@ before packages are loaded."
 		(add-to-list 'auto-mode-alist (cons pattern 'sh-mode))
 	)
 	(add-hook 'sh-mode-hook 'my-sh-mode-setup)
+
+	;; Add lsp to web-mode for TSX files
+	(add-hook 'web-mode-hook #'lsp-deferred)
+
+	(with-eval-after-load 'lsp-ui
+		;; Disable pop-up on cursor hover
+		(setq lsp-ui-doc-show-with-cursor nil)
+		;; Disable pop-up on mouse hover
+		(setq lsp-ui-doc-show-with-mouse nil))
+
+	;; Custom keybinding for lsp-ui-doc-show in holy mode
+	(spacemacs/set-leader-keys "dp" 'lsp-ui-doc-show)
+
 )
 
 (defun my/helm-rg-empty ()
