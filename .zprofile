@@ -27,4 +27,4 @@ function select_env {
 
 # source ~/.zshrc
 
-WORDCHARS='~!#$%^&*(){}[]<>?.+;-_\|@`'
+WORDCHARS='~!#$%^&*(){}[]<>?+;-_\|@`'

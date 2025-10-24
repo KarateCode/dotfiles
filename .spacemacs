@@ -576,6 +576,7 @@ It should only modify the values of Spacemacs settings."
 		dotspacemacs-byte-compile nil
 	)
 
+	(setq inhibit-splash-screen t)
 	(setq inhibit-startup-screen t)
 	(setq initial-buffer-choice t)
 )
@@ -903,15 +904,20 @@ before packages are loaded."
 )
 
 (defun my/search-region ()
-	"Search forward for the current region or symbol at point."
+	"Start isearch for current region or symbol, starting at its beginning."
 	(interactive)
-	(let* ((text (
-		if (use-region-p)
-			(buffer-substring-no-properties (region-beginning) (region-end))
-			(thing-at-point 'symbol t)
-		)))
-		(when text
+	(let* ((text (if (use-region-p)
+                   (buffer-substring-no-properties (region-beginning) (region-end))
+                 (thing-at-point 'symbol t))
+		))
+	    (when text
 			(deactivate-mark)
+			(unless (use-region-p)
+				(let ((bounds (bounds-of-thing-at-point 'symbol)))
+					(when bounds
+						(goto-char (car bounds)))
+				)
+			)
 			(isearch-mode t)
 			(isearch-yank-string text)
 		)

@@ -15,11 +15,8 @@ Emacs shortcuts:
     M-x describe-mode
     M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
     (message "### Adding tide-eldoc-function to eldoc-documentation-functions.")
-M-RET h h lsp-describe-thing-at-point
-    ✔ map move-line-up @done(25-10-01 22:32)
-        ✔ can we get a multi-line version? @done(25-10-11 18:41)
-    ✔ map move-line-down @done(25-10-01 22:32)
-        ✔ can we get a multi-line version? @done(25-10-11 18:41)
+    M-RET h h lsp-describe-thing-at-point
+
     Buffers:
         C-x b switch to buffer; now bound to helm-buffers-list
         C-x C-b list all buffers
@@ -107,6 +104,10 @@ FZF:
     https://www.youtube.com/watch?v=MvLQor1Ck3M
     fzf --preview 'bat --style=numbers --color=always {}'
     fzf --preview 'bat --style=numbers --color=always {}' --bind 'enter:execute(tmux new-window "vim {}" || tmux split-window "vim {}")'
+    export FZF_DEFAULT_COMMAND='rg --files --hidden --follow'
+    export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --inline-info'
+    export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --preview 'bat --style=numbers --color=always {}'"
+    ☐ how do I get fzf to ignore certain folders?
     ☐ How do I toggle folder mode in FZF?
 
 Tmux:
@@ -161,6 +162,7 @@ Magit:
     b c # similar to git checkout -b
     c c to commit
         C-c C-c to save commit message and proceed
+        C-c C-k to cancel
     F p to pull
     P p to push
     g refreshes magit after resolving conflicts
