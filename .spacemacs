@@ -59,7 +59,7 @@ This function should only modify configuration layer settings."
 			helm
 			;; markdown
 			multiple-cursors
-			;; org
+			org
 			;; (shell :variables
 			;;        shell-default-height 30
 			;;        shell-default-position 'bottom)
@@ -1043,26 +1043,45 @@ Otherwise, just yank as usual."
 )
 
 (defun my/tab-action ()
-	"Try to expand a snippet. If none found, do the right thing for the current mode."
+  "Smart tab behavior:
+- In Magit, toggle section visibility.
+- In Org mode, cycle visibility or indent.
+- Otherwise, expand snippet or indent."
 	(interactive)
 	(cond
-		;; If we're in Magit and at a section, toggle it.
+		;; --- Magit ---
 		((and (derived-mode-p 'magit-mode)
 			(ignore-errors (magit-current-section)))
 			(call-interactively #'magit-section-toggle)
 		)
 
-	 	;; Otherwise, try a yasnippet expansion.
-	 	((yas-expand)
-			t
+		;; --- Org Mode ---
+		((derived-mode-p 'org-mode)
+			(cond
+				;; Try to expand a snippet first
+				((yas-expand))
+				;; If in an Org table, realign it
+				((org-at-table-p)
+					(call-interactively #'org-table-next-field)
+				)
+				;; If at a heading, try to cycle
+				((save-excursion
+					(beginning-of-line)
+					(looking-at org-outline-regexp))
+					(call-interactively #'org-cycle)
+				)
+				;; Otherwise, just indent
+				(t
+				(call-interactively #'indent-for-tab-command))
+			)
 		)
 
-		;; Default fallback: indent or insert spaces.
-	 	(t
-			(indent-for-tab-command)
-		)
+		;; --- Everything Else ---
+		((yas-expand))
+		(t (call-interactively #'indent-for-tab-command))
 	)
 )
+
 
 (defun my/insert-console-log-util ()
 	"Insert my console.log util snippet."
