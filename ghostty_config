@@ -17,6 +17,7 @@ background = "#000000"
 cursor-style = bar
 cursor-style-blink = true
 cursor-color = #ff8800
+adjust-cursor-thickness = 2
 
 keybind = ctrl+,=text:\x1b[121;9z
 

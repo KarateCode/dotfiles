@@ -618,6 +618,29 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+	;; ;; Make the cursor blink (Emacs handles the blink)
+	;; Always use a blinking I-beam cursor, even in Evil
+	(setq-default cursor-type '(bar . 2))   ;; bar = I-beam, .2 = blink interval
+	(blink-cursor-mode 1)
+	(setq blink-cursor-blinks 0          ;; 0 = infinite blink
+		blink-cursor-delay 0.3         ;; I don't think any of this matters
+		blink-cursor-interval 0.2)     ;; It's just using ghostty's settings
+
+	;; Keep I-beam cursor everywhere, even inside terminal Emacs
+	(setq-default cursor-type 'bar)
+	;; Prevent Emacs from sending cursor shape escape codes
+	(setq xterm-set-cursor-shape nil)
+	;; Make sure the terminal itself stays as an I-beam
+	(add-hook 'window-setup-hook
+	(lambda ()
+		(send-string-to-terminal "\033[5 q")))  ;; I-beam
+	(add-hook 'post-command-hook
+	(lambda ()
+		(send-string-to-terminal "\033[5 q")))  ;; refresh cursor shape often
+	(add-hook 'kill-emacs-hook
+	(lambda ()
+		(send-string-to-terminal "\033[5 q")))  ;; restore I-beam on exit
+
 	;; --- Disable code-review entirely (Spacemacs bug workaround) ---
 	(with-eval-after-load 'core-configuration-layer
 		(advice-add 'configuration-layer//install-package
