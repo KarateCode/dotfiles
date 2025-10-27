@@ -1,4 +1,4 @@
-# This template file has been automatically created at the following
+gspt# This template file has been automatically created at the following
 # path since Ghostty couldn't find any existing config files on your system:
 #
 #   /Users/michaelschneider/Library/Application Support/com.mitchellh.ghostty/config
@@ -160,4 +160,5 @@ macos-icon = official
 # fullscreen. This is because the background becomes gray and it can cause
 # widgets to show through which isn't generally desirable.
 background-opacity = 0.78
+# background-image = /Users/michaelschneider/Desktop/ai-generated-space-starscape-clouds-and-stars-in-pink-purple-blue-free-photo.jpg
 unfocused-split-opacity = 0.7

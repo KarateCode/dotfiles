@@ -87,6 +87,7 @@ This function should only modify configuration layer settings."
 			;; web-mode
 			move-text
 			helm-rg
+			org-superstar
 		)
 
 		;; A list of packages that cannot be updated.
@@ -167,7 +168,7 @@ It should only modify the values of Spacemacs settings."
 		;; If non-nil show the version string in the Spacemacs buffer. It will
 		;; appear as (spacemacs version)@(emacs version)
 		;; (default t)
-		dotspacemacs-startup-buffer-show-version nil
+		dotspacemacs-startup-buffer-show-version t
 
 		;; Specify the startup banner. Default value is `official', it displays
 		;; the official spacemacs logo. An integer value is the index of text
@@ -175,7 +176,7 @@ It should only modify the values of Spacemacs settings."
 		;; directory. A string value must be a path to an image format supported
 		;; by your Emacs build.
 		;; If the value is nil then no banner is displayed. (default 'official)
-		dotspacemacs-startup-banner nil
+		dotspacemacs-startup-banner 'official
 
 		;; Scale factor controls the scaling (size) of the startup banner. Default
 		;; value is `auto' for scaling the logo automatically to fit all buffer
@@ -888,6 +889,55 @@ before packages are loaded."
 	;; Custom keybinding for lsp-ui-doc-show in holy mode
 	(spacemacs/set-leader-keys "dp" 'lsp-ui-doc-show)
 
+	(with-eval-after-load 'org
+		(require 'org-superstar)
+
+		;; (setq org-superstar-headline-bullets-list '("•" "◦" "∙"))
+		(setq org-superstar-leading-bullet ?\s)
+		(setq org-superstar-leading-fallback ?\s)
+		(setq org-superstar-remove-leading-stars t)
+		(setq org-indent-indentation-per-level 4)
+		(setq org-superstar-item-bullet-alignment 'left)
+
+		;; So headings keep their nice colors but other text turns lavender-gray
+		(set-face-attribute 'org-default nil :foreground "#b3a8d8")  ;; gray-lavender
+		;; (set-face-attribute 'org-indent nil  :foreground "#b3a8d8")  ;; match body indent
+
+		;; Make sure non-heading text actually uses org-default, not default
+		(add-hook 'org-mode-hook
+					(lambda ()
+					(org-superstar-mode)
+					(buffer-face-set 'org-default)))
+
+		;; Highlight checkbox lines (- [ ] or - [x]) white
+		(font-lock-add-keywords
+			'org-mode
+			'(("^[ \t]*- \\[[ Xx]\\].*"  ;; pattern for checkbox items
+				(0 '(:foreground "#ffffff") t)))
+		)
+	)
+	(setq org-fontify-whole-heading-line t)
+
+	;; Turn on org-indent-mode automatically when opening Org files
+	(setq org-startup-indented t)    ;; <<-- this enables org-indent-mode on startup
+	(org-indent-mode t)
+
+	;; Remap RET to our function only in Org mode
+	(with-eval-after-load 'org
+		(define-key org-mode-map (kbd "RET") #'my/org-indent-newline)
+	)
+)
+
+(defun my/org-indent-newline ()
+	"Insert a newline and indent by the current Org level * 4 spaces."
+	(interactive)
+	(org-return)
+	(let ((level (org-outline-level)))
+		(when (> level 0)
+			(message "hitting my customer return")
+			(insert (make-string 2 ?\s))
+		)
+	)
 )
 
 (defun my/helm-rg-empty ()
@@ -1150,10 +1200,21 @@ If no region is active, duplicates the current line below it and keeps cursor co
 )
 
 (defun insert-line ()
-	"Insert a new line below the current one and move point to it."
+	"Insert a new line below the current one and move point to it.
+In Org buffers use `org-return` and insert two real spaces so the new
+line visually lines up under the heading when `org-indent-mode` is on.
+For all other modes fall back to `newline-and-indent`."
 	(interactive)
 	(end-of-line)
-	(newline-and-indent)
+	(if (derived-mode-p 'org-mode)
+		(progn
+			(org-return)
+			(when (> (org-outline-level) 0)
+			;; Insert 2 real spaces so the new text visually lines up
+			;; with org-indent-mode's 2-column visual margin.
+			(insert (make-string 2 ?\s))))
+		(newline-and-indent)
+	)
 )
 
 (defun my/select-current-line-and-forward-line (arg)

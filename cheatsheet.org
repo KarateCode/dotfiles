@@ -79,9 +79,10 @@
     M-x tide-documentation-at-point
     (setq tide-always-show-documentation t)
 
+* Top level
 ** Magit
-    C-, g s # starts magit
-    s to stage files
+*** C-, g s # starts magit
+**** s to stage files
     k to delete untracked files
     b c # similar to git checkout -b
     c c to commit
