@@ -894,14 +894,12 @@ before packages are loaded."
 		(setq org-indent-indentation-per-level 4)
 		(setq org-superstar-item-bullet-alignment 'left)
 
-		;; So headings keep their nice colors but other text turns lavender-gray
-		(set-face-attribute 'org-default nil :foreground "#b3a8d8")  ;; gray-lavender
-		;; (set-face-attribute 'org-indent nil  :foreground "#b3a8d8")  ;; match body indent
-
 		;; Make sure non-heading text actually uses org-default, not default
 		(add-hook 'org-mode-hook (lambda ()
 			(my/org-checkbox-symbols)
+			(my/org-checkbox-color)
 			(org-superstar-mode)
+			(set-face-attribute 'org-default nil :foreground "#84b3ff")  ;; gray-lavender
 			(buffer-face-set 'org-default)
 		))
 
@@ -913,7 +911,11 @@ before packages are loaded."
 			)
 		)
 
+		(my/org-checkbox-color)
 		(my/org-checkbox-symbols)
+		;; So headings keep their nice colors but other text turns lavender-gray
+		(set-face-attribute 'org-default nil :foreground "#84b3ff")  ;; gray-lavender
+		;; (set-face-attribute 'org-indent nil  :foreground "#b3a8d8")  ;; match body indent
 	)
 
 	(setq org-fontify-whole-heading-line t)
@@ -932,6 +934,27 @@ before packages are loaded."
 	;; (with-eval-after-load 'org
 	;; 	(my/org-checkbox-symbols)
 	;; )
+)
+
+(defun my/org-checkbox-color ()
+	"Color entire line based on Org checkbox state."
+	(font-lock-add-keywords
+	nil
+	'(("^[ \t]*- \\[X\\] .*" (0 'my/org-checkbox-done-face prepend))
+		("^[ \t]*- \\[ \\] .*" (0 'my/org-checkbox-empty-face prepend))
+		("^[ \t]*- \\[-\\] .*" (0 'my/org-checkbox-partial-face prepend))))
+)
+(defface my/org-checkbox-done-face
+	'((t :foreground "#8aff8a" :weight normal))
+	"Face for checked Org checkbox lines."
+)
+(defface my/org-checkbox-empty-face
+	'((t :foreground "#ffffff" :weight normal))
+	"Face for unchecked Org checkbox lines."
+)
+(defface my/org-checkbox-partial-face
+	'((t :foreground "#ff6666" :weight normal))
+	"Face for partially checked (indeterminate) Org checkbox lines."
 )
 
 (defun my/org-checkbox-symbols ()
