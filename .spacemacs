@@ -38,7 +38,6 @@ This function should only modify configuration layer settings."
 			html
 			;; web-mode
 			lsp
-			web
 			(typescript :variables
 				typescript-backend 'lsp)
 			(javascript :variables
@@ -66,12 +65,7 @@ This function should only modify configuration layer settings."
 			;; spell-checking
 			;; version-control
 			treemacs
-
-			;;  (doom-themes :variables ;; This was throwing an error in *Messages*
-			;;               doom-themes-enable-bold t
-			;;               doom-themes-enable-italic t
-			;;               )
-			)
+		)
 
 
 		;; List of additional packages that will be installed without being wrapped
@@ -770,7 +764,8 @@ before packages are loaded."
 
 	;; Optional but nice:
 	(setq doom-themes-enable-bold t
-				doom-themes-enable-italic t)
+		doom-themes-enable-italic t
+	)
 
 	;; Load one immediately
 	(load-theme 'doom-one t)
@@ -778,13 +773,10 @@ before packages are loaded."
 	;; Enable Doom's improved org-mode & visual bell tweaks (safe even if you don't use org)
 	(doom-themes-org-config)
 
-	(setq doom-themes-enable-bold t
-				doom-themes-enable-italic t)
 	(set-face-attribute 'italic nil :slant 'italic)
 	(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
 
-	(doom-themes-visual-bell-config)
-	(doom-themes-org-config)
+	;; (doom-themes-visual-bell-config)
 	(blink-cursor-mode 1)
 
 	(spacemacs/set-leader-keys "bk" 'kill-this-buffer)
@@ -889,6 +881,9 @@ before packages are loaded."
 	;; Custom keybinding for lsp-ui-doc-show in holy mode
 	(spacemacs/set-leader-keys "dp" 'lsp-ui-doc-show)
 
+	; ====================
+	; ORG Mode
+	; ====================
 	(with-eval-after-load 'org
 		(require 'org-superstar)
 
@@ -904,18 +899,23 @@ before packages are loaded."
 		;; (set-face-attribute 'org-indent nil  :foreground "#b3a8d8")  ;; match body indent
 
 		;; Make sure non-heading text actually uses org-default, not default
-		(add-hook 'org-mode-hook
-					(lambda ()
-					(org-superstar-mode)
-					(buffer-face-set 'org-default)))
+		(add-hook 'org-mode-hook (lambda ()
+			(my/org-checkbox-symbols)
+			(org-superstar-mode)
+			(buffer-face-set 'org-default)
+		))
 
 		;; Highlight checkbox lines (- [ ] or - [x]) white
 		(font-lock-add-keywords
 			'org-mode
 			'(("^[ \t]*- \\[[ Xx]\\].*"  ;; pattern for checkbox items
-				(0 '(:foreground "#ffffff") t)))
+				(0 '(:foreground "#ffffff") t))
+			)
 		)
+
+		(my/org-checkbox-symbols)
 	)
+
 	(setq org-fontify-whole-heading-line t)
 
 	;; Turn on org-indent-mode automatically when opening Org files
@@ -926,6 +926,25 @@ before packages are loaded."
 	(with-eval-after-load 'org
 		(define-key org-mode-map (kbd "RET") #'my/org-indent-newline)
 	)
+
+	;; New stuff to remap to utf8 checkbox characters
+	;; (add-hook 'org-mode-hook #'my/org-checkbox-symbols)
+	;; (with-eval-after-load 'org
+	;; 	(my/org-checkbox-symbols)
+	;; )
+)
+
+(defun my/org-checkbox-symbols ()
+	"Display UTF-8 checkboxes in every Org buffer."
+	(setq-local prettify-symbols-alist
+		'(("[ ]" . "☐")
+			("[X]" . "☑")
+			("[-]" . "⛝"))
+	)
+	(prettify-symbols-mode 1)
+	(when (fboundp #'font-lock-flush) (font-lock-flush))
+	(when (fboundp #'font-lock-ensure) (font-lock-ensure))
+	(message "✅ Checkbox prettify applied to %s" (buffer-name))
 )
 
 (defun my/org-indent-newline ()
