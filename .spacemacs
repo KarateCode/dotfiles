@@ -192,7 +192,7 @@ It should only modify the values of Spacemacs settings."
 		dotspacemacs-startup-lists '()
 
 		;; True if the home buffer should respond to resize events. (default t)
-		dotspacemacs-startup-buffer-responsive nil
+		dotspacemacs-startup-buffer-responsive t
 
 		;; Show numbers before the startup list lines. (default t)
 		dotspacemacs-show-startup-list-numbers nil
@@ -613,28 +613,23 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-	;; ;; Make the cursor blink (Emacs handles the blink)
-	;; Always use a blinking I-beam cursor, even in Evil
-	(setq-default cursor-type '(bar . 2))   ;; bar = I-beam, .2 = blink interval
-	(blink-cursor-mode 1)
-	(setq blink-cursor-blinks 0          ;; 0 = infinite blink
-		blink-cursor-delay 0.3         ;; I don't think any of this matters
-		blink-cursor-interval 0.2)     ;; It's just using ghostty's settings
-
-	;; Keep I-beam cursor everywhere, even inside terminal Emacs
-	(setq-default cursor-type 'bar)
-	;; Prevent Emacs from sending cursor shape escape codes
-	(setq xterm-set-cursor-shape nil)
-	;; Make sure the terminal itself stays as an I-beam
-	(add-hook 'window-setup-hook
-	(lambda ()
-		(send-string-to-terminal "\033[5 q")))  ;; I-beam
-	(add-hook 'post-command-hook
-	(lambda ()
-		(send-string-to-terminal "\033[5 q")))  ;; refresh cursor shape often
-	(add-hook 'kill-emacs-hook
-	(lambda ()
-		(send-string-to-terminal "\033[5 q")))  ;; restore I-beam on exit
+	;; ------------------------------------------------------
+	;; Prevent Emacs from ever touching terminal cursor shape
+	;; ------------------------------------------------------
+	;; Unload and neuter xterm terminal init logic completely
+	(when (fboundp 'xterm--init)
+		(message "✅ fmakunbound xterm--init")
+		(fmakunbound 'xterm--init)
+	)
+	(when (fboundp 'terminal-init-xterm)
+		(message "✅ fmakunbound terminal-init-xterm")
+		(fmakunbound 'terminal-init-xterm)
+	)
+	(setq evil-normal-state-cursor '(bar . 2)
+		evil-insert-state-cursor '(bar . 2)
+		evil-visual-state-cursor '(bar . 2)
+		evil-replace-state-cursor '(bar . 2)
+		evil-emacs-state-cursor '(bar . 2))
 
 	;; --- Disable code-review entirely (Spacemacs bug workaround) ---
 	(with-eval-after-load 'core-configuration-layer

@@ -33,6 +33,8 @@ Emacs shortcuts:
         ps aux | grep emacs
         C-x b to Messages to see errors that may have occurred
         M-: org-indent-indentation-per-level # to get value of a variable
+        M-: (symbol-function 'terminal-init-xterm) # shows if anything is trying to modify my cursor
+
 
     ☐ try jtsx; apparently is supports better commenting in tsx files
 
