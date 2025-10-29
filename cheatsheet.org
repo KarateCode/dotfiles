@@ -18,22 +18,24 @@
     M-RET h h lsp-describe-thing-at-point
 
 ** Buffers
-        C-x b switch to buffer; now bound to helm-buffers-list
-        C-x C-b list all buffers
-        C-x k kill buffer
+  C-x b switch to buffer; now bound to helm-buffers-list
+  C-x C-b list all buffers
+  C-x k kill buffer
+
 ** Windows
-        C-x 1 delete other windows; toggle maximize window
-            under File -> Remove other windows
-            Can find it under the M-x commands
-        C-x 2 split pane horizontally
-        C-x 3 split pane vertically
-            M-x split-root-window-<right/below>
-        C-x o to move between windows
+  C-x 1 delete other windows; toggle maximize window
+      under File -> Remove other windows
+      Can find it under the M-x commands
+  C-x 2 split pane horizontally
+  C-x 3 split pane vertically
+      M-x split-root-window-<right/below>
+  C-x o to move between windows
 
 ** Troubleshooting
-        See that no emacs are running in the background:
-        ps aux | grep emacs
-        C-x b to Messages to see errors that may have occurred
+  See that no emacs are running in the background:
+  ps aux | grep emacs
+  C-x b to Messages to see errors that may have occurred
+  M-: org-indent-indentation-per-level # to get value of a variable
 
 ** pipe file to emacs
         how come when I 'xargs emacs' to pass a file name, it errors with "emacs: standard input is not a tty"

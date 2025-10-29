@@ -81,7 +81,7 @@ This function should only modify configuration layer settings."
 			;; web-mode
 			move-text
 			helm-rg
-			org-superstar
+			;; org-superstar
 		)
 
 		;; A list of packages that cannot be updated.
@@ -885,55 +885,25 @@ before packages are loaded."
 	; ORG Mode
 	; ====================
 	(with-eval-after-load 'org
-		(require 'org-superstar)
+		(setq org-indent-indentation-per-level 4) ; spaces the headings out pretty, but busts the spacing in funzzy open mode
 
-		;; (setq org-superstar-headline-bullets-list '("•" "◦" "∙"))
-		(setq org-superstar-leading-bullet ?\s)
-		(setq org-superstar-leading-fallback ?\s)
-		(setq org-superstar-remove-leading-stars t)
-		(setq org-indent-indentation-per-level 4)
-		(setq org-superstar-item-bullet-alignment 'left)
+		(my/org-checkbox-symbols)
+		(my/org-checkbox-color)
+		(set-face-attribute 'org-default nil :foreground "#84b3ff")
+		(buffer-face-set 'org-default)
 
-		;; Make sure non-heading text actually uses org-default, not default
+		;; Your custom return key for Org
+		(define-key org-mode-map (kbd "RET") #'my/org-indent-newline)
+
 		(add-hook 'org-mode-hook (lambda ()
 			(my/org-checkbox-symbols)
 			(my/org-checkbox-color)
-			(org-superstar-mode)
-			(set-face-attribute 'org-default nil :foreground "#84b3ff")  ;; gray-lavender
+			(set-face-attribute 'org-default nil :foreground "#84b3ff")
 			(buffer-face-set 'org-default)
 		))
-
-		;; Highlight checkbox lines (- [ ] or - [x]) white
-		(font-lock-add-keywords
-			'org-mode
-			'(("^[ \t]*- \\[[ Xx]\\].*"  ;; pattern for checkbox items
-				(0 '(:foreground "#ffffff") t))
-			)
-		)
-
-		(my/org-checkbox-color)
-		(my/org-checkbox-symbols)
-		;; So headings keep their nice colors but other text turns lavender-gray
-		(set-face-attribute 'org-default nil :foreground "#84b3ff")  ;; gray-lavender
-		;; (set-face-attribute 'org-indent nil  :foreground "#b3a8d8")  ;; match body indent
-	)
-
-	(setq org-fontify-whole-heading-line t)
-
-	;; Turn on org-indent-mode automatically when opening Org files
-	(setq org-startup-indented t)    ;; <<-- this enables org-indent-mode on startup
-	(org-indent-mode t)
-
-	;; Remap RET to our function only in Org mode
-	(with-eval-after-load 'org
-		(define-key org-mode-map (kbd "RET") #'my/org-indent-newline)
-	)
-
-	;; New stuff to remap to utf8 checkbox characters
-	;; (add-hook 'org-mode-hook #'my/org-checkbox-symbols)
-	;; (with-eval-after-load 'org
-	;; 	(my/org-checkbox-symbols)
-	;; )
+  	)
+	(setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
+	(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
 )
 
 (defun my/org-checkbox-color ()
