@@ -899,6 +899,19 @@ before packages are loaded."
   	)
 	(setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
 	(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
+
+	; =========================================
+	; Centering cursor on screen upon file load
+	; =========================================
+	(defun my/recenter-on-startup ()
+		"Recenter after initial window setup if a file was opened via command line."
+		(when (and (bound-and-true-p save-place-mode)
+			(buffer-file-name))
+			(run-with-idle-timer 0.1 nil #'recenter)
+		)
+	)
+	(add-hook 'window-setup-hook #'my/recenter-on-startup)
+	(add-hook 'find-file-hook #'my/recenter-on-startup)
 )
 
 (defun my/org-checkbox-color ()
@@ -926,8 +939,8 @@ before packages are loaded."
 	"Display UTF-8 checkboxes in every Org buffer."
 	(setq-local prettify-symbols-alist
 		'(("[ ]" . "☐")
-			("[X]" . "☑")
-			("[-]" . "⛝"))
+			("[X]" . "✓") ;; ☑
+			("[-]" . "𝒙")) ;; ⛝
 	)
 	(prettify-symbols-mode 1)
 	(when (fboundp #'font-lock-flush) (font-lock-flush))
