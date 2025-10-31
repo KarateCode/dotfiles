@@ -1,3 +1,5 @@
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Set up LS_COLORS for theming
 # export LS_COLORS="$(vivid generate catppuccin-latte)"
