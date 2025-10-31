@@ -876,30 +876,6 @@ before packages are loaded."
 	;; Custom keybinding for lsp-ui-doc-show in holy mode
 	(spacemacs/set-leader-keys "dp" 'lsp-ui-doc-show)
 
-	; ====================
-	; ORG Mode
-	; ====================
-	(with-eval-after-load 'org
-		(setq org-indent-indentation-per-level 4) ; spaces the headings out pretty, but busts the spacing in funzzy open mode
-
-		(my/org-checkbox-symbols)
-		(my/org-checkbox-color)
-		(set-face-attribute 'org-default nil :foreground "#84b3ff")
-		(buffer-face-set 'org-default)
-
-		;; Your custom return key for Org
-		(define-key org-mode-map (kbd "RET") #'my/org-indent-newline)
-
-		(add-hook 'org-mode-hook (lambda ()
-			(my/org-checkbox-symbols)
-			(my/org-checkbox-color)
-			(set-face-attribute 'org-default nil :foreground "#84b3ff")
-			(buffer-face-set 'org-default)
-		))
-  	)
-	(setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
-	(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
-
 	; =========================================
 	; Centering cursor on screen upon file load
 	; =========================================
@@ -912,16 +888,64 @@ before packages are loaded."
 	)
 	(add-hook 'window-setup-hook #'my/recenter-on-startup)
 	(add-hook 'find-file-hook #'my/recenter-on-startup)
+
+	; ====================
+	; ORG Mode
+	; ====================
+	(setq org-checkbox-statistics-intermediate-state t)
+	(setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
+	(setq org-indent-indentation-per-level 4)
+	(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
+	(define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
+
+	(with-eval-after-load 'org
+		(my/org-checkbox-pretty-and-colored)
+		(set-face-attribute 'org-default nil :foreground "#84b3ff")
+		(buffer-face-set 'org-default)
+
+		(define-key org-mode-map (kbd "RET") #'my/org-indent-newline)
+
+		(add-hook 'org-mode-hook (lambda ()
+			(my/org-checkbox-pretty-and-colored)
+			(set-face-attribute 'org-default nil :foreground "#84b3ff")
+			(buffer-face-set 'org-default)
+		))
+  	)
 )
 
-(defun my/org-checkbox-color ()
-	"Color entire line based on Org checkbox state."
-	(font-lock-add-keywords
-	nil
-	'(("^[ \t]*- \\[X\\] .*" (0 'my/org-checkbox-done-face prepend))
-		("^[ \t]*- \\[ \\] .*" (0 'my/org-checkbox-empty-face prepend))
-		("^[ \t]*- \\[-\\] .*" (0 'my/org-checkbox-partial-face prepend))))
+(defun my/org-checkbox-pretty-and-colored ()
+	"Replace and color Org checkboxes inline."
+	(font-lock-add-keywords nil `(
+		;; Checked
+		("^[ \t]*- ?\\(\\[X\\]\\)\\(.*\\)"
+		(1 (prog1 ()
+			(compose-region (match-beginning 0) (match-end 1) ?✔)
+		) nil)
+		(0 'my/org-checkbox-done-face prepend))
+
+		;; Empty
+		("^[ \t]*- \\(\\[ \\]\\)\\(.*\\)"
+		(1 (prog1 ()
+			(compose-region (match-beginning 0) (match-end 1) ?☐)
+		) nil)
+		(0 'my/org-checkbox-empty-face prepend))
+
+		;; Partial
+		("^[ \t]*- \\(\\[-\\]\\)\\(.*\\)"
+		(1 (prog1 ()
+			(compose-region (match-beginning 0) (match-end 1) ?✘)
+		) nil)
+		(0 'my/org-checkbox-partial-face prepend))
+	))
 )
+
+(defun my/org-checkbox-set-indeterminate ()
+  "Set the checkbox at point to indeterminate [-]."
+  (interactive)
+  (when (org-at-item-checkbox-p)
+    (org-toggle-checkbox '(16)))
+) ; Prefix arg 16 sets it to [-]
+
 (defface my/org-checkbox-done-face
 	'((t :foreground "#8aff8a" :weight normal))
 	"Face for checked Org checkbox lines."
@@ -933,31 +957,6 @@ before packages are loaded."
 (defface my/org-checkbox-partial-face
 	'((t :foreground "#ff6666" :weight normal))
 	"Face for partially checked (indeterminate) Org checkbox lines."
-)
-
-(defun my/org-checkbox-symbols ()
-	"Display UTF-8 checkboxes in every Org buffer."
-	(setq-local prettify-symbols-alist
-		'(("[ ]" . "☐")
-			("[X]" . "✓") ;; ☑
-			("[-]" . "𝒙")) ;; ⛝
-	)
-	(prettify-symbols-mode 1)
-	(when (fboundp #'font-lock-flush) (font-lock-flush))
-	(when (fboundp #'font-lock-ensure) (font-lock-ensure))
-	(message "✅ Checkbox prettify applied to %s" (buffer-name))
-)
-
-(defun my/org-indent-newline ()
-	"Insert a newline and indent by the current Org level * 4 spaces."
-	(interactive)
-	(org-return)
-	(let ((level (org-outline-level)))
-		(when (> level 0)
-			(message "hitting my customer return")
-			(insert (make-string 2 ?\s))
-		)
-	)
 )
 
 (defun my/helm-rg-empty ()
@@ -1226,15 +1225,7 @@ line visually lines up under the heading when `org-indent-mode` is on.
 For all other modes fall back to `newline-and-indent`."
 	(interactive)
 	(end-of-line)
-	(if (derived-mode-p 'org-mode)
-		(progn
-			(org-return)
-			(when (> (org-outline-level) 0)
-			;; Insert 2 real spaces so the new text visually lines up
-			;; with org-indent-mode's 2-column visual margin.
-			(insert (make-string 2 ?\s))))
-		(newline-and-indent)
-	)
+	(newline-and-indent)
 )
 
 (defun my/select-current-line-and-forward-line (arg)
