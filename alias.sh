@@ -36,7 +36,8 @@ alias tasks='npm run tasks'
 alias job='cd ~/appropos/envoy-web/server; env AWS_PROFILE=appropos APPROPOS_ENV=local ./bin/run-node bin/task-runner.js background-job-runner --integrationARN="arn:aws:sns:us-east-1:506597054164:appropos-integration-local-error" --ignoreJobInterval=true'
 alias cemacs="xargs sh -c 'emacs $@ < /dev/tty' emacs"
 alias preview="fzf --preview 'bat --style=numbers --color=always {}'"
-alias ms="~/dotfiles/scripts/mongo_shell_script.sh"
+alias msa="~/dotfiles/scripts/mongo_shell_array.sh"
+alias mso="~/dotfiles/scripts/mongo_shell_object.sh"
 
 alias ds='node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js'
 alias gl='bash ~/dotfiles/scripts/grep-git-log.bash'
