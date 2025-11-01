@@ -903,7 +903,7 @@ before packages are loaded."
 		(set-face-attribute 'org-default nil :foreground "#84b3ff")
 		(buffer-face-set 'org-default)
 
-		(define-key org-mode-map (kbd "RET") #'my/org-indent-newline)
+		(define-key org-mode-map (kbd "RET") #'my/org-return-backspace-checkbox)
 
 		(add-hook 'org-mode-hook (lambda ()
 			(my/org-checkbox-pretty-and-colored)
@@ -913,18 +913,59 @@ before packages are loaded."
   	)
 )
 
+(defun my/org-return-backspace-checkbox ()
+  "Custom `org-return` behavior: remove leading space on new checkbox lines."
+  (interactive)
+  (let ((pos (point)))
+    ;; Call the original org-return first
+    (org-return)
+    ;; Now, check if the new line is a checkbox
+    (save-excursion
+      (beginning-of-line)
+      (when (looking-at-p " - \\[[- X]\\]")
+        ;; Delete the leading space
+        (delete-char 1))))
+)
+
+(defun insert-line ()
+  "Insert a new line below the current one and move point to it.
+
+	In Org mode:
+	- Use `org-return` so new lines inherit checkboxes, indentation, etc.
+	- If the new line starts with a checkbox, remove the leading space.
+
+	In all other modes:
+	- Use `newline-and-indent` for standard behavior."
+	(interactive)
+	(end-of-line)
+	(if (derived-mode-p 'org-mode)
+		;; Org-mode behavior
+		(progn
+			(org-return)
+			(save-excursion
+				(beginning-of-line)
+				(when (looking-at-p " - \\[[- X]\\]")
+					(delete-char 1)
+				)
+			)
+		)
+		;; Non-Org-mode fallback
+		(newline-and-indent)
+	)
+)
+
 (defun my/org-checkbox-pretty-and-colored ()
 	"Replace and color Org checkboxes inline."
 	(font-lock-add-keywords nil `(
 		;; Checked
-		("^[ \t]*- ?\\(\\[X\\]\\)\\(.*\\)"
+		("^[ \t]*- \\(\\[X\\]\\)\\(.*\\)" ;; ^\(-\) \(\[X\]\)\(.*\) ;; ^[ \t]*\(- ?\[X\]\) ;; ^- \(\[X\]\)\(.*\)
 		(1 (prog1 ()
 			(compose-region (match-beginning 0) (match-end 1) ?✔)
 		) nil)
 		(0 'my/org-checkbox-done-face prepend))
 
 		;; Empty
-		("^[ \t]*- \\(\\[ \\]\\)\\(.*\\)"
+		("^[ \t]*- \\(\\[ \\]\\)\\(.*\\)" ;; ^[ \t]*- \(\[ \]\)\(.*\)
 		(1 (prog1 ()
 			(compose-region (match-beginning 0) (match-end 1) ?☐)
 		) nil)
@@ -1218,16 +1259,6 @@ If no region is active, duplicates the current line below it and keeps cursor co
 	(indent-according-to-mode)
 )
 
-(defun insert-line ()
-	"Insert a new line below the current one and move point to it.
-In Org buffers use `org-return` and insert two real spaces so the new
-line visually lines up under the heading when `org-indent-mode` is on.
-For all other modes fall back to `newline-and-indent`."
-	(interactive)
-	(end-of-line)
-	(newline-and-indent)
-)
-
 (defun my/select-current-line-and-forward-line (arg)
 	"Select the current line and move the cursor by ARG lines IF
 	no region is selected.
@@ -1257,6 +1288,34 @@ For all other modes fall back to `newline-and-indent`."
 	(when (use-region-p)
 		(delete-region (mark) (point))
 	)
+)
+
+(defun my/debug-highlight-regex (regex)
+	"Highlight matches of REGEX in the current buffer and show group spans.
+	Each group gets a different color. Run `M-x my/debug-clear-overlays` to clear."
+	(interactive "sRegex: ")
+	(my/debug-clear-overlays)
+	(save-excursion
+		(goto-char (point-min))
+		(while (re-search-forward regex nil t)
+		(let ((n 0)
+				(colors ["#ff5555" "#55ff55" "#5555ff" "#ffaa00" "#00ffaa" "#ff00aa"]))
+			(while (match-beginning n)
+			(let* ((start (match-beginning n))
+					(end (match-end n))
+					(ov (make-overlay start end)))
+				(overlay-put ov 'face
+							`(:background ,(aref colors (mod n (length colors)))
+										:foreground "black"))
+				(overlay-put ov 'my-debug-overlay t)
+				(overlay-put ov 'help-echo (format "Group %d: %S" n (buffer-substring start end))))
+			(setq n (1+ n))))))
+)
+
+(defun my/debug-clear-overlays ()
+	"Remove debug overlays created by `my/debug-highlight-regex`."
+	(interactive)
+	(remove-overlays nil nil 'my-debug-overlay t)
 )
 
 (with-eval-after-load 'dired
