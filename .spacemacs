@@ -900,15 +900,23 @@ before packages are loaded."
 
 	(with-eval-after-load 'org
 		(my/org-checkbox-pretty-and-colored)
-		(set-face-attribute 'org-default nil :foreground "#84b3ff")
+		(set-face-attribute 'org-default nil :foreground "#a877bf")
 		(buffer-face-set 'org-default)
+		(define-key org-mode-map (kbd "M-<down>") 'custom-move-down-7-lines)
+		(define-key org-mode-map (kbd "M-<up>") 'custom-move-up-7-lines)
+		(define-key org-mode-map (kbd "M-}") 'custom-move-down-7-lines)
+		(define-key org-mode-map (kbd "M-{") 'custom-move-up-7-lines)
 
 		(define-key org-mode-map (kbd "RET") #'my/org-return-backspace-checkbox)
 
 		(add-hook 'org-mode-hook (lambda ()
 			(my/org-checkbox-pretty-and-colored)
-			(set-face-attribute 'org-default nil :foreground "#84b3ff")
+			(set-face-attribute 'org-default nil :foreground "#a877bf")
 			(buffer-face-set 'org-default)
+			(define-key org-mode-map (kbd "M-<down>") 'custom-move-down-7-lines)
+			(define-key org-mode-map (kbd "M-<up>") 'custom-move-up-7-lines)
+			(define-key org-mode-map (kbd "M-}") 'custom-move-down-7-lines)
+			(define-key org-mode-map (kbd "M-{") 'custom-move-up-7-lines)
 		))
   	)
 )
