@@ -53,8 +53,10 @@ This function should only modify configuration layer settings."
 			;; better-defaults
 			emacs-lisp
 			(git :variables
-				 git-enable-magit-delta-plugin t
-				 git-enable-code-review nil)
+				git-enable-magit-delta-plugin t
+				git-enable-code-review nil
+				git-additional-packages '(forge)
+			)
 			helm
 			;; markdown
 			multiple-cursors
@@ -81,7 +83,7 @@ This function should only modify configuration layer settings."
 			;; web-mode
 			move-text
 			helm-rg
-			;; org-superstar
+			forge
 		)
 
 		;; A list of packages that cannot be updated.
@@ -604,6 +606,10 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 			(tsx-ts-mode . web-mode)
 			(typescript-ts-mode . typescript-mode))
 	)
+
+	(setq epg-gpg-program "/opt/homebrew/bin/gpg")
+	(setq epg-disable-tty-libgpg-error t)
+	(setq auth-source-gpg-recipient "53FE280AB4DD267F")
 )
 
 (defun dotspacemacs/user-config ()
@@ -613,16 +619,18 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+	(require 'auth-source)
+	(setq auth-source-path '("~/.authinfo.gpg" "~/.authinfo"))
+	(setq auth-source-fallback t)
+
 	;; ------------------------------------------------------
 	;; Prevent Emacs from ever touching terminal cursor shape
 	;; ------------------------------------------------------
 	;; Unload and neuter xterm terminal init logic completely
 	(when (fboundp 'xterm--init)
-		(message "✅ fmakunbound xterm--init")
 		(fmakunbound 'xterm--init)
 	)
 	(when (fboundp 'terminal-init-xterm)
-		(message "✅ fmakunbound terminal-init-xterm")
 		(fmakunbound 'terminal-init-xterm)
 	)
 	(setq evil-normal-state-cursor '(bar . 2)
@@ -895,10 +903,10 @@ before packages are loaded."
 	(setq org-checkbox-statistics-intermediate-state t)
 	(setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
 	(setq org-indent-indentation-per-level 4)
-	(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
 	(define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
 
 	(with-eval-after-load 'org
+		(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
 		(my/org-checkbox-pretty-and-colored)
 		(set-face-attribute 'org-default nil :foreground "#a877bf")
 		(buffer-face-set 'org-default)
@@ -919,6 +927,16 @@ before packages are loaded."
 			(define-key org-mode-map (kbd "M-{") 'custom-move-up-7-lines)
 		))
   	)
+
+	(with-eval-after-load 'forge
+		(add-to-list 'forge-alist
+			'("github.com"
+				"api.github.com"
+				"github.com"
+				forge-github-repository
+			)
+		)
+	)
 )
 
 (defun my/org-return-backspace-checkbox ()
