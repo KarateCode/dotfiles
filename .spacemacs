@@ -639,6 +639,11 @@ before packages are loaded."
 		evil-replace-state-cursor '(bar . 2)
 		evil-emacs-state-cursor '(bar . 2))
 
+	;; Don't put spaces around my braces
+	(setq lsp-enable-on-type-formatting nil)
+	(setq lsp-enable-indentation nil)
+	(setq lsp-enable-format-on-save nil)
+
 	;; --- Disable code-review entirely (Spacemacs bug workaround) ---
 	(with-eval-after-load 'core-configuration-layer
 		(advice-add 'configuration-layer//install-package
