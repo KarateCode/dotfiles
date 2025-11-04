@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# may want to make this zsh someday
-go test -run $1 -v . | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/''

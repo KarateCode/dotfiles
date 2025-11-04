@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 source ~/.nvm/nvm.sh
 PROJECTS_PATH=/Users/michael/appropos

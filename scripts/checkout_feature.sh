@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 Yellow='\033[0;33m'
 Red='\033[0;31m'

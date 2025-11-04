@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 cd /Users/michael/appropos/awt
 git checkout develop
