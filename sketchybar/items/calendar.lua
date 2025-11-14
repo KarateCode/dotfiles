@@ -9,16 +9,19 @@ local cal = sbar.add("item", {
     color = colors.white,
     padding_left = 8,
     font = {
-      style = settings.font.style_map["Black"],
+      -- style = settings.font.style_map["Black"],
       size = 12.0,
     },
   },
   label = {
     color = colors.white,
     padding_right = 8,
-    width = 49,
+    width = 69,
     align = "right",
-    font = { family = settings.font.numbers },
+    font = {
+      -- family = settings.font.numbers,
+      style = settings.font.style_map["Black"],
+    },
   },
   position = "right",
   update_freq = 30,
@@ -45,5 +48,8 @@ sbar.add("bracket", { cal.name }, {
 sbar.add("item", { position = "right", width = settings.group_paddings })
 
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
-  cal:set({ icon = os.date("%a. %d %b."), label = os.date("%H:%M") })
+    local time_with_zero = os.date("%I:%M%p")
+    local time_no_zero = time_with_zero:gsub("^0(%d)", "%1")
+
+    cal:set({ icon = os.date("%a %b %d"), label = time_no_zero })
 end)

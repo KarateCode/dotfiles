@@ -63,6 +63,7 @@ doom-tokyo-night
 ** Treemacs
 M-m p t (now C-o p t) to display file browser pane
 y r copies file and path to clipboard
+p p to switch projects (if you see the wrong tree)
 
 ** Dired
 launch with C-x d or M-x dired
@@ -300,6 +301,10 @@ has built in skhd. Set random OS level hotkeys to run stuff
 https://www.youtube.com/watch?v=5nwnJjr5eOo
 * TODO Sketchy Bar
 Replacement for mac's top menu bar
+brew services start sketchybar
+brew services stop sketchybar
+brew services restart sketchybar
+
 * Janky Borders
 Adds some border customization to Aerospace
 * Hammerspoon
