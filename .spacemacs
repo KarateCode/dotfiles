@@ -34,6 +34,9 @@ This function should only modify configuration layer settings."
 		;; List of configuration layers to load.
 		dotspacemacs-configuration-layers
 		'(
+			yaml
+			go
+			csv
 			toml
 			html
 			;; web-mode
@@ -599,6 +602,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 	;; Force .ts and .tsx to classic modes before Spacemacs loads its layers
 	(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 	(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+	(add-to-list 'auto-mode-alist '("sketchybarrc\\'" . sh-mode))
 
 	;; Double-check mode mapping after layers are loaded
 	(setq major-mode-remap-alist
@@ -875,6 +879,7 @@ before packages are loaded."
 	(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 	(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 	(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+	(add-to-list 'auto-mode-alist '("sketchybarrc\\'" . sh-mode))
 	(add-hook 'web-mode-hook #'lsp-deferred)
 
 	;; Add lsp to web-mode for TSX files
