@@ -16,6 +16,7 @@
     M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
     (message "### Adding tide-eldoc-function to eldoc-documentation-functions.")
     M-RET h h lsp-describe-thing-at-point
+    C-x h is mark (highlight) whole buffer
 
 ** Buffers
 C-x b switch to buffer; now bound to helm-buffers-list
@@ -85,6 +86,7 @@ M-x tide-documentation-at-point
 C-, g s # starts magit
 s to stage files
 k to delete untracked files
+k to discard hunk
 b c # similar to git checkout -b
 c c to commit
     C-c C-c to save commit message and proceed
@@ -129,11 +131,17 @@ export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -l -g""'
 https://www.youtube.com/watch?v=MvLQor1Ck3M
 fzf --preview 'bat --style=numbers --color=always {}'
 fzf --preview 'bat --style=numbers --color=always {}' --bind 'enter:execute(tmux new-window "vim {}" || tmux split-window "vim {}")'
+tmux display-popup -E -w 80% -h 60% -x 10 -y 5 "cd ~/appropos/envoy-web && fzf --preview 'bat --style=numbers --color=always {}'"
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow'
 export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --inline-info'
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --preview 'bat --style=numbers --color=always {}
 how do I get fzf to ignore certain folders?
  - [ ]  How do I toggle folder mode in FZF?
+FZF matches on build/ folder when I type "client standup"
+    But isn't this okay? It's rg that I want to act like a project. fzf should fuzzy find any folder I cd into
+
+* Git
+git push --force-with-lease # a safe force push
 
 * Tmux
 prefix+n for next window
@@ -204,12 +212,16 @@ mongosh $NAMING_PREFIX query.js
 clear && mongosh $NAMING_PREFIX query.js
 echo query.js | entr zsh -c 'clear && mongosh "$NAMING_PREFIX" query.js'
 echo query.js | entr zsh -c 'clear && mongosh "$NAMING_PREFIX" query.js | jq ".[].code"'
+printjson(JSON.stringify(
+    db.Collection.find({isActive: false}).toArray()
+))
 
 * TODO mc (midnight commander) vs yazi?
 
 * mongosh
 mongosh wwwinc-stag-eu-cf --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
 mongosh $NAMING_PREFIX --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
+mongosh "$NAMING_PREFIX" --eval 'db.Client.updateMany({}, {$set: {"config.integrationMoveFiles": false, "config.integrationSrcPath": "/Users/michaelschneider/appropos/envoy-web"}})'
 
 * On integration server, to see the envoy-web codebase in docker:
 docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash
@@ -217,6 +229,9 @@ or use the $DOCKER_RUN_ONE to run commands like from cron
 Chad might make a $DOCKER_RUN to make it even easier, so we don't need to fiddle with the lock
 /client is mounted inside docker containers at /client.  So it can do work on integration files
 ~/utilities_parent/utilities/scripts/docker_shell.sh
+** cleanup_old_files.sh
+/home/ec2-user/utilities_parent/utilities/scripts/cleanup_old_files.sh
+$UTILITIES_PATH/scripts/cleanup_old_files.sh -k 30 /client/EU/archive
 
 * Handy for pausing in scripts:
 import readline from 'readline';
@@ -257,5 +272,49 @@ Log into shared dev server in Studio 3T
 find your db. Right click or Cmd+c
 Right-click localhost or select and Cmd+v
 
+* SFTP
+sidelines_sftp@sftp.envoyb2b.com password: GoARKiBGhrqzdkH+4gkxdA==
+get Product-2025-11-05-10-16-14.csv
+mv Product-2025-11-05-10-16-14.csv /Users/sftp_test/sftp/PRODUCT/
+job --type=SFTP_PRODUCT_IMPORT --brandCode=sidelines
+select_env (probably envoy-prod), then:
+can we come up with a commandline script to set my integration card?
+sftp Matador2@sftp.envoyb2b.com password: cuh55VkkR7rbyyIOaD/1pg==
+ssh envoy-prod-na-sftp
+
+
 * Scripting ideas
 I've moved around symlinks, what about unaliasing and re-aliasing?
+
+* AWS
+AWS_PROFILE=appropos-admin AWS_REGION=us-east-1 script_to_run.sh
+
+* Node
+rm -rf node_modules && npm cache clear --force && rm -f .stylelintcache .eslintcache && nvm install && nvm use && npm run install-dev
+
+* Nginx
+nginx is now booted up from docker dashboard on my system
+* Aerospace
+mac window tiling manager
+has built in skhd. Set random OS level hotkeys to run stuff
+https://www.youtube.com/watch?v=5nwnJjr5eOo
+* TODO Sketchy Bar
+Replacement for mac's top menu bar
+* Janky Borders
+Adds some border customization to Aerospace
+* Hammerspoon
+Can launch or interact with apps
+Can run menu items
+Has cool looking display modal
+https://www.youtube.com/watch?v=wnsJ0vxQms0
+* Curl
+https://www.youtube.com/watch?v=3xmD4E2aqxo
+* NuShell
+https://www.youtube.com/watch?v=uJsZATwQ3R8
+* Devs are better than AI; learn to hack
+https://www.youtube.com/watch?v=iBkDhtjqXhA
+
+* SKHD
+Wait, it has an app switcher?
+* Expanso is like snippets for your terminal
+* TODO Moonlander keyboard!
