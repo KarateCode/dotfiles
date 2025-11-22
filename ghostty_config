@@ -139,11 +139,18 @@ custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playgroun
 # command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
 # command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then $HOME/github/dotfiles-latest/tmux/tools/prime/tmux-sessionizer.sh $HOME/github/dotfiles-latest || (tmux attach 2>/dev/null || tmux); else exec zsh; fi"
 
+# macos-titlebar-style = "tabs"
+# window-theme = "system"
+# window-decoration = false
+
 window-padding-x = 4,2
 window-padding-y = 40
 window-padding-y = 6,0
 
-font-family = "JetBrainsMono Nerd Font Mono"
+font-family = "Inconsolata LGC Nerd Font Mono"
+# font-family = "FiraMono Nerd Font Mono"
+# font-family = "CaskaydiaCove Nerd Font Mono"
+# font-family = "JetBrainsMono Nerd Font Mono"
 font-style = bold
 font-size = 14
 
@@ -159,6 +166,6 @@ macos-icon = official
 # On macOS, background opacity is disabled when the terminal enters native
 # fullscreen. This is because the background becomes gray and it can cause
 # widgets to show through which isn't generally desirable.
-background-opacity = 0.78
+background-opacity = 0.55
 # background-image = /Users/michaelschneider/Desktop/ai-generated-space-starscape-clouds-and-stars-in-pink-purple-blue-free-photo.jpg
 unfocused-split-opacity = 0.7
