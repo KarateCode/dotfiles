@@ -1,22 +1,23 @@
 * Emacs shortcuts
-    C-w is like cut
-    M-w is like copy
-    C-y is paste from kill ring
-    C-x C-f find file
-    M-g g goto line number
-    M-m brings up the main menu in Holy mode, h for help, T for tutorial
-    C-h is the help character
-    C-h x previous-line
-    C-h k C-p (describes what shortcut is linked to)
-    C-j executes current line in scratch
-    C-. highlights current word
+C-w is like cut
+M-w is like copy
+C-y is paste from kill ring
+C-x C-f find file
+M-g g goto line number
+M-m brings up the main menu in Holy mode, h for help, T for tutorial
+C-h is the help character
+C-h x previous-line
+C-h k C-p (describes what shortcut is linked to)
+C-j executes current line in scratch
+C-. highlights current word
 
-    M-: (eval-expression): Prompts you to type a Lisp expression in the minibuffer, which is then evaluated.
-    M-x describe-mode
-    M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
-    (message "### Adding tide-eldoc-function to eldoc-documentation-functions.")
-    M-RET h h lsp-describe-thing-at-point
-    C-x h is mark (highlight) whole buffer
+M-: (eval-expression): Prompts you to type a Lisp expression in the minibuffer, which is then evaluated.
+M-x describe-mode
+M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
+(message "### Adding tide-eldoc-function to eldoc-documentation-functions.")
+M-RET h h lsp-describe-thing-at-point
+C-x h is mark (highlight) whole buffer
+M-x package-list-packages
 
 ** Buffers
 C-x b switch to buffer; now bound to helm-buffers-list
@@ -157,6 +158,7 @@ prefix+: (command prompt) resize-pane
  - [ ]  should map prefix+> to change size in increments of 10
 prefix+I to reload conf
 prefix+U to force reload. Type 'all' at prompt
+prefix+o swaps the right and left pane
  - [X]  Get panes to start in same directory (envoy-web), windows always at home @done(25-10-09 20:
  - [X]  set shortcut to resize panes
 Tmux hack for anytime it intercepts a keystroke:
@@ -216,6 +218,8 @@ echo query.js | entr zsh -c 'clear && mongosh "$NAMING_PREFIX" query.js | jq ".[
 printjson(JSON.stringify(
     db.Collection.find({isActive: false}).toArray()
 ))
+For integration servers:
+mongosh $MONGO_CONNECTION_STRING
 
 * TODO mc (midnight commander) vs yazi?
 
@@ -233,6 +237,8 @@ Chad might make a $DOCKER_RUN to make it even easier, so we don't need to fiddle
 ** cleanup_old_files.sh
 /home/ec2-user/utilities_parent/utilities/scripts/cleanup_old_files.sh
 $UTILITIES_PATH/scripts/cleanup_old_files.sh -k 30 /client/EU/archive
+** deal with docker locally
+docker exec -it 7ebf68dae360 /bin/bash
 
 * Handy for pausing in scripts:
 import readline from 'readline';
@@ -246,12 +252,10 @@ return new Promise((resolve) => {
     });
 }).then(() => {rl.close()});
 
-* Take notes on 7 Essential command line tools
+* 7 Essential command line tools
 grep "search term" file.txt
 grep -i subResource # makes it case insensitive
 grep -iv subResource # flips to exclude instead of include
-| jq ".status.statusBar[1]"
-| jqp # to a GUI like interface
 sed 's/one/omerxx/g' my.json # /g is for global
 gsed -i 's/one/omerxx/g' my.json # -i writes back to the file
 cat my.json --style plain
@@ -259,6 +263,20 @@ bat also works as a pager (replaces more and less)
 awk '{print $1$2}' text.txt
 awk '$2 >=200 {print $1}' data.txt
 | cut -d ':' -f 1,3 |
+
+* JQ
+| jq ".status.statusBar[1]"
+| jqp # to a GUI like interface
+jq -r # gets rid of wrapping quotes if you're just outputting strings
+| jq '.[0] | {message: .commit.message, name: .commit.committer.name}'
+jq -c # is for 'compact'; takes out line returns and whatnot
+jq '.team[] | select(.salary<115000)' pp.json
+jq '.team[] | select(.name=="James Dunn")' pp.json
+jq '.team[] | del(.skills) | del(.salary)' pp.json
+jq keys pp.json
+jq '.team[] | keys' pp.json
+jq '.team[] | select(.skills | index("Java"))' pp.json # index seems to match on string "Java" in skills array
+gojq can also parse yaml, and convert between yaml and json
 
 * Jira UI
 To filter and use JQL:
@@ -282,7 +300,8 @@ select_env (probably envoy-prod), then:
 can we come up with a commandline script to set my integration card?
 sftp Matador2@sftp.envoyb2b.com password: cuh55VkkR7rbyyIOaD/1pg==
 ssh envoy-prod-na-sftp
-
+* FTPS
+lftp -e "set ftp:ssl-protect-data yes; set ftp:ssl-force yes; open -u username,password ftps.example.com"
 
 * Scripting ideas
 I've moved around symlinks, what about unaliasing and re-aliasing?
@@ -295,11 +314,17 @@ rm -rf node_modules && npm cache clear --force && rm -f .stylelintcache .eslintc
 
 * Nginx
 nginx is now booted up from docker dashboard on my system
+
 * Aerospace
 mac window tiling manager
-has built in skhd. Set random OS level hotkeys to run stuff
 https://www.youtube.com/watch?v=5nwnJjr5eOo
-* TODO Sketchy Bar
+defaults write -g NSWindowShouldDragOnGesture -bool true
+Now, you can move windows by holding ctrl+cmd and dragging any part of the window (not necessarily the window title)
+has function built in that negates need for skhd. Set random OS level hotkeys to run stuff
+** SKHD
+Wait, it has an app switcher?
+
+* Sketchy Bar
 Replacement for mac's top menu bar
 brew services start sketchybar
 brew services stop sketchybar
@@ -314,12 +339,11 @@ Has cool looking display modal
 https://www.youtube.com/watch?v=wnsJ0vxQms0
 * Curl
 https://www.youtube.com/watch?v=3xmD4E2aqxo
-* NuShell
+* TODO NuShell
 https://www.youtube.com/watch?v=uJsZATwQ3R8
 * Devs are better than AI; learn to hack
 https://www.youtube.com/watch?v=iBkDhtjqXhA
 
-* SKHD
-Wait, it has an app switcher?
 * Expanso is like snippets for your terminal
 * TODO Moonlander keyboard!
+* TODO lazysql (TUI app for sqlite)
