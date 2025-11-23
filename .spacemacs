@@ -919,7 +919,6 @@ before packages are loaded."
 	(setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
 	(setq org-indent-indentation-per-level 4)
 	;; (define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
-
 	(with-eval-after-load 'org
 		(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
 		(my/org-checkbox-pretty-and-colored)
@@ -944,6 +943,9 @@ before packages are loaded."
 			(company-mode -1)
 		))
   	)
+	(custom-set-faces
+		'(org-todo ((t (:foreground "white" :weight bold))))
+	)
 
 	(with-eval-after-load 'forge
 		(add-to-list 'forge-alist

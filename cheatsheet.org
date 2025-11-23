@@ -138,7 +138,7 @@ export FZF_DEFAULT_COMMAND='rg --files --hidden --follow'
 export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --inline-info'
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --preview 'bat --style=numbers --color=always {}
 how do I get fzf to ignore certain folders?
- - [ ]  How do I toggle folder mode in FZF?
+How do I toggle folder mode in FZF?
 FZF matches on build/ folder when I type "client standup"
     But isn't this okay? It's rg that I want to act like a project. fzf should fuzzy find any folder I cd into
 
@@ -155,7 +155,6 @@ prefix+< renames window
 ctrl+space starts highlight in copy-mode
 prefix+space cycles orientation of pane
 prefix+: (command prompt) resize-pane
- - [ ]  should map prefix+> to change size in increments of 10
 prefix+I to reload conf
 prefix+U to force reload. Type 'all' at prompt
 prefix+o swaps the right and left pane
