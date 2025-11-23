@@ -66,6 +66,7 @@ keybind = cmd+shift+z=text:\x1b[109;9z
 keybind = cmd+d=text:\x1b[110;9z
 keybind = "cmd+enter=unbind"
 keybind = cmd+enter=text:\x1b[111;9z
+keybind = cmd+shift+enter=text:\x1b[111;10z
 keybind = cmd+shift+f=text:\x1b[113;9z
 keybind = cmd+e=text:\x1b[122;9z
 keybind = cmd+l=text:\x1b[123;9z

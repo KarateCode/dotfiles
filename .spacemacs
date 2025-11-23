@@ -708,6 +708,10 @@ before packages are loaded."
 	(define-key input-decode-map "\e[111;9z" [cmd-enter])
 	;; Bind Cmd+Enter
 	(global-set-key [cmd-enter] #'insert-line)
+	;; Decode Ghostty's Cmd+Shift+Enter sequence
+	(define-key input-decode-map "\e[111;10z" [cmd-shift-enter])
+	;; Bind it
+	(global-set-key [cmd-shift-enter] #'insert-line-above)
 
 	;; Decode Ghostty's custom Cmd+D sequence
 	(define-key input-decode-map "\e[110;9z" [cmd-d])
@@ -914,7 +918,7 @@ before packages are loaded."
 	(setq org-checkbox-statistics-intermediate-state t)
 	(setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
 	(setq org-indent-indentation-per-level 4)
-	(define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
+	;; (define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
 
 	(with-eval-after-load 'org
 		(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
@@ -962,6 +966,23 @@ before packages are loaded."
       (when (looking-at-p " - \\[[- X]\\]")
         ;; Delete the leading space
         (delete-char 1))))
+)
+
+(defun insert-line-above ()
+  "Insert a new line above the current one and move the cursor there.
+Preserves column relative to indentation and runs mode indentation."
+  (interactive)
+  (let ((col (current-column)))
+    ;; Go to beginning of current line
+    (move-beginning-of-line 1)
+    ;; Insert a new line *above*
+    (newline)
+    ;; Move into the newly created line
+    (forward-line -1)
+    ;; Indent according to mode
+    (indent-according-to-mode)
+    ;; Restore column (relative to indentation)
+    (move-to-column col))
 )
 
 (defun insert-line ()
@@ -1238,31 +1259,35 @@ Otherwise, just yank as usual."
 )
 
 (defun duplicate-line ()
-	"Duplicate the current line, or the active region if one is selected.
-If a region is active, duplicates the selected text right after it.
-If no region is active, duplicates the current line below it and keeps cursor column."
-	(interactive)
-	(if (use-region-p)
-		;; --- Duplicate the region ---
-		(let* ((start (region-beginning))
-				(end (region-end))
-				(text (buffer-substring start end)))
-			(goto-char end)
-			(insert text)
-		)
-		;; --- Duplicate the current line ---
-		(save-excursion
-			(let ((col (current-column)))
-				(move-beginning-of-line 1)
-				(kill-line)
-				(yank)
-				(open-line 1)
-				(forward-line 1)
-				(yank)
-				(move-to-column col)
-			)
-		)
-	)
+  "Duplicate the active region or the current line (Sublime-style).
+Reselects duplicated region under Spacemacs holy mode."
+  (interactive)
+  (if (and mark-active transient-mark-mode)
+      ;; --- Duplicate region (Sublime style) ---
+      (let* ((start (region-beginning))
+             (end   (region-end))
+             (text  (buffer-substring-no-properties start end))
+             (len   (- end start)))
+        ;; Insert duplicate
+        (goto-char end)
+        (insert text)
+        ;; Reselect duplicated block reliably
+        (setq deactivate-mark nil)
+        (push-mark end t t)       ;; sets mark & activates region
+        (goto-char (+ end len)))
+    ;; --- Duplicate current line ---
+    (let ((col (current-column)))
+      (save-excursion
+        (move-beginning-of-line 1)
+        (let ((line (buffer-substring-no-properties
+                     (line-beginning-position)
+                     (line-end-position))))
+          (end-of-line)
+          (open-line 1)
+          (forward-line 1)
+          (insert line)))
+      (forward-line 1)
+      (move-to-column col)))
 )
 
 (defun select-current-word (arg)
