@@ -929,6 +929,7 @@ before packages are loaded."
 		(define-key org-mode-map (kbd "M-<up>") 'custom-move-up-7-lines)
 		(define-key org-mode-map (kbd "M-}") 'custom-move-down-7-lines)
 		(define-key org-mode-map (kbd "M-{") 'custom-move-up-7-lines)
+		(company-mode -1)
 
 		(define-key org-mode-map (kbd "RET") #'my/org-return-backspace-checkbox)
 
@@ -940,6 +941,7 @@ before packages are loaded."
 			(define-key org-mode-map (kbd "M-<up>") 'custom-move-up-7-lines)
 			(define-key org-mode-map (kbd "M-}") 'custom-move-down-7-lines)
 			(define-key org-mode-map (kbd "M-{") 'custom-move-up-7-lines)
+			(company-mode -1)
 		))
   	)
 
