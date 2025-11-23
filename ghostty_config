@@ -25,12 +25,13 @@ keybind = ctrl+,=text:\x1b[121;9z
 # It must be an actual key on the keyboard
 # So here, we're generating the F1 key
 keybind = "cmd+k=text:\x1bOP"
+# cmd+alt+left → F2
+keybind = "cmd+alt+left=text:\x1bOQ"
+# cmd+alt+right → F3
+keybind = "cmd+alt+right=text:\x1bOR"
 
 # unset, so that I can use it as duplicate line in emacs
 keybind = cmd+d=unbind
-
-keybind = super+alt+left=previous_tab
-keybind = super+alt+right=next_tab
 
 keybind = PageUp=text:\x1b[5~
 keybind = PageDown=text:\x1b[6~
