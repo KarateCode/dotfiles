@@ -809,9 +809,9 @@ before packages are loaded."
 	;; Decode Ghostty Cmd+C sequence
 	(define-key input-decode-map "\e[118;9z" [cmd-c])
 	;; Make Cmd+C behave like M-w
-	;; (global-set-key [cmd-c] #'kill-ring-save)
 	(global-set-key [cmd-c] 'custom-copy-line-or-region)
 	(global-set-key (kbd "M-w") 'custom-copy-line-or-region)
+	(global-set-key (kbd "C-w") #'my/C-w)
 
 	(define-key input-decode-map "\e[119;9z" [cmd-s])
 	(global-set-key [cmd-s]
@@ -1022,6 +1022,15 @@ before packages are loaded."
 	;; 	;; Attach the jump AFTER the file-opening action
 	;; 	(advice-add 'helm-find-file-or-marked :after #'my-helm-jump-after-open)
 	;; )
+)
+
+(defun my/C-w ()
+	"If region active, kill it; otherwise run clean-aindent--bsunindent."
+	(interactive)
+	(if (use-region-p)
+		(kill-region (region-beginning) (region-end))
+		(clean-aindent--bsunindent 1)
+	)
 )
 
 (defun my/scroll-half-page-down ()
