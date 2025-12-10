@@ -29,6 +29,9 @@ keybind = "cmd+k=text:\x1bOP"
 keybind = "cmd+alt+left=text:\x1bOQ"
 # cmd+alt+right → F3
 keybind = "cmd+alt+right=text:\x1bOR"
+# cmd-v → F4
+keybind = "cmd+v=text:\x1bOS"
+keybind = cmd+shift+v=paste_from_clipboard
 
 # unset, so that I can use it as duplicate line in emacs
 keybind = cmd+d=unbind

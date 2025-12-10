@@ -37,6 +37,11 @@ This function should only modify configuration layer settings."
 			yaml
 			lua
 			go
+			(go :variables
+				go-backend 'lsp
+				go-tab-width 4
+				go-format-before-save t)
+			;; ruby
 			csv
 			toml
 			html
@@ -571,7 +576,7 @@ It should only modify the values of Spacemacs settings."
 		;; and todos. If non-nil only the file name is shown.
 		dotspacemacs-home-shorten-agenda-source nil
 
-		dotspacemacs-enable-clipboard t
+		dotspacemacs-enable-clipboard nil
 
 		;; If non-nil then byte-compile some of Spacemacs files.
 		dotspacemacs-byte-compile nil
@@ -657,9 +662,6 @@ before packages are loaded."
 				(unless (eq pkg 'code-review)
 					(apply orig-fun pkg args))))
 	)
-
-	(setq interprogram-cut-function 'copy-to-osx)
-	(setq interprogram-paste-function 'paste-from-osx)
 
 	;; Disable auto-save files (#...#)
 	(setq auto-save-default nil)
@@ -809,6 +811,7 @@ before packages are loaded."
 	;; Make Cmd+C behave like M-w
 	;; (global-set-key [cmd-c] #'kill-ring-save)
 	(global-set-key [cmd-c] 'custom-copy-line-or-region)
+	(global-set-key (kbd "M-w") 'custom-copy-line-or-region)
 
 	(define-key input-decode-map "\e[119;9z" [cmd-s])
 	(global-set-key [cmd-s]
@@ -956,6 +959,81 @@ before packages are loaded."
 			)
 		)
 	)
+
+	;; Scroll by halfpage instead of full
+	(define-key global-map (kbd "C-v") #'my/scroll-half-page-down)
+	(define-key global-map (kbd "M-v") #'my/scroll-half-page-up)
+
+	;; Getting cmd-v to not overwrite killring value
+	(setq interprogram-cut-function nil)
+	(setq interprogram-paste-function nil)
+
+	;; ;; ==================
+	;; ;; fuzzy find file and :line_number
+	;; ;; ==================
+	;; (defun my-helm--parse-pattern (pattern)
+	;; 	"Return (BASE LINE COL) for patterns like foo:12 or foo:12:3."
+	;; 	;; (message "[my-helm] RAW pattern='%s'" pattern)
+	;; 	(if (string-match "\\(.*?\\):\\([0-9]+\\)\\(?:[:]?\\([0-9]+\\)\\)?$" pattern)
+	;; 		(list (match-string 1 pattern)
+	;; 				(string-to-number (match-string 2 pattern))
+	;; 				(let ((col-str (match-string 3 pattern)))
+	;; 				(when col-str (string-to-number col-str))))
+	;; 		(list pattern nil nil))
+	;; )
+	;; (defun my-helm--adjust-pattern ()
+	;; 	"Ensure Helm uses stripped pattern for filtering."
+	;; 	;; (message "[my-helm] RAW helm-pattern='%s'" helm-pattern)
+	;; 	(let* ((raw helm-pattern)
+	;; 			(parsed (my-helm--parse-pattern raw))
+	;; 			(clean (car parsed)))
+	;; 		(message "[my-helm] CLEAN raw='%s'" raw)
+	;; 		(message "[my-helm] CLEAN helm-pattern='%s'" clean)
+	;; 		(setq helm-pattern clean)
+	;; 		(setq helm-pattern-raw raw)
+	;; 	)
+	;; )
+	;; (defun my-helm-jump-after-open (&rest _)
+	;; 	"Jump to line/col AFTER Helm opens a file."
+	;; 	(message "*** my-helm-jump-after-open ***")
+	;; 	(message "helm-pattern-raw='%s' " helm-pattern-raw)
+
+	;; 	(let* ((pattern helm-pattern-raw)   ;; <-- FIXED HERE
+	;; 			(parsed (my-helm--parse-pattern pattern))
+	;; 			(line   (nth 1 parsed))
+	;; 			(col    (nth 2 parsed))
+	;; 		)
+	;; 		;; (message line)
+	;; 		(message "[my-helm] line='%s' " line)
+	;; 		(message "[my-helm] col='%s' " col)
+
+	;; 		(when line
+	;; 			(goto-char (point-min))
+	;; 			(message "*** jumping to line ***")
+	;; 			(forward-line (1- line))
+	;; 			(when col
+	;; 				(move-to-column col))
+	;; 		)
+	;; 	)
+	;; )
+	;; (with-eval-after-load 'helm
+	;; 	;; Fix matching pattern at every input update
+	;; 	(add-hook 'helm-before-update-hook #'my-helm--adjust-pattern)
+	;; 	;; Attach the jump AFTER the file-opening action
+	;; 	(advice-add 'helm-find-file-or-marked :after #'my-helm-jump-after-open)
+	;; )
+)
+
+(defun my/scroll-half-page-down ()
+	"Scroll down by half the window height."
+	(interactive)
+	(scroll-up-command (/ (window-body-height) 2))
+)
+
+(defun my/scroll-half-page-up ()
+	"Scroll up by half the window height."
+	(interactive)
+	(scroll-down-command (/ (window-body-height) 2))
 )
 
 (defun my/org-return-backspace-checkbox ()
@@ -1096,6 +1174,7 @@ Preserves column relative to indentation and runs mode indentation."
 
 (defun paste-from-osx ()
 	(shell-command-to-string "pbpaste")
+	;; (message "Line copied")
 )
 
 (defun my/search-region ()
@@ -1183,14 +1262,25 @@ Otherwise, just yank as usual."
 )
 
 (defun custom-copy-line-or-region ()
-	"If region is active, copy it. Otherwise, copy the current line."
+	"Copy region or current line to BOTH kill-ring and system clipboard."
 	(interactive)
-	(if (use-region-p)
-		(kill-ring-save (region-beginning) (region-end))
-		(kill-ring-save (line-beginning-position)
-			(line-beginning-position 2)
+	(let* ((text
+			(if (use-region-p)
+			(buffer-substring-no-properties (region-beginning) (region-end))
+			(buffer-substring-no-properties
+			(line-beginning-position)
+			(line-beginning-position 2)))
+		))
+		;; Put into kill ring
+		(kill-new text)
+
+		;; Put into macOS system clipboard (ignore Emacs interprogram hooks)
+		(with-temp-buffer
+			(insert text)
+			(call-process-region (point-min) (point-max) "pbcopy")
 		)
-		(message "Line copied")
+
+		(message "Copied: %s" (if (use-region-p) "region" "line"))
 	)
 )
 
@@ -1256,10 +1346,21 @@ Otherwise, just yank as usual."
 
 
 (defun my/insert-console-log-util ()
-	"Insert my console.log util snippet."
+	"Insert language-specific debug print snippet."
 	(interactive)
-	(yas-expand-snippet
-	"console.log('$1:');\nconsole.log(require('util').inspect($1, false, null));")
+	(cond
+		;; --- Go Mode ---
+		((derived-mode-p 'go-mode)
+			(yas-expand-snippet
+				"fmt.Printf(\"$1:\\n\")\nfmt.Printf(\"%+v\\n\", $1)")
+		)
+
+		;; --- Default (JavaScript/Node etc.) ---
+		(t
+			(yas-expand-snippet
+				"console.log('$1:');\nconsole.log(require('util').inspect($1, false, null));")
+		)
+	)
 )
 
 (defun duplicate-line ()
