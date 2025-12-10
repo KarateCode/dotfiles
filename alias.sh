@@ -5,6 +5,7 @@ alias la='eza -l --icons --git -a'
 alias lt='eza --tree --level=2 --long --icons --git'
 alias b='cd -'
 alias e='cd ~/appropos/envoy-web'
+alias weather='curl wttr.in/Belmont,Michigan'
 
 alias nr='npm run'
 alias nt='npm test'

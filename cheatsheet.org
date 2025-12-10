@@ -9,7 +9,8 @@ C-h is the help character
 C-h x previous-line
 C-h k C-p (describes what shortcut is linked to)
 C-j executes current line in scratch
-C-. highlights current word
+S-e highlights current word
+C-/ undo
 
 M-: (eval-expression): Prompts you to type a Lisp expression in the minibuffer, which is then evaluated.
 M-x describe-mode
@@ -117,6 +118,8 @@ C-c C-c toggles checkboxes
 * TODO try jtsx; apparently is supports better commenting in tsx files
 * TODO Could try out the Inconsolata nerd font
 
+* Golang:
+
 
 * Starship
 ~/.config/starship.toml
@@ -158,6 +161,8 @@ prefix+: (command prompt) resize-pane
 prefix+I to reload conf
 prefix+U to force reload. Type 'all' at prompt
 prefix+o swaps the right and left pane
+prefix+shift+{ swaps a pane to the left
+prefix+shift+} swaps a pane to the right
  - [X]  Get panes to start in same directory (envoy-web), windows always at home @done(25-10-09 20:
  - [X]  set shortcut to resize panes
 Tmux hack for anytime it intercepts a keystroke:
@@ -192,6 +197,7 @@ C-K C-S to see shortcut tool
 * dump dev to local:
 mongodump --out=/client/dump/dump_7_21_2025 --excludeCollection=ImportRow --excludeCollection=HouseLogRow --excludeCollection=Event --excludeCollection=EventAggregate --excludeCollection=CardConnectIntegration --uri=$MONGO_CONNECTION_STRING
 aws secretsmanager get-secret-value --secret-id "envoy-dev-na-cf-bauer-na_CONNECTION_STRING" | jq -r '.SecretString'
+history | grep SUBPREFIX gets you started running tasks on dev server
 
 * Ghostty
 https://www.youtube.com/watch?v=enwDjM7pNNE (cursor trails)
@@ -226,6 +232,7 @@ mongosh $MONGO_CONNECTION_STRING
 mongosh wwwinc-stag-eu-cf --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
 mongosh $NAMING_PREFIX --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
 mongosh "$NAMING_PREFIX" --eval 'db.Client.updateMany({}, {$set: {"config.integrationMoveFiles": false, "config.integrationSrcPath": "/Users/michaelschneider/appropos/envoy-web"}})'
+mso "Client.deleteOne({code: 'faker-na'})"
 
 * On integration server, to see the envoy-web codebase in docker:
 docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash
@@ -263,7 +270,7 @@ awk '{print $1$2}' text.txt
 awk '$2 >=200 {print $1}' data.txt
 | cut -d ':' -f 1,3 |
 
-* JQ
+* JQ:
 | jq ".status.statusBar[1]"
 | jqp # to a GUI like interface
 jq -r # gets rid of wrapping quotes if you're just outputting strings
@@ -276,6 +283,10 @@ jq keys pp.json
 jq '.team[] | keys' pp.json
 jq '.team[] | select(.skills | index("Java"))' pp.json # index seems to match on string "Java" in skills array
 gojq can also parse yaml, and convert between yaml and json
+jq "[.products[].skus[].props.qtyOpen] | add"
+
+* YQ:
+yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_status.251202010530.csv
 
 * Jira UI
 To filter and use JQL:
@@ -320,6 +331,8 @@ https://www.youtube.com/watch?v=5nwnJjr5eOo
 defaults write -g NSWindowShouldDragOnGesture -bool true
 Now, you can move windows by holding ctrl+cmd and dragging any part of the window (not necessarily the window title)
 has function built in that negates need for skhd. Set random OS level hotkeys to run stuff
+alt-, lays out windows horizontally (do again to toggle between vertical/horizontal)
+alt-/ lays out windows stacked
 ** SKHD
 Wait, it has an app switcher?
 
@@ -328,7 +341,12 @@ Replacement for mac's top menu bar
 brew services start sketchybar
 brew services stop sketchybar
 brew services restart sketchybar
+Is the Slack icon appearing or not based on if I'm in laptop of docked mode?
 
+* Carapace
+auto completion for Go and pretty much everything else
+* Zoxide
+better cd. "Single greatest command line tool"
 * Janky Borders
 Adds some border customization to Aerospace
 * Hammerspoon
@@ -345,4 +363,13 @@ https://www.youtube.com/watch?v=iBkDhtjqXhA
 
 * Expanso is like snippets for your terminal
 * TODO Moonlander keyboard!
+ - [X]  Ordered!
+consier mapping alt-{ instead of alt-shift-{ to line hopper
+or better yet, it doesn't look like alt-i and alt-k do anything productive; map those!
+
 * TODO lazysql (TUI app for sqlite)
+
+Postgres is not a database
+https://www.youtube.com/watch?v=b7eXdUOzUTM
+5 minutes
+

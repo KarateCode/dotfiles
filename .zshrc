@@ -26,3 +26,5 @@ setopt HIST_REDUCE_BLANKS     # Removes extra blanks from history entries
 # if command -v tmux >/dev/null 2>&1; then
 #     [ -z "$TMUX" ] && exec tmux
 # fi
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
