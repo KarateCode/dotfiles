@@ -28,6 +28,10 @@ select_env() {
     eval "$("$HOME/code/tools-and-infrastructure/scripts/developer/select_env_menu.sh" "$arg")"
 }
 
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' menu select
+
 # source ~/.zshrc
 
 WORDCHARS='~!#$%^&*(){}<>?+;_\|@`-'
