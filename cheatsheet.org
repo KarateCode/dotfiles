@@ -292,7 +292,7 @@ yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_s
 To filter and use JQL:
     click Search bar at top
     click "view all work items"
-
+https://envoyplatform.atlassian.net/issues?filter=11900&jql=project%20in%20%28EP%2C%20EI%29%20AND%20fixVersion%20%3D%20v40%20AND%20%22Deployment%20Notes%22%20is%20not%20EMPTY
 * Jira API
     https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
 
@@ -333,11 +333,13 @@ Now, you can move windows by holding ctrl+cmd and dragging any part of the windo
 has function built in that negates need for skhd. Set random OS level hotkeys to run stuff
 alt-, lays out windows horizontally (do again to toggle between vertical/horizontal)
 alt-/ lays out windows stacked
+alt-shift-tab swaps workspace onto secondary monitor
+alt-shift-h moves (swaps) window tile to the left
+alt-shift-l moves (swaps) window tile to the right
 ** SKHD
 Wait, it has an app switcher?
 
 * Sketchy Bar
-Replacement for mac's top menu bar
 brew services start sketchybar
 brew services stop sketchybar
 brew services restart sketchybar
@@ -366,6 +368,8 @@ https://www.youtube.com/watch?v=iBkDhtjqXhA
  - [X]  Ordered!
 consier mapping alt-{ instead of alt-shift-{ to line hopper
 or better yet, it doesn't look like alt-i and alt-k do anything productive; map those!
+ - [X]  map hyper-s to Slack.
+Toy with lights
 
 * TODO lazysql (TUI app for sqlite)
 

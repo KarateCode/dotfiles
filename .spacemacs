@@ -812,6 +812,7 @@ before packages are loaded."
 	(global-set-key [cmd-c] 'custom-copy-line-or-region)
 	(global-set-key (kbd "M-w") 'custom-copy-line-or-region)
 	(global-set-key (kbd "C-w") #'my/C-w)
+	(global-set-key (kbd "C-u") #'my/kill-to-beginning-of-line)
 
 	(define-key input-decode-map "\e[119;9z" [cmd-s])
 	(global-set-key [cmd-s]
@@ -1022,6 +1023,18 @@ before packages are loaded."
 	;; 	;; Attach the jump AFTER the file-opening action
 	;; 	(advice-add 'helm-find-file-or-marked :after #'my-helm-jump-after-open)
 	;; )
+)
+
+(defun my/kill-to-beginning-of-line ()
+	"Kill text from the beginning of the line to point.
+	If already at beginning, kill the preceding newline."
+	(interactive)
+	(if (= (point) (line-beginning-position))
+		;; At beginning -> kill the previous newline, if any
+		(delete-backward-char 1)
+		;; Otherwise -> kill backwards to BOL
+		(kill-region (line-beginning-position) (point))
+	)
 )
 
 (defun my/C-w ()
