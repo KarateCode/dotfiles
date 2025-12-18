@@ -35,6 +35,8 @@ keybind = cmd+shift+v=paste_from_clipboard
 
 # unset, so that I can use it as duplicate line in emacs
 keybind = cmd+d=unbind
+# unset, so that I can use it to grow pane size in tmux
+keybind = ctrl+8=unbind
 
 keybind = PageUp=text:\x1b[5~
 keybind = PageDown=text:\x1b[6~

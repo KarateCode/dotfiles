@@ -102,6 +102,7 @@ A A to git cherry-pick continue
 A a to cherry-pick abort
 r r for git rebase continue
     C-c C-c to save commit message and proceed
+z k drop stash
 
 *** Forge
 forge-pull a to download all PR's
@@ -336,6 +337,7 @@ alt-/ lays out windows stacked
 alt-shift-tab swaps workspace onto secondary monitor
 alt-shift-h moves (swaps) window tile to the left
 alt-shift-l moves (swaps) window tile to the right
+alt-shift-space floats the window making it a popover
 ** SKHD
 Wait, it has an app switcher?
 
@@ -369,6 +371,7 @@ https://www.youtube.com/watch?v=iBkDhtjqXhA
 consier mapping alt-{ instead of alt-shift-{ to line hopper
 or better yet, it doesn't look like alt-i and alt-k do anything productive; map those!
  - [X]  map hyper-s to Slack.
+ - [ ]  1** Need to version control aerospace.toml!!!
 Toy with lights
 
 * TODO lazysql (TUI app for sqlite)

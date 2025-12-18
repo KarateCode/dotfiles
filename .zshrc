@@ -28,3 +28,7 @@ setopt HIST_REDUCE_BLANKS     # Removes extra blanks from history entries
 # fi
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
+
+bindkey -r "^H"
+
+nvm use default
