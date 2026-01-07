@@ -338,14 +338,24 @@ alt-shift-tab swaps workspace onto secondary monitor
 alt-shift-h moves (swaps) window tile to the left
 alt-shift-l moves (swaps) window tile to the right
 alt-shift-space floats the window making it a popover
-** SKHD
-Wait, it has an app switcher?
+ - [ ]  ^^ okay, now can you move the popover?
+alt-shift-arrow (one of vim keys) does horizontal
 
 * Sketchy Bar
 brew services start sketchybar
 brew services stop sketchybar
 brew services restart sketchybar
 Is the Slack icon appearing or not based on if I'm in laptop of docked mode?
+
+
+* gh:
+gh auth status
+gh repo view
+gh pr list
+gh pr view PR_NUMBER
+gh pr status
+gh pr merge PR_NUMBER --squash --delete-branch
+gh pr diff | delta (or `gh pr diff PR_NUMBER | delta`)
 
 * Carapace
 auto completion for Go and pretty much everything else
@@ -366,13 +376,15 @@ https://www.youtube.com/watch?v=uJsZATwQ3R8
 https://www.youtube.com/watch?v=iBkDhtjqXhA
 
 * Expanso is like snippets for your terminal
-* TODO Moonlander keyboard!
+ - [ ]  Is this something that works across ssh? because I could really use an mso/msa snippet!
+* DONE Moonlander keyboard!
+CLOSED: [2026-01-07 Wed 11:38]
  - [X]  Ordered!
-consier mapping alt-{ instead of alt-shift-{ to line hopper
-or better yet, it doesn't look like alt-i and alt-k do anything productive; map those!
+ - [X]  consier mapping alt-{ instead of alt-shift-{ to line hopper
+ - [X]  or better yet, it doesn't look like alt-i and alt-k do anything productive; map those!
  - [X]  map hyper-s to Slack.
- - [ ]  1** Need to version control aerospace.toml!!!
-Toy with lights
+ - [X]  Need to version control aerospace.toml!!!
+ - [X]  Toy with lights
 
 * TODO lazysql (TUI app for sqlite)
 
@@ -380,3 +392,26 @@ Postgres is not a database
 https://www.youtube.com/watch?v=b7eXdUOzUTM
 5 minutes
 
+* Brow6el is a browser that runs in a terminal
+* Opencode
+     | Action | Keybind |
+     |--------|---------|
+     | Page Up | PageUp |
+     | Page Down | PageDown |
+     | Half Page Up | Ctrl+Alt+u |
+     | Half Page Down | Ctrl+Alt+d |
+     | Go to First Message | Ctrl+g or Home |
+     | Go to Last Message | Ctrl+Alt+g or End |
+
+     Scroll Speed Configuration
+
+     You can also customize scroll behavior in your opencode.json:
+
+     {
+       "tui": {
+         "scroll_speed": 3,
+         "scroll_acceleration": {
+           "enabled": true
+         }
+       }
+     }
