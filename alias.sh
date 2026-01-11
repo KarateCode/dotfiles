@@ -9,6 +9,7 @@ alias weather='curl wttr.in/Belmont,Michigan'
 alias se='ls ~/code/tools-and-infrastructure/scripts/developer/environments | fzf | while read -r env; do select_env "$env"; done'
 alias gitbd='~/dotfiles/scripts/delete_local_git_branches.sh'
 alias hss='~/dotfiles/scripts/ssh_fzf.sh'
+alias sl='pmset sleepnow'
 
 alias nr='npm run'
 alias nt='npm test'
