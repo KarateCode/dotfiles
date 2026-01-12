@@ -787,7 +787,13 @@ before packages are loaded."
 	)
 
 	;; Load one immediately
-	(load-theme 'doom-one t)
+	;; (load-theme 'doom-one t)
+	;; (load-theme 'doom-vibrant t)
+	;; (load-theme 'doom-dracula t)
+	;; (load-theme 'doom-nord t)
+	;; (load-theme 'doom-solarized-dark t)
+	;; (load-theme 'doom-laserwave t)
+	(load-theme 'doom-horizon t)
 
 	;; Enable Doom's improved org-mode & visual bell tweaks (safe even if you don't use org)
 	(doom-themes-org-config)
@@ -964,8 +970,11 @@ before packages are loaded."
 	)
 
 	;; Scroll by halfpage instead of full
+	(require 'view)
 	(define-key global-map (kbd "C-v") #'my/scroll-half-page-down)
 	(define-key global-map (kbd "M-v") #'my/scroll-half-page-up)
+	;; (global-set-key (kbd "C-v") 'my/scroll-half-page-down)
+	;; (global-set-key (kbd "M-v") 'my/scroll-half-page-up)
 
 	;; Getting cmd-v to not overwrite killring value
 	(setq interprogram-cut-function nil)

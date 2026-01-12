@@ -146,9 +146,9 @@ custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playgroun
 # command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
 # command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then $HOME/github/dotfiles-latest/tmux/tools/prime/tmux-sessionizer.sh $HOME/github/dotfiles-latest || (tmux attach 2>/dev/null || tmux); else exec zsh; fi"
 
-# macos-titlebar-style = "tabs"
-# window-theme = "system"
-# window-decoration = false
+# other options: tabs, native, transparent
+macos-titlebar-style = hidden
+theme = Hardcore
 
 window-padding-x = 4,2
 window-padding-y = 40
