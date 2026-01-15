@@ -18,6 +18,8 @@ source <(fzf --zsh)
 alias ds='node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js'
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/dotfiles/alias.sh
+source ~/dotfiles/.sensitive.sh
+
 export EDITOR=emacs
 export VITE_REACT_APP_API_URL=http://localhost:8080
 export VITE_REACT_APP_API_WS="ws://localhost:8080"
