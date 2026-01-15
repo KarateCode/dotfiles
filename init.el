@@ -15,7 +15,9 @@
 (setq-default js-indent-level 4)
 (setq-default css-indent-offset 4)
 
-
+; ====================
+; Package installs
+; ====================
 (use-package vertico
   :ensure t
   :init
@@ -95,6 +97,14 @@
   (setq breadcrumb-imenu-crumb-separator " ▶︎ ")
 )
 
+(use-package move-text
+  :ensure t  ;; <--- Add this line to auto-install
+  :config
+  ;; Move current line or region up/down
+  (global-set-key [cmd-ctrl-up] 'move-text-up)
+  (global-set-key [cmd-ctrl-down] 'move-text-down)
+)
+
 (use-package doom-themes
   :ensure t
   :config
@@ -107,10 +117,13 @@
 ;; Load the specific theme
 (load-theme 'doom-horizon t)
 ;; Enable flashing mode-line on errors
-(doom-themes-visual-bell-config)
+;; (doom-themes-visual-bell-config)
 ;; Corrects (and improves) org-mode appearance
 (doom-themes-org-config))
 
+; ====================
+; My Custom Functions
+; ====================
 (defun my/org-checkbox-pretty-and-colored ()
 	"Replace and color Org checkboxes inline."
 	(font-lock-add-keywords nil `(
@@ -363,17 +376,23 @@ Reselects duplicated region under Spacemacs holy mode."
 	)
 )
 
+(defun my/project-grep-empty ()
+  "Modern replacement for helm-rg using consult-ripgrep."
+  (interactive)
+  (let ((default-directory (projectile-project-root)))
+    (consult-ripgrep default-directory ""))
+)
 
+; ====================
+; UI Tweaks
+; ====================
 (menu-bar-mode -1)   ;; Remove the "File Edit Options" menu
 ;; (tool-bar-mode -1)   ;; Remove the row of icons
 ;; (scroll-bar-mode -1) ;; Remove the scroll bars for a truly clean look
-
 ;; Disable word wrap (truncate lines) globally
 (setq-default truncate-lines t)
-
 ;; Enable line numbers globally
 (global-display-line-numbers-mode t)
-
 ;; Disable line numbers for specific modes where they don't make sense
 (dolist (mode '(org-mode-hook
                 term-mode-hook
@@ -383,10 +402,14 @@ Reselects duplicated region under Spacemacs holy mode."
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 (global-hl-line-mode t)
 
-
+; ====================
+; Dirvish
+; ====================
 (setq dirvish-attributes '(file-size vcs-state icons collapse subtree-state))
 
-
+; ====================
+; ORG Mode
+; ====================
 (with-eval-after-load 'org
   (my/org-checkbox-pretty-and-colored)
   (setq org-todo-keyword-faces
@@ -409,7 +432,6 @@ Reselects duplicated region under Spacemacs holy mode."
 			;; (company-mode -1)
 		))
 )
-
 ;; Disable the "dumb" checkbox behavior
 (setq org-enforce-todo-checkbox-dependencies nil)
 (setq org-enforce-todo-dependencies nil)
@@ -417,6 +439,10 @@ Reselects duplicated region under Spacemacs holy mode."
 (setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
 (setq org-indent-indentation-per-level 4)
 
+
+; ====================
+; Mouse Support
+; ====================
 ;; Enable mouse support in the terminal
 (unless (display-graphic-p)
   (xterm-mouse-mode 1)
@@ -429,7 +455,9 @@ Reselects duplicated region under Spacemacs holy mode."
 (setq mouse-wheel-progressive-speed nil)            ;; don't accelerate
 (setq mouse-wheel-follow-mouse 't)                  ;; scroll window under mouse
 
-
+; ====================
+; Setting Tweaks
+; ====================
 ;; 1. Disable backup files (the ones ending in ~)
 (setq make-backup-files nil)
 ;; 2. Disable auto-save files (the ones wrapped in #)
@@ -451,7 +479,6 @@ Reselects duplicated region under Spacemacs holy mode."
 ;; ;; Rebind the exit key (C-x C-c) to your new forced function
 ;; (global-set-key (kbd "C-x C-c") #'my-force-kill-emacs)
 
-
 ;; Remember cursor location upon reopening file
 (save-place-mode 1)
 ;; (add-hook 'find-file-hook (lambda () (recenter-top-bottom)) t)
@@ -460,24 +487,19 @@ Reselects duplicated region under Spacemacs holy mode."
 ;;       scroll-step 1             ; Scroll 1 line at a time
 ;;       scroll-conservatively 101) ; Never jump more than 1 line
 
-
-;; Decode Ghostty's Cmd+Enter sequence
+; ===========================
+; Ghostty cmd interpretations
+; ===========================
 (define-key input-decode-map "\e[111;9z" [cmd-enter])
-;; Bind Cmd+Enter
 (global-set-key [cmd-enter] #'insert-line)
-;; Decode Ghostty's Cmd+Shift+Enter sequence
+
 (define-key input-decode-map "\e[111;10z" [cmd-shift-enter])
-;; Bind it
 (global-set-key [cmd-shift-enter] #'insert-line-above)
 
-;; Decode Ghostty's custom Cmd+D sequence
 (define-key input-decode-map "\e[110;9z" [cmd-d])
-;; Bind Cmd+D to duplicate-line
 (global-set-key [cmd-d] #'duplicate-line)
 
-;; Decode the Ghostty sequence
 (define-key input-decode-map "\e[114;9z" [cmd-j])
-;; Bind it to join-line
 (global-set-key [cmd-j] 'custom-join-lines)
 
 (define-key input-decode-map "\e[119;9z" [cmd-s])
@@ -485,39 +507,33 @@ Reselects duplicated region under Spacemacs holy mode."
   (lambda () (interactive) (execute-kbd-macro (kbd "C-x C-s")))
 )
 
-;; Decode the Ghostty sequence
 (define-key input-decode-map "\e[122;9z" [cmd-e])
-;; Bind it to select word under cursor
 (global-set-key [cmd-e] 'my/search-region)
 
-;; Decode Ghostty Cmd+C sequence
 (define-key input-decode-map "\e[118;9z" [cmd-c])
-;; Make Cmd+C behave like M-w
 (global-set-key [cmd-c] 'custom-copy-line-or-region)
 
-;; Decode the Ghostty Cmd+X escape sequence
 (define-key input-decode-map "\e[120;9z" [cmd-x])
-;; Map it to the same thing as C-w (kill-region)
-;; (global-set-key [cmd-x] (key-binding (kbd "C-w")))
 (global-set-key [cmd-x] 'custom-cut-line-or-region)
 
-;; Decode Ghostty sequence for Cmd+Ctrl+Up
 (define-key input-decode-map "\e[115;9z" [cmd-ctrl-up])
-;; Decode Ghostty sequence for Cmd+Ctrl+Down
 (define-key input-decode-map "\e[116;9z" [cmd-ctrl-down])
-;; (use-package move-text
-;;     :config
-;;     ;; Move current line or region up/down
-;;     (global-set-key [cmd-ctrl-up] 'move-text-up)
-;;     (global-set-key [cmd-ctrl-down] 'move-text-down))
-(use-package move-text
-  :ensure t  ;; <--- Add this line to auto-install
-  :config
-  ;; Move current line or region up/down
-  (global-set-key [cmd-ctrl-up] 'move-text-up)
-  (global-set-key [cmd-ctrl-down] 'move-text-down))
 
+(define-key input-decode-map "\e[113;9z" [cmd-shift-f])
+(global-set-key [cmd-shift-f] #'my/project-grep-empty)
 
+(define-key input-decode-map "\e[117;9z" [C-S-backspace])
+(global-set-key [C-S-backspace] #'delete-current-line)
+
+(define-key input-decode-map "\e[108;9z" [cmd-z])
+(global-set-key [cmd-z] 'undo)
+
+(define-key input-decode-map "\e[109;9z" [cmd-shift-z])
+(global-set-key [cmd-shift-z] 'undo-redo)
+
+; ====================
+; More keybindings
+; ====================
 (global-set-key (kbd "M-a") #'my/select-current-line-and-forward-line)
 
 (global-set-key (kbd "M-q") #'delete-current-line)
@@ -525,29 +541,9 @@ Reselects duplicated region under Spacemacs holy mode."
 	(lambda ()
 		(local-set-key (kbd "M-q") #'delete-current-line))
 )
-;; Decode Ghostty sequence for Ctrl+Shift+Backspace
-(define-key input-decode-map "\e[117;9z" [C-S-backspace])
-;; Bind it to delete-current-line
-(global-set-key [C-S-backspace] #'delete-current-line)
-
-
-;; The only way to get an actual command/super is to use GUI Emacs
-;; We can't map to Esc as a prefix, because that is Alt's default mapping
-;; So instead, we're going to map to a uniq charater string
-(define-key input-decode-map "\e[108;9z" [cmd-z])
-(global-set-key [cmd-z] 'undo)
-;; Redo: interpret ESC [109;9z as [cmd-shift-z]
-(define-key input-decode-map "\e[109;9z" [cmd-shift-z])
-;; Bind it to redo
-(global-set-key [cmd-shift-z] 'undo-redo)
 
 (define-key global-map (kbd "C-v") #'my/scroll-half-page-down)
 (define-key global-map (kbd "M-v") #'my/scroll-half-page-up)
-
-;; (define-key org-mode-map (kbd "M-<down>") 'custom-move-down-7-lines)
-;; (define-key org-mode-map (kbd "M-<up>") 'custom-move-up-7-lines)
-;; (define-key org-mode-map (kbd "M-}") 'custom-move-down-7-lines)
-;; (define-key org-mode-map (kbd "M-{") 'custom-move-up-7-lines)
 
 (global-set-key (kbd "M-<up>") 'custom-move-up-7-lines)
 (global-set-key (kbd "M-<down>") 'custom-move-down-7-lines)
@@ -565,6 +561,10 @@ Reselects duplicated region under Spacemacs holy mode."
 
 (global-set-key (kbd "C-t") 'projectile-find-file)
 
+
+; =======================
+; Autogenerated by Emacs:
+; =======================
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
