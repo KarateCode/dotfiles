@@ -10,6 +10,7 @@ alias se='ls ~/code/tools-and-infrastructure/scripts/developer/environments | fz
 alias gitbd='~/dotfiles/scripts/delete_local_git_branches.sh'
 alias hss='~/dotfiles/scripts/ssh_fzf.sh'
 alias sl='pmset sleepnow'
+alias van='emacs --init-directory=~/vanilla-emacs'
 
 alias nr='npm run'
 alias nt='npm test'

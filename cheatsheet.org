@@ -8,6 +8,7 @@ M-m brings up the main menu in Holy mode, h for help, T for tutorial
 C-h is the help character
 C-h x previous-line
 C-h k C-p (describes what shortcut is linked to)
+C-h v (describe-variable) lets you type a variable name and get it's value (like typescript-ts-mode-indent-offset)
 C-j executes current line in scratch
 S-e highlights current word
 C-/ undo
@@ -19,6 +20,7 @@ M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
 M-RET h h lsp-describe-thing-at-point
 C-x h is mark (highlight) whole buffer
 M-x package-list-packages
+(custom-set-faces! '(default :background nil)) ; If I ever want transparent background in emacs
 
 ** Buffers
 C-x b switch to buffer; now bound to helm-buffers-list
@@ -203,12 +205,20 @@ history | grep SUBPREFIX gets you started running tasks on dev server
 * Ghostty
 https://www.youtube.com/watch?v=enwDjM7pNNE (cursor trails)
     https://github.com/ghostty-org/ghostty/releases
-ghostty +list-themes
 ghostty +list-keybinds
 ghostty show-config --default --docs
 macos-icon-frame
     docs are: https://ghostty.org/docs/config/reference
 currently keeping shaders in: ~/.config/ghostty
+** ghostty +list-themes
+box
+dark pastel
+deep
+farmhouse
+firefly
+github dark
+glacier
+hardcore ** I like this one
 
 * RipGrep
 rg -F looks for exact text matches instead of regex
@@ -234,6 +244,7 @@ mongosh wwwinc-stag-eu-cf --quiet --eval "JSON.stringify(db.Product.find({}).toA
 mongosh $NAMING_PREFIX --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
 mongosh "$NAMING_PREFIX" --eval 'db.Client.updateMany({}, {$set: {"config.integrationMoveFiles": false, "config.integrationSrcPath": "/Users/michaelschneider/appropos/envoy-web"}})'
 mso "Client.deleteOne({code: 'faker-na'})"
+* tongo
 
 * On integration server, to see the envoy-web codebase in docker:
 docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash
