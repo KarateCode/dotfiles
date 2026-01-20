@@ -20,7 +20,7 @@ source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/dotfiles/alias.sh
 source ~/dotfiles/.sensitive.sh
 
-export EDITOR=emacs
+export EDITOR="emacs --init-directory=~/vanilla-emacs"
 export VITE_REACT_APP_API_URL=http://localhost:8080
 export VITE_REACT_APP_API_WS="ws://localhost:8080"
 export VITE_REACT_APP_GOOGLE_CLIENT_ID="85730891639-c4ahs2ldb2i2cmjaom4v02ijc6rjjkt1.apps.googleusercontent.com"

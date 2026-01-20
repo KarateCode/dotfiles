@@ -7,6 +7,9 @@
   (package-install 'org))
 
 ;; Sane Defaults
+(unless package-archive-contents
+  (package-refresh-contents))
+
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 ;; Force the "TS" modes to 4 globally as a backup
@@ -39,7 +42,8 @@
 (use-package multiple-cursors
   :ensure t
   :bind (("C-S-<up>" . mc/mark-previous-like-this)
-         ("C-S-<down>" . mc/mark-next-like-this)))
+         ("C-S-<down>" . mc/mark-next-like-this))
+)
 (use-package projectile
   :ensure t
   :init
@@ -51,19 +55,41 @@
   (setq projectile-use-git-grep t)
 
   ;; Setup the standard keymap
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+)
+(use-package nerd-icons
+  :ensure t)
 (use-package dirvish
   :ensure t
   :init
+  ;; Ensure Dired uses Dirvish's enhancements universally
   (dirvish-override-dired-mode)
-  :config
-  ;; 1. Unbind the default fill-column command
+
+  ;; Make C-x f open Dirvish
   (global-unset-key (kbd "C-x f"))
-  ;; 2. Bind dirvish-side to C-x f
   (global-set-key (kbd "C-x f") #'dirvish-side)
+
+  :config
+  ;; --- Icon Configuration ---
+  (require 'dirvish-widgets)
+  (setq dirvish-icon-backend 'nerd-icons)
+  (setq dirvish-subtree-state-style 'nerd)
+
+  ;; Define the visual elements to display in the buffer
+  (setq dirvish-attributes
+        '(nerd-icons subtree-state vc-state git-msg collapse file-size))
+
+  ;; --- Omit Configuration (No "." or "..") ---
+  ;; Use a specific hook to enable omit mode *after* dirvish has loaded
+  (add-hook 'dired-mode-hook #'dired-omit-mode)
+  (setq dired-omit-files "^\\.[^.]?\\|^\\.\\.$")
+
+  ;; --- Keybindings ---
   :bind
   (:map dired-mode-map
-      ("TAB" . dirvish-subtree-toggle)))
+        ("TAB" . dirvish-subtree-toggle) ; Folders
+        ("M-o" . dired-omit-mode)       ; Toggle hiding files
+        ("C-c d" . dirvish-dispatch)))  ; Actions menu
 (use-package treesit-auto
   :ensure t
   :custom
@@ -103,6 +129,15 @@
   ;; Move current line or region up/down
   (global-set-key [cmd-ctrl-up] 'move-text-up)
   (global-set-key [cmd-ctrl-down] 'move-text-down)
+)
+
+(use-package magit
+  :ensure t
+  :bind ("C-x g" . magit-status)  ;; The universal shortcut for "Git Status"
+  :config
+  ;; Optional: Magit usually takes over the whole window.
+  ;; This makes it quit back to exactly where you were.
+  (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 )
 
 (use-package doom-themes
@@ -486,6 +521,11 @@ Reselects duplicated region under Spacemacs holy mode."
 ;; (setq scroll-margin 5           ; Start scrolling when 5 lines from top/bottom
 ;;       scroll-step 1             ; Scroll 1 line at a time
 ;;       scroll-conservatively 101) ; Never jump more than 1 line
+
+;; Kill current buffer immediately without prompting for the name
+(global-set-key (kbd "C-x k") #'kill-current-buffer)
+;; Use y or n instead of yes or no
+(setq use-short-answers t)
 
 ; ===========================
 ; Ghostty cmd interpretations
