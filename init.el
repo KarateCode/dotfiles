@@ -140,6 +140,44 @@
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 )
 
+;; Remove directories from exec-path that don't actually exist on disk.
+;; This prevents the "Doing vfork" error in 2026 macOS environments.
+(setq exec-path (seq-filter #'file-directory-p exec-path))
+
+;; Also update the $PATH environment variable to match the cleaned list
+(setenv "PATH" (mapconcat #'identity exec-path path-separator))
+
+(use-package eglot
+  :ensure nil ; built-in in Emacs 29+
+  :hook ((typescript-ts-mode . eglot-ensure)
+         (tsx-ts-mode . eglot-ensure))
+)
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((typescript-ts-mode tsx-ts-mode) . ("/Users/michaelschneider/.nvm/versions/node/v18.12.1/bin/typescript-language-server " "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '((typescript-ts-mode tsx-ts-mode) . ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/typescript-language-server/lib/cli.mjs" "--stdio")))
+)
+
+(with-eval-after-load 'flymake
+  (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
+  (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
+  (define-key flymake-mode-map (kbd "C-c l l") 'flymake-show-buffer-diagnostics)
+)
+(with-eval-after-load 'eglot
+  (define-key eglot-mode-map (kbd "C-c l a") 'eglot-code-actions)
+  ;; (define-key eglot-mode-map (kbd "C-c l r") 'eglot-rename)
+  ;; (define-key eglot-mode-map (kbd "C-c l f") 'eglot-format-buffer)
+)
+
+;; 1. Map file extensions to the new Tree-sitter modes
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+
+;; 2. Optional: Automatically prefer TS Tree-sitter modes over legacy modes
+(add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
+
 (use-package doom-themes
   :ensure t
   :config
