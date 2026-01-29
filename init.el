@@ -211,15 +211,16 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1))
-;; Load the specific theme
-(load-theme 'doom-horizon t)
-;; Enable flashing mode-line on errors
-;; (doom-themes-visual-bell-config)
-;; Corrects (and improves) org-mode appearance
-(doom-themes-org-config))
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
+  ;; Load the specific theme
+  (load-theme 'doom-horizon t)
+  ;; Enable flashing mode-line on errors
+  ;; (doom-themes-visual-bell-config)
+  ;; Corrects (and improves) org-mode appearance
+  ;; (doom-themes-org-config)
+)
 
 ; ====================
 ; My Custom Functions
@@ -519,10 +520,6 @@ Reselects duplicated region under Spacemacs holy mode."
 
   (define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
 		(add-hook 'org-mode-hook (lambda ()
-			;; (setq org-enforce-todo-dependencies nil)
-			;; (setq org-enforce-todo-checkbox-dependencies nil)
-			;; (setq org-checkbox-hierarchical-statistics nil)
-
 			(my/org-checkbox-pretty-and-colored)
 			;; (set-face-attribute 'org-default nil :foreground "#a877bf")
 			;; (buffer-face-set 'org-default)
@@ -539,7 +536,9 @@ Reselects duplicated region under Spacemacs holy mode."
 (setq org-checkbox-statistics-intermediate-state t)
 (setq org-startup-indented t) ;; <-- this enables org-indent-mode on startup
 (setq org-indent-indentation-per-level 4)
-
+;; Silver bullet to get rid of 'unchecked subitems' error
+(with-eval-after-load 'org-list
+  (advice-add 'org-list-struct-fix-box :around (lambda (orig-fun &rest args) nil)))
 
 ; ====================
 ; Mouse Support
