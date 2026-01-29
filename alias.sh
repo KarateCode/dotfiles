@@ -10,7 +10,7 @@ alias se='ls ~/code/tools-and-infrastructure/scripts/developer/environments | fz
 alias gitbd='~/dotfiles/scripts/delete_local_git_branches.sh'
 alias hss='~/dotfiles/scripts/ssh_fzf.sh'
 alias sl='pmset sleepnow'
-alias van='emacs --init-directory=~/vanilla-emacs'
+alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
 
 alias nr='npm run'
 alias nt='npm test'
@@ -79,6 +79,6 @@ alias appdev='ssh -i ~/.ssh/app-envoy-stag-us-east-1.pem ec2-user@52.6.239.36'
 alias wwwdev='ssh -i ~/.ssh/www-envoy-vpc-uat.pem ec2-user@52.22.40.7'
 alias condev='ssh -i ~/.ssh/con-envoy-stag-eu-west-1.pem ec2-user@52.30.49.202'
 
-alias emacs='emacs -nw'
+# alias emacs='emacs -nw'
 alias fix_know_hosts="cd ~/.ssh; sed -i '' '/UserKnownHostsFile/d' config; cd -"
 alias onering='/Users/michaelschneider/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh'

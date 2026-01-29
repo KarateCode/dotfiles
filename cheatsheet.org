@@ -77,6 +77,9 @@ delete with d and executes delete with x
 sort with o
 close with q
 
+** Dirvish
+
+
 ** Flycheck/EsLint:
 leader e l to view all flycheck errors
 leader e n jumps cursor to next error
@@ -245,6 +248,9 @@ mongosh $NAMING_PREFIX --quiet --eval "JSON.stringify(db.Product.find({}).toArra
 mongosh "$NAMING_PREFIX" --eval 'db.Client.updateMany({}, {$set: {"config.integrationMoveFiles": false, "config.integrationSrcPath": "/Users/michaelschneider/appropos/envoy-web"}})'
 mso "Client.deleteOne({code: 'faker-na'})"
 * tongo
+
+* cron
+sudo systemctl status crond
 
 * On integration server, to see the envoy-web codebase in docker:
 docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash

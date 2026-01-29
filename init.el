@@ -149,15 +149,40 @@
 
 (use-package eglot
   :ensure nil ; built-in in Emacs 29+
-  :hook ((typescript-ts-mode . eglot-ensure)
-         (tsx-ts-mode . eglot-ensure))
+  :hook (
+    (typescript-ts-mode . eglot-ensure)
+    (tsx-ts-mode . eglot-ensure)
+    (js-ts-mode . eglot-ensure)
+    (js-mode . eglot-ensure)
+  )
 )
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               '((typescript-ts-mode tsx-ts-mode) . ("/Users/michaelschneider/.nvm/versions/node/v18.12.1/bin/typescript-language-server " "--stdio")))
+    '(
+      (typescript-ts-mode tsx-ts-mode) . ("/Users/michaelschneider/.nvm/versions/node/v18.12.1/bin/typescript-language-server " "--stdio")
+      ;; :initializationOptions
+      ;; (:settings (:rulesCustomizations [(:rule "*" :severity "warn")]))
+    )
+  )
+
   (add-to-list 'eglot-server-programs
-               '((typescript-ts-mode tsx-ts-mode) . ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/typescript-language-server/lib/cli.mjs" "--stdio")))
+    '((typescript-ts-mode tsx-ts-mode) . ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/typescript-language-server/lib/cli.mjs" "--stdio")))
+
+  (add-to-list 'eglot-server-programs
+    '((js-ts-mode js-mode) .
+      ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/vscode-langservers-extracted/lib/eslint-language-server/eslintServer.js" "--stdio"
+        :initializationOptions
+        (:settings (
+            :workingDirectories [(:directory "./client" :changeProcessCWD t)
+              (:directory "./server" :changeProcessCWD t)]
+            :validate ["javascript" "javascriptreact" "typescript" "typescriptreact"]
+            :rulesCustomizations [(:rule "*" :severity "warn")]
+          )
+        )
+      )
+    )
+  )
 )
 
 (with-eval-after-load 'flymake
@@ -174,9 +199,11 @@
 ;; 1. Map file extensions to the new Tree-sitter modes
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
 
 ;; 2. Optional: Automatically prefer TS Tree-sitter modes over legacy modes
 (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
+(add-to-list 'major-mode-remap-alist '(js-mode . js-ts-mode))
 
 (use-package doom-themes
   :ensure t
@@ -459,6 +486,7 @@ Reselects duplicated region under Spacemacs holy mode."
 ; ====================
 ; UI Tweaks
 ; ====================
+(setq scroll-conservatively 101)
 (menu-bar-mode -1)   ;; Remove the "File Edit Options" menu
 ;; (tool-bar-mode -1)   ;; Remove the row of icons
 ;; (scroll-bar-mode -1) ;; Remove the scroll bars for a truly clean look
@@ -531,6 +559,12 @@ Reselects duplicated region under Spacemacs holy mode."
 ; ====================
 ; Setting Tweaks
 ; ====================
+;; Enable automatic pairing of brackets, braces, and quotes
+(electric-pair-mode 1)
+;; Ensure that typing a bracket with an active region wraps the text
+(setq electric-pair-preserve-balance t)
+
+(setq-default show-trailing-whitespace t)
 ;; 1. Disable backup files (the ones ending in ~)
 (setq make-backup-files nil)
 ;; 2. Disable auto-save files (the ones wrapped in #)
@@ -638,6 +672,12 @@ Reselects duplicated region under Spacemacs holy mode."
 (global-set-key (kbd "C-S-<down>") 'mc/mark-next-like-this)
 
 (global-set-key (kbd "C-t") 'projectile-find-file)
+;; Dired overrides and has it's own bindings, so correct C-t here
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "C-t") 'projectile-find-file))
+;; If using Dirvish, it inherits from Dired but may need its own override
+(with-eval-after-load 'dirvish
+  (define-key dirvish-mode-map (kbd "C-t") 'projectile-find-file))
 
 
 ; =======================
