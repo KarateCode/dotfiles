@@ -78,12 +78,12 @@ sort with o
 close with q
 
 ** Dirvish
-
+C-x f launch
 
 ** Flycheck/EsLint:
 leader e l to view all flycheck errors
-leader e n jumps cursor to next error
-leader e p jumps cursor to previous error
+M-n jumps cursor to next error
+M-p jumps cursor to previous error
 leader e x explains error at current position
 
 ** Tide

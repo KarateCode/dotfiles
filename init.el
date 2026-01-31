@@ -558,6 +558,8 @@ Reselects duplicated region under Spacemacs holy mode."
 ; ====================
 ; Setting Tweaks
 ; ====================
+;; Stop prompting when trying to open a symlink
+(setq vc-follow-symlinks t)
 ;; Enable automatic pairing of brackets, braces, and quotes
 (electric-pair-mode 1)
 ;; Ensure that typing a bracket with an active region wraps the text
