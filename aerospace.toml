@@ -82,6 +82,7 @@ automatically-unhide-macos-hidden-apps = false
     ctrl-shift-alt-c = 'exec-and-forget open -a Google\ Chrome'
     ctrl-shift-alt-v = 'exec-and-forget open -a Visual\ Studio\ Code'
     ctrl-shift-alt-cmd-m = 'exec-and-forget open -a Studio\ 3T'
+    ctrl-shift-alt-cmd-j = 'exec-and-forget ~/dotfiles/sketchybar/scripts/caffeine.sh toggle'
 
     ctrl-shift-alt-1 = 'exec-and-forget pmset sleepnow'
 
