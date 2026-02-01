@@ -2,6 +2,8 @@
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
+(setq native-comp-jit-compilation-deny-list '(".*org-element.*" ".*org.*"))
+
 (defun dotspacemacs/layers ()
 	"Layer configuration:
 This function should only modify configuration layer settings."
@@ -64,12 +66,15 @@ This function should only modify configuration layer settings."
 			(git :variables
 				git-enable-magit-delta-plugin t
 				git-enable-code-review nil
-				git-additional-packages '(forge)
 			)
 			helm
 			;; markdown
 			multiple-cursors
-			org
+			;; org
+			(org :variables
+				org-enforce-todo-checkbox-dependencies nil
+				org-enforce-todo-dependencies nil)
+
 			;; (shell :variables
 			;;        shell-default-height 30
 			;;        shell-default-position 'bottom)
@@ -92,7 +97,6 @@ This function should only modify configuration layer settings."
 			;; web-mode
 			move-text
 			helm-rg
-			forge
 		)
 
 		;; A list of packages that cannot be updated.
@@ -932,6 +936,10 @@ before packages are loaded."
 	(setq org-indent-indentation-per-level 4)
 	(define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
 	(with-eval-after-load 'org
+		(setq org-enforce-todo-dependencies nil)
+		(setq org-enforce-todo-checkbox-dependencies nil)
+		(setq org-checkbox-hierarchical-statistics nil)
+
 		(org-indent-mode t) ;; <-- Everything false back to two spaces when not set. Is this my culprit?
 		(my/org-checkbox-pretty-and-colored)
 		(set-face-attribute 'org-default nil :foreground "#a877bf")
@@ -945,6 +953,10 @@ before packages are loaded."
 		(define-key org-mode-map (kbd "RET") #'my/org-return-backspace-checkbox)
 
 		(add-hook 'org-mode-hook (lambda ()
+			(setq org-enforce-todo-dependencies nil)
+			(setq org-enforce-todo-checkbox-dependencies nil)
+			(setq org-checkbox-hierarchical-statistics nil)
+
 			(my/org-checkbox-pretty-and-colored)
 			(set-face-attribute 'org-default nil :foreground "#a877bf")
 			(buffer-face-set 'org-default)
@@ -958,23 +970,24 @@ before packages are loaded."
 	(custom-set-faces
 		'(org-todo ((t (:foreground "white" :weight bold))))
 	)
+	(setq org-enforce-todo-dependencies nil)
+	(setq org-enforce-todo-checkbox-dependencies nil)
 
-	(with-eval-after-load 'forge
-		(add-to-list 'forge-alist
-			'("github.com"
-				"api.github.com"
-				"github.com"
-				forge-github-repository
-			)
-		)
-	)
+
+	;; (with-eval-after-load 'forge
+	;; 	(add-to-list 'forge-alist
+	;; 		'("github.com"
+	;; 			"api.github.com"
+	;; 			"github.com"
+	;; 			forge-github-repository
+	;; 		)
+	;; 	)
+	;; )
 
 	;; Scroll by halfpage instead of full
 	(require 'view)
 	(define-key global-map (kbd "C-v") #'my/scroll-half-page-down)
 	(define-key global-map (kbd "M-v") #'my/scroll-half-page-up)
-	;; (global-set-key (kbd "C-v") 'my/scroll-half-page-down)
-	;; (global-set-key (kbd "M-v") 'my/scroll-half-page-up)
 
 	;; Getting cmd-v to not overwrite killring value
 	(setq interprogram-cut-function nil)
@@ -1034,6 +1047,16 @@ before packages are loaded."
 	;; 	;; Attach the jump AFTER the file-opening action
 	;; 	(advice-add 'helm-find-file-or-marked :after #'my-helm-jump-after-open)
 	;; )
+	(defun my-org-settings ()
+		(setq org-enforce-todo-checkbox-dependencies nil)
+		(setq org-enforce-todo-dependencies nil)
+		(setq org-checkbox-hierarchical-statistics nil)
+	)
+
+	(add-hook 'org-mode-hook #'my-org-settings)
+	(setq-default org-enforce-todo-checkbox-dependencies nil)
+	(setq-default org-checkbox-hierarchical-statistics nil)
+
 )
 
 (defun my/kill-to-beginning-of-line ()
