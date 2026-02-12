@@ -79,6 +79,7 @@ close with q
 
 ** Dirvish
 C-x f launch
+C-0 w copy full path of file to killring
 
 ** Flycheck/EsLint:
 leader e l to view all flycheck errors
@@ -91,7 +92,7 @@ M-x tide-documentation-at-point
 (setq tide-always-show-documentation t)
 
 ** Magit
-C-, g s # starts magit
+C-, g # starts magit
 s to stage files
 k to delete untracked files
 k to discard hunk
@@ -121,11 +122,7 @@ How do I set a todo? Appears to be only in ** precursed things
 C-c C-c toggles checkboxes
 
 
-* TODO try jtsx; apparently is supports better commenting in tsx files
-* TODO Could try out the Inconsolata nerd font
-
 * Golang:
-
 
 * Starship
 ~/.config/starship.toml
@@ -247,7 +244,6 @@ mongosh wwwinc-stag-eu-cf --quiet --eval "JSON.stringify(db.Product.find({}).toA
 mongosh $NAMING_PREFIX --quiet --eval "JSON.stringify(db.Product.find({}).toArray())" | jq ".[].sizingSystems[].variations"
 mongosh "$NAMING_PREFIX" --eval 'db.Client.updateMany({}, {$set: {"config.integrationMoveFiles": false, "config.integrationSrcPath": "/Users/michaelschneider/appropos/envoy-web"}})'
 mso "Client.deleteOne({code: 'faker-na'})"
-* tongo
 
 * cron
 sudo systemctl status crond
@@ -350,7 +346,7 @@ defaults write -g NSWindowShouldDragOnGesture -bool true
 Now, you can move windows by holding ctrl+cmd and dragging any part of the window (not necessarily the window title)
 has function built in that negates need for skhd. Set random OS level hotkeys to run stuff
 alt-, lays out windows horizontally (do again to toggle between vertical/horizontal)
-alt-/ lays out windows stacked
+alt-. lays out windows stacked
 alt-shift-tab swaps workspace onto secondary monitor
 alt-shift-h moves (swaps) window tile to the left
 alt-shift-l moves (swaps) window tile to the right
@@ -404,10 +400,6 @@ CLOSED: [2026-01-07 Wed 11:38]
  - [X]  Toy with lights
 
 * TODO lazysql (TUI app for sqlite)
-
-Postgres is not a database
-https://www.youtube.com/watch?v=b7eXdUOzUTM
-5 minutes
 
 * Brow6el is a browser that runs in a terminal
 * Opencode

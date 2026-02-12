@@ -81,6 +81,14 @@ automatically-unhide-macos-hidden-apps = false
     ctrl-shift-alt-z = 'exec-and-forget open -a zoom.us'
     ctrl-shift-alt-c = 'exec-and-forget open -a Google\ Chrome'
     ctrl-shift-alt-v = 'exec-and-forget open -a Visual\ Studio\ Code'
+    ctrl-shift-alt-d = "exec-and-forget zsh -c 'open ~/Downloads/*(om[1])'"
+    ctrl-shift-alt-t = [
+        'exec-and-forget open -a iTerm --args -p Downloads',
+        # 'layout floating',
+        # 'layout tiling',
+        'resize smart 300'
+        # 'move-mouse window-force-center'           # Centers mouse/focus (AeroSpace trick)
+    ]
     ctrl-shift-alt-cmd-m = 'exec-and-forget open -a Studio\ 3T'
     ctrl-shift-alt-cmd-j = 'exec-and-forget ~/dotfiles/sketchybar/scripts/caffeine.sh toggle'
 
@@ -229,3 +237,9 @@ automatically-unhide-macos-hidden-apps = false
     down = 'volume down'
     up = 'volume up'
     shift-down = ['volume set 0', 'mode main']
+
+[[on-window-detected]]
+    if.app-id = 'com.googlecode.iterm2'
+    run = [
+        'layout floating'
+    ]
