@@ -25,6 +25,8 @@ export VITE_REACT_APP_API_URL=http://localhost:8080
 export VITE_REACT_APP_API_WS="ws://localhost:8080"
 export VITE_REACT_APP_GOOGLE_CLIENT_ID="85730891639-c4ahs2ldb2i2cmjaom4v02ijc6rjjkt1.apps.googleusercontent.com"
 
+export JIRA_API_TOKEN="nsaJfxujotlQYWyfzxMMCB92"
+
 select_env() {
     local arg="$1"
     eval "$("$HOME/code/tools-and-infrastructure/scripts/developer/select_env_menu.sh" "$arg")"

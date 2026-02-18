@@ -94,7 +94,8 @@ M-x tide-documentation-at-point
 ** Magit
 C-, g # starts magit
 s to stage files
-k to delete untracked files
+k t
+o delete untracked files
 k to discard hunk
 b c # similar to git checkout -b
 c c to commit
@@ -298,6 +299,7 @@ jq '.team[] | keys' pp.json
 jq '.team[] | select(.skills | index("Java"))' pp.json # index seems to match on string "Java" in skills array
 gojq can also parse yaml, and convert between yaml and json
 jq "[.products[].skus[].props.qtyOpen] | add"
+msa "ShipMethod.find({})" | jq '.[] | {code: .code, desc: .languages[].description}'
 
 * YQ:
 yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_status.251202010530.csv
@@ -309,6 +311,16 @@ To filter and use JQL:
 https://envoyplatform.atlassian.net/issues?filter=11900&jql=project%20in%20%28EP%2C%20EI%29%20AND%20fixVersion%20%3D%20v40%20AND%20%22Deployment%20Notes%22%20is%20not%20EMPTY
 * Jira API
     https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+* Jira CLI:
+michael.schneider@appropos.com
+Configuration generated: /Users/michaelschneider/.config/.jira/.config.yml
+jira issue list
+jira issue list -a$(jira me)
+jira issue comment add EP-13067
+jira issue view EP-13221 --comments 20
+jira epic list
+jira sprint list
+v to view a ticket
 
 * Dump Dev Database
 Log into shared dev server in Studio 3T
@@ -360,6 +372,11 @@ brew services stop sketchybar
 brew services restart sketchybar
 Is the Slack icon appearing or not based on if I'm in laptop of docked mode?
 
+* Slack:
+Cmd+o to attach a file (opens in Downloads folder by default)
+Cmd+/ opens the keyboard shortcut cheetsheet
+Cmd+shift+/ react to last line
+cmd+shift+h to start/stop huddle
 
 * gh:
 gh auth status

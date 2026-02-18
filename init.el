@@ -159,31 +159,37 @@
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-    '(
-      (typescript-ts-mode tsx-ts-mode) . ("/Users/michaelschneider/.nvm/versions/node/v18.12.1/bin/typescript-language-server " "--stdio")
-      ;; :initializationOptions
-      ;; (:settings (:rulesCustomizations [(:rule "*" :severity "warn")]))
-    )
-  )
-
-  (add-to-list 'eglot-server-programs
-    '((typescript-ts-mode tsx-ts-mode) . ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/typescript-language-server/lib/cli.mjs" "--stdio")))
-
-  (add-to-list 'eglot-server-programs
-    '((js-ts-mode js-mode) .
-      ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/vscode-langservers-extracted/lib/eslint-language-server/eslintServer.js" "--stdio"
-        :initializationOptions
-        (:settings (
-            :workingDirectories [(:directory "./client" :changeProcessCWD t)
-              (:directory "./server" :changeProcessCWD t)]
-            :validate ["javascript" "javascriptreact" "typescript" "typescriptreact"]
-            :rulesCustomizations [(:rule "*" :severity "warn")]
-          )
-        )
-      )
-    )
+      '((typescript-mode js-mode typescript-ts-mode) . ("typescript-language-server" "--stdio"))
   )
 )
+
+;; (with-eval-after-load 'eglot
+;;   (add-to-list 'eglot-server-programs
+;;     '(
+;;       (typescript-ts-mode tsx-ts-mode) . ("/Users/michaelschneider/.nvm/versions/node/v18.12.1/bin/typescript-language-server " "--stdio")
+;;       ;; :initializationOptions
+;;       ;; (:settings (:rulesCustomizations [(:rule "*" :severity "warn")]))
+;;     )
+;;   )
+
+;;   (add-to-list 'eglot-server-programs
+;;     '((typescript-ts-mode tsx-ts-mode) . ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/typescript-language-server/lib/cli.mjs" "--stdio")))
+
+;;   (add-to-list 'eglot-server-programs
+;;     '((js-ts-mode js-mode) .
+;;       ("node" "/Users/michaelschneider/.nvm/versions/node/v18.12.1/lib/node_modules/vscode-langservers-extracted/lib/eslint-language-server/eslintServer.js" "--stdio"
+;;         :initializationOptions
+;;         (:settings (
+;;             :workingDirectories [(:directory "./client" :changeProcessCWD t)
+;;               (:directory "./server" :changeProcessCWD t)]
+;;             :validate ["javascript" "javascriptreact" "typescript" "typescriptreact"]
+;;             :rulesCustomizations [(:rule "*" :severity "warn")]
+;;           )
+;;         )
+;;       )
+;;     )
+;;   )
+;; )
 
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
@@ -509,6 +515,25 @@ Reselects duplicated region under Spacemacs holy mode."
 ; ====================
 (setq dirvish-attributes '(file-size vcs-state icons collapse subtree-state))
 
+(defun my/dirvish-copy-relative-path-to-clipboard ()
+  "Copy the current file path relative to projectile root directly to macOS clipboard."
+  (interactive)
+  (let* ((filename (dired-get-filename nil t))
+         (project-root (projectile-project-root))
+         (relative-path (if project-root
+                            (file-relative-name filename project-root)
+                          (file-name-nondirectory filename))))
+    (when relative-path
+      ;; Use shell-command-on-region to pipe the string to pbcopy
+      (shell-command-to-string (format "echo -n %s | pbcopy" (shell-quote-argument relative-path)))
+      (message "Copied to system clipboard: %s" relative-path)
+    )
+  )
+)
+(with-eval-after-load 'dirvish
+  (define-key dirvish-mode-map (kbd "w") #'my/dirvish-copy-relative-path-to-clipboard)
+)
+
 ; ====================
 ; ORG Mode
 ; ====================
@@ -589,7 +614,8 @@ Reselects duplicated region under Spacemacs holy mode."
 
 ;; Remember cursor location upon reopening file
 (save-place-mode 1)
-;; (add-hook 'find-file-hook (lambda () (recenter-top-bottom)) t)
+(add-hook 'isearch-update-post-hook 'recenter)
+
 ;; ;; Bonus, smooth scrolling
 ;; (setq scroll-margin 5           ; Start scrolling when 5 lines from top/bottom
 ;;       scroll-step 1             ; Scroll 1 line at a time
