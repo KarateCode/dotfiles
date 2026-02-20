@@ -386,6 +386,7 @@ gh pr view PR_NUMBER
 gh pr status
 gh pr merge PR_NUMBER --squash --delete-branch
 gh pr diff | delta (or `gh pr diff PR_NUMBER | delta`)
+gh pr diff | diffnav
 
 * Carapace
 auto completion for Go and pretty much everything else
