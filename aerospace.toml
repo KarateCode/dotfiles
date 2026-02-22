@@ -82,6 +82,7 @@ automatically-unhide-macos-hidden-apps = false
     ctrl-shift-alt-c = 'exec-and-forget open -a Google\ Chrome'
     ctrl-shift-alt-v = 'exec-and-forget open -a Visual\ Studio\ Code'
     ctrl-shift-alt-d = "exec-and-forget zsh -c 'open ~/Downloads/*(om[1])'"
+    ctrl-shift-alt-r = "exec-and-forget zsh -c ~/dotfiles/scripts/delete_recent_download_file.sh"
     ctrl-shift-alt-t = [
         'exec-and-forget open -a iTerm --args -p Downloads',
         # 'layout floating',
@@ -122,9 +123,9 @@ automatically-unhide-macos-hidden-apps = false
     # '''
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-    alt-period = 'layout tiles horizontal vertical'
+    ctrl-shift-alt-cmd-period = 'layout tiles horizontal vertical'
     # alt-slash = 'layout tiles horizontal vertical'
-    alt-comma = 'layout accordion horizontal vertical'
+    ctrl-shift-alt-cmd-comma = 'layout accordion horizontal vertical'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
     alt-h = 'focus left'
@@ -243,3 +244,9 @@ automatically-unhide-macos-hidden-apps = false
     run = [
         'layout floating'
     ]
+
+# Rule 2: The new Chrome DevTools rule
+# [[on-window-detected]]
+#     if.app-id = 'com.google.Chrome'
+#     if.window-title-regex-substring = 'DevTools'
+#     run = 'resize width 33'
