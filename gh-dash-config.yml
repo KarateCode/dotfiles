@@ -18,10 +18,10 @@ repo:
 defaults:
     preview:
         open: true
-        width: 50
-    prsLimit: 20
-    prApproveComment: LGTM
-    issuesLimit: 20
+        width: 100
+    prsLimit: 40
+    prApproveComment: Approved
+    issuesLimit: 40
     view: prs
     layout:
         prs:
@@ -69,6 +69,11 @@ theme:
         table:
             showSeparator: true
             compact: false
+    colors:
+        # text:
+        #     secondary: "#ff0000"
+        # background:
+        #     selected: "#ff0000"
 pager:
     diff: diffnav
 confirmQuit: false

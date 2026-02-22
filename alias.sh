@@ -13,6 +13,7 @@ alias ddownloads='~/dotfiles/scripts/delete_download_files.sh'
 alias hss='~/dotfiles/scripts/ssh_fzf.sh'
 alias sl='pmset sleepnow'
 alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
+alias jdev='jira issue list -s"Dev Review"'
 
 alias nr='npm run'
 alias nt='npm test'

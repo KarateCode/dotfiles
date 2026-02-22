@@ -321,6 +321,7 @@ jira issue view EP-13221 --comments 20
 jira epic list
 jira sprint list
 v to view a ticket
+jira issue list -s"Dev Review""
 
 * Dump Dev Database
 Log into shared dev server in Studio 3T
