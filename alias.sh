@@ -14,9 +14,11 @@ alias hss='~/dotfiles/scripts/ssh_fzf.sh'
 alias sl='pmset sleepnow'
 alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
 alias jdev='jira issue list -s"Dev Review"'
+alias jme='jira issue list -a$(jira me)'
+alias ntc='tmuxinator npm-test-concurrent --append'
 
 alias nr='npm run'
-alias nt='npm test'
+alias nt='npm run test:concurrent'
 alias nrt='npm run test-one'
 alias nrd='npm run dev'
 alias nrs='npm run test:server'
@@ -27,7 +29,6 @@ alias td='npm run test-database 2>/dev/null'
 
 alias cod='git checkout develop'
 alias pd='git pull origin develop'
-alias scour='~/dotfiles/scripts/scour.sh'
 alias ns='cd ~/appropos/envoy-web/server && ./bin/run-dev-server'
 alias o='~/dotfiles/scripts/next_rebase_file.sh'
 alias fd='~/dotfiles/scripts/next_git_diff_file.sh'
@@ -74,14 +75,6 @@ alias fcode='fzf | cut -d ":" -f 1 | xargs code'
 alias gt="~/dotfiles/scripts/colorize_go_tests.bash"
 alias gtr="~/dotfiles/scripts/colorize_go_test_run.bash"
 alias lastc='git log -p -1'
-
-alias conint='ssh -i ~/.ssh/con-envoy-stag-eu-west-1.pem ec2-user@ec2-52-16-118-244.eu-west-1.compute.amazonaws.com'
-alias envint='ssh -i ~/.ssh/app-envoy-prod-us-east-1.pem ec2-user@ec2-52-4-132-185.compute-1.amazonaws.com'
-alias awtint='ssh -i ~/.ssh/app-envoy-prod-us-east-1.pem ubuntu@ec2-23-23-175-155.compute-1.amazonaws.com'
-alias wwwint='ssh -i ~/.ssh/www-envoy-vpc.pem ec2-user@ec2-54-174-109-36.compute-1.amazonaws.com'
-alias appdev='ssh -i ~/.ssh/app-envoy-stag-us-east-1.pem ec2-user@52.6.239.36'
-alias wwwdev='ssh -i ~/.ssh/www-envoy-vpc-uat.pem ec2-user@52.22.40.7'
-alias condev='ssh -i ~/.ssh/con-envoy-stag-eu-west-1.pem ec2-user@52.30.49.202'
 
 # alias emacs='emacs -nw'
 alias fix_know_hosts="cd ~/.ssh; sed -i '' '/UserKnownHostsFile/d' config; cd -"

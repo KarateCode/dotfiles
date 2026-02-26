@@ -322,6 +322,9 @@ jira epic list
 jira sprint list
 v to view a ticket
 jira issue list -s"Dev Review""
+jira issue move
+jira issue move EP-13221 "Ready For Testing"
+
 
 * Dump Dev Database
 Log into shared dev server in Studio 3T
@@ -339,6 +342,11 @@ sftp Matador2@sftp.envoyb2b.com password: cuh55VkkR7rbyyIOaD/1pg==
 ssh envoy-prod-na-sftp
 * FTPS
 lftp -e "set ftp:ssl-protect-data yes; set ftp:ssl-force yes; open -u username,password ftps.example.com"
+
+* SSH config:
+Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
+To fix ^^, comment out in ssh config: UserKnownHostsFile=/dev/null
+ - [ ]  Still need to figure out the fix for mbongo not connecting
 
 * Scripting ideas
 I've moved around symlinks, what about unaliasing and re-aliasing?

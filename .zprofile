@@ -6,7 +6,7 @@ bindkey -e
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 # export PATH="/opt/homebrew/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
-export TMUXINATOR_CONFIG=/Users/michaelschneider/code/envoy-tmuxinator-configs/configs
+export TMUXINATOR_CONFIG=/Users/michaelschneider/code/tmuxinator-configs/configs
 export RIPGREP_CONFIG_PATH=/Users/michaelschneider/.ripgreprc
 # alias ls='gls --color=auto --group-directories-first'
 # alias ls='ls -G'
@@ -52,6 +52,8 @@ jview() {
     echo "Fetching issue: $input..."
     jira issue view "$input" --comments 50
 }
+
+source /opt/homebrew/share/zsh-autopair/autopair.zsh
 
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
