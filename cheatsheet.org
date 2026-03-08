@@ -201,7 +201,7 @@ C-K C-S to see shortcut tool
 * dump dev to local:
 mongodump --out=/client/dump/dump_7_21_2025 --excludeCollection=ImportRow --excludeCollection=HouseLogRow --excludeCollection=Event --excludeCollection=EventAggregate --excludeCollection=CardConnectIntegration --uri=$MONGO_CONNECTION_STRING
 aws secretsmanager get-secret-value --secret-id "envoy-dev-na-cf-bauer-na_CONNECTION_STRING" | jq -r '.SecretString'
-history | grep SUBPREFIX gets you started running tasks on dev server
+history | grep SUBPREFIX # gets you started running tasks on dev server
 
 * Ghostty
 https://www.youtube.com/watch?v=enwDjM7pNNE (cursor trails)
@@ -316,7 +316,7 @@ michael.schneider@appropos.com
 Configuration generated: /Users/michaelschneider/.config/.jira/.config.yml
 jira issue list
 jira issue list -a$(jira me)
-jira issue comment add EP-13067
+jira issue comment add EP-13067 # (will prompt to open in emacs)
 jira issue view EP-13221 --comments 20
 jira epic list
 jira sprint list
@@ -324,6 +324,9 @@ v to view a ticket
 jira issue list -s"Dev Review""
 jira issue move
 jira issue move EP-13221 "Ready For Testing"
+
+* New Relic:
+Netsuite integration dataposts to our endpoints are keyed by requestId and stored in s3
 
 
 * Dump Dev Database

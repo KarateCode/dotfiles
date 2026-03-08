@@ -84,6 +84,12 @@
   (add-hook 'dired-mode-hook #'dired-omit-mode)
   (setq dired-omit-files "^\\.[^.]?\\|^\\.\\.$")
 
+  (setq dirvish-side-follow-mode t)
+
+(use-package jq-mode
+  :ensure t
+  :mode "\\.jq\\'")
+
   ;; --- Keybindings ---
   :bind
   (:map dired-mode-map
@@ -206,6 +212,7 @@
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.mongodb\\'" . js-mode))
 
 ;; 2. Optional: Automatically prefer TS Tree-sitter modes over legacy modes
 (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))

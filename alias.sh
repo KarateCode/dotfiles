@@ -11,10 +11,12 @@ alias gitbd='~/dotfiles/scripts/delete_local_git_branches.sh'
 alias bounceenv='~/dotfiles/scripts/setup_local_env.sh'
 alias ddownloads='~/dotfiles/scripts/delete_download_files.sh'
 alias hss='~/dotfiles/scripts/ssh_fzf.sh'
+alias tssh='~/dotfiles/scripts/tunnel_ssh.sh'
+alias tkill='if pids=$(lsof -t -i :27018); then echo "$pids" | xargs kill && echo "Tunnel killed"; else echo "No tunnel active"; fi'
 alias sl='pmset sleepnow'
 alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
-alias jdev='jira issue list -s"Dev Review"'
-alias jme='jira issue list -a$(jira me)'
+alias jdev='mb-jira-cli --toggleview="column" --filter="Dev Review"'
+alias jme='mb-jira-cli --toggleview="table" --filter="Me"'
 alias ntc='tmuxinator npm-test-concurrent --append'
 
 alias nr='npm run'
@@ -48,6 +50,7 @@ alias cemacs="xargs sh -c 'emacs $@ < /dev/tty' emacs"
 alias preview="fzf --preview 'bat --style=numbers --color=always {}'"
 alias msa="~/dotfiles/scripts/mongo_shell_array.sh"
 alias mso="~/dotfiles/scripts/mongo_shell_object.sh"
+alias msf="~/dotfiles/scripts/mongo_shell_file.sh"
 
 alias ds='node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js'
 alias gl='bash ~/dotfiles/scripts/grep-git-log.sh'

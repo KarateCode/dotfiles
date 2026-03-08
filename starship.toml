@@ -12,6 +12,7 @@ $rust\
 $golang\
 $php\
 [](fg:#394260)\
+${custom.tunnel}\
 \n$character"""
 
 [directory]
@@ -70,6 +71,11 @@ disabled = true
 time_format = "%R" # Hour:Minute Format
 style = "bg:#1d2230"
 format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
+
+[custom.tunnel]
+command = "echo 'TUNNEL ACTIVE'"
+when = "lsof -i :27018"
+format = "\n[   $output   ](fg:#212736 bg:yellow)[](fg:yellow)"
 
 [character]
 success_symbol = "[▶︎](bold green)" # Symbol on command success ✈︎ ✒︎ ➤ ► ▶︎ ⚡︎ ♜ ☀︎ ➜
