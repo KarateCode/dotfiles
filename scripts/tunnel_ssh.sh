@@ -42,4 +42,15 @@ TUNNEL_SPEC="${LOCAL_PORT}:${host}:${REMOTE_PORT}"
 
 echo "  tunnel spec: $TUNNEL_SPEC"
 
-ssh -N -L $TUNNEL_SPEC $ssh_alias
+# Start SSH tunnel in background
+ssh -N -L $TUNNEL_SPEC $ssh_alias &
+SSH_PID=$!
+
+# Wait for tunnel to be established (check every 0.2 seconds)
+echo -n "  Waiting for tunnel"
+while ! lsof -i :$LOCAL_PORT > /dev/null 2>&1; do
+    echo -n "."
+    sleep 0.2
+done
+echo ""
+echo "  Tunnel established (PID: $SSH_PID)"
