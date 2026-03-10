@@ -50,6 +50,7 @@ alias cemacs="xargs sh -c 'emacs $@ < /dev/tty' emacs"
 alias preview="fzf --preview 'bat --style=numbers --color=always {}'"
 alias ms="~/dotfiles/scripts/mongo_shell_inline.sh"
 alias msf="~/dotfiles/scripts/mongo_shell_file.sh"
+alias mt='~/dotfiles/scripts/mongo_tui_launch.sh'
 
 alias ds='node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js'
 alias gl='bash ~/dotfiles/scripts/grep-git-log.sh'

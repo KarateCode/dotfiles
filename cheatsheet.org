@@ -167,8 +167,8 @@ prefix+U to force reload. Type 'all' at prompt
 prefix+o swaps the right and left pane
 prefix+shift+{ swaps a pane to the left
 prefix+shift+} swaps a pane to the right
- - [X]  Get panes to start in same directory (envoy-web), windows always at home @done(25-10-09 20:
- - [X]  set shortcut to resize panes
+tmux list-panes -F "#{pane_index} #{pane_width}x#{pane_height}"
+tmux display-message -p "#{window_layout}"
 Tmux hack for anytime it intercepts a keystroke:
     # Show a short message in the status line whenever tmux intercepts any key
     set -g display-time 500  # Message lasts half a second
