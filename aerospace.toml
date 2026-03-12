@@ -123,9 +123,9 @@ automatically-unhide-macos-hidden-apps = false
     # '''
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-    ctrl-shift-alt-cmd-period = 'layout tiles horizontal vertical'
+    ctrl-shift-alt-period = 'layout tiles horizontal vertical'
     # alt-slash = 'layout tiles horizontal vertical'
-    ctrl-shift-alt-cmd-comma = 'layout accordion horizontal vertical'
+    ctrl-shift-alt-comma = 'layout accordion horizontal vertical'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
     alt-h = 'focus left'
@@ -244,8 +244,10 @@ automatically-unhide-macos-hidden-apps = false
     run = [
         'layout floating'
     ]
-
-# Rule 2: The new Chrome DevTools rule
+    # if.workspace = "1"
+    # run = [
+    #     "resize width 16"# Rule 2: The new Chrome DevTools rule
+    # ]
 # [[on-window-detected]]
 #     if.app-id = 'com.google.Chrome'
 #     if.window-title-regex-substring = 'DevTools'
