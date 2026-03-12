@@ -10,6 +10,28 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+;; See if we're requesting Tiny Mode (add "--textbox" at the command line)
+;; van --eval "(progn (breadcrumb-mode -1) (setq-default mode-line-format nil)) (progn (setq mode-line-format nil) (fringe-mode 0) (menu-bar-mode -1) (tool-bar-mode -1) (scroll-bar-mode -1))" jq_filter.jq
+(when (member "--textbox" command-line-args)
+  ;; Remove the flag so Emacs doesn't try to process it as a file
+  (setq command-line-args (delete "--textbox" command-line-args))
+
+  ;; Apply your "One-Line" UI configuration
+  (breadcrumb-mode -1)
+  (progn (breadcrumb-mode -1) (setq-default mode-line-format nil))
+  (setq mode-line-format nil)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (setq display-buffer-alist '((".*" (display-buffer-same-window))))
+
+  ;; Silence the "Beginning/End of buffer" alerts
+  (setq command-error-function
+        (lambda (data context caller)
+          (unless (memq (car data) '(beginning-of-buffer end-of-buffer))
+            (command-error-default-function data context caller)))
+  )
+)
+
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 ;; Force the "TS" modes to 4 globally as a backup
