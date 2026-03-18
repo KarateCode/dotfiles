@@ -32,13 +32,20 @@ if [ -z "$_id" ]; then
     exit 1
 fi
 
-# Query MongoDB and output the record
-mongosh --quiet "mongodb://localhost:27017/$DATABASE_NAME" --eval "
+# Query MongoDB and save to temp file
+temp_file=$(mktemp).json
+echo $temp_file
+result=$(mongosh --quiet "mongodb://localhost:27017/$DATABASE_NAME" --eval "
     const doc = db.getCollection('$collection_name').findOne({ _id: ObjectId('$_id') });
     if (doc) {
         printjson(doc);
-    } else {
-        print('No document found with _id: $_id');
     }
-"
+")
+
+if [ -n "$result" ]; then
+    echo "$result" > "$temp_file"
+    $EDITOR "$temp_file" < /dev/tty
+else
+    echo "No document found with _id: $_id"
+fi
 
