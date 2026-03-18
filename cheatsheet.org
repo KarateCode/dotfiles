@@ -111,13 +111,6 @@ r r for git rebase continue
     C-c C-c to save commit message and proceed
 z k drop stash
 
-*** Forge
-forge-pull a to download all PR's
-d d to view a PR diff (up and enter to easily enter 'develop' as branch to diff against)
-e from PR diff to open a file in side-by-side view
-m s to Squash and Merge the PR
-gpg password is 'password' if prompted
-
 ** ORG mode
 How do I set a todo? Appears to be only in ** precursed things
 C-c C-c toggles checkboxes
@@ -168,7 +161,7 @@ prefix+o swaps the right and left pane
 prefix+shift+{ swaps a pane to the left
 prefix+shift+} swaps a pane to the right
 tmux list-panes -F "#{pane_index} #{pane_width}x#{pane_height}"
-tmux display-message -p "#{window_layout}"
+tmux display-message -p "#{window_layout}" # outputs the goo that goes in tmuxinator scripts
 Tmux hack for anytime it intercepts a keystroke:
     # Show a short message in the status line whenever tmux intercepts any key
     set -g display-time 500  # Message lasts half a second
@@ -420,19 +413,17 @@ https://www.youtube.com/watch?v=iBkDhtjqXhA
 
 * Expanso is like snippets for your terminal
  - [ ]  Is this something that works across ssh? because I could really use an mso/msa snippet!
-* DONE Moonlander keyboard!
-CLOSED: [2026-01-07 Wed 11:38]
- - [X]  Ordered!
- - [X]  consier mapping alt-{ instead of alt-shift-{ to line hopper
- - [X]  or better yet, it doesn't look like alt-i and alt-k do anything productive; map those!
- - [X]  map hyper-s to Slack.
- - [X]  Need to version control aerospace.toml!!!
- - [X]  Toy with lights
+* Moonlander:
 
 * TODO lazysql (TUI app for sqlite)
 
 * Brow6el is a browser that runs in a terminal
 * Opencode
+Big Pickle is an LLM offered for free by opencode
+Is /sessions how you go back to an old thread?
+You can make agents, MD files that help AI do a specific task
+Skills can be loaded on demand (just another prompt injection to guide)
+Can pop your Editor!
      | Action | Keybind |
      |--------|---------|
      | Page Up | PageUp |

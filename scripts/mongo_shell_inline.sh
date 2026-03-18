@@ -2,12 +2,13 @@
 # an alias sets this script to `ms1` in alias.sh
 # Usage: ms1 'Product.findOne({})'
 
-if [ -z "$NAMING_PREFIX" ]; then
-    echo "NAMING_PREFIX not set" >&2
-    exit 1
-fi
-
 QUERY=$1
+
+# Parse collection name from query (e.g., 'Customer.find({...})' -> 'Customer')
+COLLECTION_NAME=$(echo "$QUERY" | sed -n 's/^\([^.]*\)\..*$/\1/p')
+
+# Write collection name to a hardcoded temp file (overwrites each time)
+echo "$COLLECTION_NAME" > /tmp/mongo_collection_name
 
 # Build the eval expression
 # If query contains 'find(' or 'aggregate(', it returns a cursor and needs .toArray()
@@ -19,7 +20,6 @@ fi
 
 # Check if SSH tunnel is active on port 27018
 if lsof -i :27018 > /dev/null 2>&1; then
-    # echo "Active SSH tunnel detected on port 27018"
 
     # Parse credentials from cached remote URI
     REMOTE_URI=$(cat "$HOME/.config/.mongo-remote-uri")
@@ -31,5 +31,10 @@ if lsof -i :27018 > /dev/null 2>&1; then
 
     mongosh "$LOCAL_URI" --quiet --eval "$EVAL_EXPR"
 else
+    if [ -z "$NAMING_PREFIX" ]; then
+        echo "NAMING_PREFIX not set" >&2
+        exit 1
+    fi
+
     mongosh "$NAMING_PREFIX" --quiet --eval "$EVAL_EXPR"
 fi

@@ -26,6 +26,7 @@ export VITE_REACT_APP_API_WS="ws://localhost:8080"
 export VITE_REACT_APP_GOOGLE_CLIENT_ID="85730891639-c4ahs2ldb2i2cmjaom4v02ijc6rjjkt1.apps.googleusercontent.com"
 
 export JIRA_API_TOKEN="nsaJfxujotlQYWyfzxMMCB92"
+export FZF_DEFAULT_OPTS='--bind "ctrl-a:select-all,ctrl-d:deselect-all"'
 
 select_env() {
     local arg="$1"
@@ -61,4 +62,4 @@ zstyle ':completion:*' menu select
 
 # source ~/.zshrc
 
-WORDCHARS='~!#$%^&*(){}<>?+;_\|@`-'
+WORDCHARS='~!#$%^&*{}<>?+;_\|@`-'
