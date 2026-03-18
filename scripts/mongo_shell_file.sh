@@ -3,11 +3,6 @@
 # Usage: mongo_shell_file.sh -f <file> | mongo_shell_file.sh --file <file>
 # Default query file: $HOME/working/query.mongodb (e.g., 'Customer.find()')
 
-if [ -z "$NAMING_PREFIX" ]; then
-    echo "NAMING_PREFIX not set" >&2
-    exit 1
-fi
-
 # Default query file
 QUERY_FILE="$HOME/working/query.mongodb"
 
@@ -53,5 +48,10 @@ if lsof -i :27018 > /dev/null 2>&1; then
 
     mongosh "$LOCAL_URI" --quiet --eval "$EVAL_EXPR"
 else
+    if [ -z "$NAMING_PREFIX" ]; then
+        echo "NAMING_PREFIX not set" >&2
+        exit 1
+    fi
+
     mongosh "$NAMING_PREFIX" --quiet --eval "$EVAL_EXPR"
 fi
