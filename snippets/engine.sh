@@ -49,3 +49,26 @@ bindkey '.' _delim_expand
 bindkey '/' _delim_expand
 
 bindkey '^I' _jump_abbr
+
+# Popup fzf menu that inserts selection at cursor
+_fzf_popup_insert() {
+    local tmp_file="/tmp/fzf_popup_selection"
+    rm -f "$tmp_file"
+
+    # Run fzf in a tmux popup - customize the input source as needed
+    tmux display-popup -E -w 80% -h 60% "echo -e 'option1\noption2\noption3\nfoo\nbar\nbaz' | fzf --prompt='Select: ' > $tmp_file"
+
+    # Read selection and insert at cursor
+    if [[ -f "$tmp_file" ]]; then
+        local selection=$(<"$tmp_file")
+        if [[ -n "$selection" ]]; then
+            LBUFFER+="$selection"
+        fi
+        rm -f "$tmp_file"
+    fi
+
+    zle redisplay
+}
+
+zle -N _fzf_popup_insert
+bindkey '^[,' _fzf_popup_insert

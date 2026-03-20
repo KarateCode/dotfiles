@@ -520,6 +520,20 @@ Reselects duplicated region under Spacemacs holy mode."
 )
 
 ; ====================
+; Adjusting Word chars
+; ====================
+(defun my/set-underscore-as-word ()
+  "Treat underscore as a word constituent in the current buffer."
+  (modify-syntax-entry ?_ "w"))
+
+(dolist (hook '(js-mode-hook
+                typescript-mode-hook
+                js-ts-mode-hook
+                ruby-mode-hook
+                go-mode-hook))
+  (add-hook hook #'my/set-underscore-as-word))
+
+; ====================
 ; UI Tweaks
 ; ====================
 (setq scroll-conservatively 101)
