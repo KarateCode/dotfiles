@@ -50,25 +50,51 @@ bindkey '/' _delim_expand
 
 bindkey '^I' _jump_abbr
 
-# Popup fzf menu that inserts selection at cursor
-_fzf_popup_insert() {
+# Popup fzf menu to select MongoDB field names and insert at cursor
+_fzf_mongo_fields() {
     local tmp_file="/tmp/fzf_popup_selection"
+    local tmp_collection="/tmp/fzf_popup_collection"
     rm -f "$tmp_file"
 
-    # Run fzf in a tmux popup - customize the input source as needed
-    tmux display-popup -E -w 80% -h 60% "echo -e 'option1\noption2\noption3\nfoo\nbar\nbaz' | fzf --prompt='Select: ' > $tmp_file"
+    # Get full command line and parse collection name
+    # Matches patterns like: Client.find(), Product.aggregate(), etc.
+    local full_line="$LBUFFER$RBUFFER"
+    local collection_name=$(echo "$full_line" | sed -E -n 's/.*([A-Z][a-zA-Z]*).(find|findOne|aggregate|count|distinct).*/\1/p')
+
+    if [[ -z "$collection_name" ]]; then
+        zle -M "Could not parse collection name from command line"
+        return
+    fi
+    # echo "collection_name: $collection_name"
+
+    # Write collection name to temp file for the popup script to read
+    echo "$collection_name" > "$tmp_collection"
+
+    # Run fzf in a tmux popup with mongosh providing field names
+    popup_script="
+        select_env=$DATABASE_NAME
+        collection=\$(< $tmp_collection)
+        echo 'key' > $tmp_file
+        mongosh \"$DATABASE_NAME\" --quiet --eval \"JSON.stringify(db.getCollection('\$collection').findOne())\" |
+        jq -r '. | (with_entries(select(.value | type != \"object\" and type != \"array\"))) | keys - [\"_id\"] | .[]' |
+        fzf --multi --prompt='Select fields: ' >> $tmp_file
+    "
+    tmux display-popup -E -w 80% -h 60% $popup_script
 
     # Read selection and insert at cursor
     if [[ -f "$tmp_file" ]]; then
-        local selection=$(<"$tmp_file")
+        local selection=$(< "$tmp_file" | yq -p=csv '.[] |= .key + ": 1" | join(", ")') # actual mongo (not mongoose) syntax
+        # local selection=$(< "$tmp_file" | yq -p=csv ".[] |= \"'\" + .key + \"'\" | join(\", \")") # wrapped in single quotes
+        # local selection=$(< "$tmp_file" | yq -p=csv '.[] |= "\"" + .key + "\"" | join(", ")') # wrapped in double quotes
         if [[ -n "$selection" ]]; then
             LBUFFER+="$selection"
         fi
         rm -f "$tmp_file"
     fi
+    rm -f "$tmp_collection"
 
     zle redisplay
 }
 
-zle -N _fzf_popup_insert
-bindkey '^[,' _fzf_popup_insert
+zle -N _fzf_mongo_fields
+bindkey '^[,' _fzf_mongo_fields

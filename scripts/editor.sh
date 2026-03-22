@@ -19,8 +19,8 @@ fi
 
 # Extract _id from JSON
 # First try to get _id directly (if input is an object)
-_id=$(echo "$json_input" | jq -r '._id // empty' 2>/dev/null)
-
+_id=$(echo $json_input | jq -r '._id // empty' 2>/dev/null)
+echo "_id: $_id"
 # If that fails or is empty, try to get first element's _id (if input is an array)
 if [ -z "$_id" ]; then
     _id=$(echo "$json_input" | jq -r '.[0]._id // empty' 2>/dev/null)
