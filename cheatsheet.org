@@ -14,7 +14,7 @@ S-e highlights current word
 C-/ undo
 
 M-: (eval-expression): Prompts you to type a Lisp expression in the minibuffer, which is then evaluated.
-M-x describe-mode
+C-h m (or M-x describe-mode)
 M-: (fboundp 'tide-eldoc-function) is a way to check if internal functions exist
 (message "### Adding tide-eldoc-function to eldoc-documentation-functions.")
 M-RET h h lsp-describe-thing-at-point
@@ -296,6 +296,8 @@ msa "ShipMethod.find({})" | jq '.[] | {code: .code, desc: .languages[].descripti
 
 * YQ:
 yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_status.251202010530.csv
+yq -p=csv '.[] |= "\"" + .key + "\"" | join(", ")'
+
 
 * Jira UI
 To filter and use JQL:

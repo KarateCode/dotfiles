@@ -519,6 +519,14 @@ Reselects duplicated region under Spacemacs holy mode."
     (consult-ripgrep default-directory ""))
 )
 
+(defun smart-kill-region-or-word ()
+  "Kill the active region if it exists; otherwise, kill the word behind the cursor."
+  (interactive)
+  (if (use-region-p)
+      (call-interactively 'kill-region)
+    (backward-kill-word 1)))
+(global-set-key (kbd "C-w") 'smart-kill-region-or-word)
+
 ; ====================
 ; Adjusting Word chars
 ; ====================
