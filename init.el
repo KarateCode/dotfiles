@@ -641,6 +641,27 @@ Reselects duplicated region under Spacemacs holy mode."
 ;; Ensure that typing a bracket with an active region wraps the text
 (setq electric-pair-preserve-balance t)
 
+;; Disable electric-pair-mode when pasting to prevent duplicate closing chars
+(defvar my/pasting nil "Non-nil when a paste operation is in progress.")
+
+(defun my/disable-electric-pair-during-paste (orig-fun &rest args)
+  "Temporarily disable electric-pair-mode during paste operations."
+  (let ((my/pasting t))
+    (apply orig-fun args)))
+
+(defun my/electric-pair-inhibit-if-pasting (char)
+  "Inhibit electric pairing when pasting."
+  my/pasting)
+
+(setq electric-pair-inhibit-predicate
+      (lambda (char)
+        (or my/pasting
+            (electric-pair-default-inhibit char))))
+
+(advice-add 'yank :around #'my/disable-electric-pair-during-paste)
+(advice-add 'yank-pop :around #'my/disable-electric-pair-during-paste)
+(advice-add 'clipboard-yank :around #'my/disable-electric-pair-during-paste)
+
 (setq-default show-trailing-whitespace t)
 ;; 1. Disable backup files (the ones ending in ~)
 (setq make-backup-files nil)
