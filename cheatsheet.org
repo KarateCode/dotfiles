@@ -412,6 +412,7 @@ https://www.youtube.com/watch?v=3xmD4E2aqxo
 https://www.youtube.com/watch?v=uJsZATwQ3R8
 ls | where type == dir
 ls | sort-by modified --reverse
+supports csv toml json sqlite
 * Devs are better than AI; learn to hack
 https://www.youtube.com/watch?v=iBkDhtjqXhA
 

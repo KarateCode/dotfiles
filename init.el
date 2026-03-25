@@ -690,6 +690,9 @@ Reselects duplicated region under Spacemacs holy mode."
 (save-place-mode 1)
 (add-hook 'isearch-update-post-hook 'recenter)
 
+;; Center line after goto-line (M-g M-g)
+(advice-add 'goto-line :after (lambda (&rest _) (recenter)))
+
 ;; ;; Bonus, smooth scrolling
 ;; (setq scroll-margin 5           ; Start scrolling when 5 lines from top/bottom
 ;;       scroll-step 1             ; Scroll 1 line at a time
