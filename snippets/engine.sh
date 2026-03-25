@@ -96,5 +96,10 @@ _fzf_mongo_fields() {
     zle redisplay
 }
 
+_fzf_mongo_table_names() {
+    ms "getCollectionNames()" | jq -r ".[]" | sort | fzf | tr -d '[:space:]'
+}
 zle -N _fzf_mongo_fields
 bindkey '^[,' _fzf_mongo_fields
+zle -N _fzf_mongo_table_names
+bindkey '^[t' _fzf_mongo_table_names

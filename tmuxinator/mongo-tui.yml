@@ -1,0 +1,29 @@
+name: mongo-tui
+root: ~/working
+windows:
+  - Mongo TUI:
+      # layout: tiled
+      # layout: be92,204x51,0,0{152x51,0,0,1,51x51,153,0,2}
+      layout: 5a3a,300x66,0,0{150x66,0,0[150x4,0,0,21,150x61,0,5,22],149x66,151,0[149x64,151,0,23,149x1,151,65,24]}
+      # synchronize: after
+      panes:
+        - |-
+          touch jq_filter.jq
+          van --textbox --eval "(progn (breadcrumb-mode -1) (setq-default mode-line-format nil))" jq_filter.jq
+        - |-
+          tmux set pane-border-lines single
+          tmux set pane-border-style "fg=#00FFFF"
+          tmux set pane-active-border-style "fg=#00FFFF"
+          touch query.mongodb
+          tmux select-pane -t 1
+          van query.mongodb
+        - |
+          select_env <%= @args[0] %>
+          echo "" > output.txt
+          echo -e "query.mongodb\njq_filter.jq" | entr zsh -c "clear && tmux clear-history && ~/dotfiles/scripts/mongo_shell_file.sh | tee output.txt | jq -f jq_filter.jq"
+        - |-
+          sleep 2
+          tmux resize-pane -t 0 -D 1
+          sleep 0.2
+          tmux resize-pane -t 0 -U 1
+          tail -f ~/working/output.txt | ~/tuis/mongo_title/mongo_title

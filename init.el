@@ -537,6 +537,8 @@ Reselects duplicated region under Spacemacs holy mode."
 (dolist (hook '(js-mode-hook
                 typescript-mode-hook
                 js-ts-mode-hook
+                typescript-ts-mode-hook
+                bash-ts-mode-hook
                 ruby-mode-hook
                 go-mode-hook))
   (add-hook hook #'my/set-underscore-as-word))

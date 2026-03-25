@@ -410,6 +410,8 @@ https://www.youtube.com/watch?v=wnsJ0vxQms0
 https://www.youtube.com/watch?v=3xmD4E2aqxo
 * TODO NuShell
 https://www.youtube.com/watch?v=uJsZATwQ3R8
+ls | where type == dir
+ls | sort-by modified --reverse
 * Devs are better than AI; learn to hack
 https://www.youtube.com/watch?v=iBkDhtjqXhA
 
