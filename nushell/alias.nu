@@ -31,8 +31,12 @@ def gita [] {
       git status
 }
 alias gitl = git log
-alias gpull = git pull origin `git symbolic-ref --short HEAD` --rebase
-alias gpush = git push origin `git symbolic-ref --short HEAD`
+def gpull [] {
+    git pull origin (git symbolic-ref --short HEAD) --rebase
+}
+def gpush [] {
+    git push origin (git symbolic-ref --short HEAD)
+}
 alias cof = bash ~/dotfiles/scripts/checkout_feature.sh
 # alias stash='git add -A .; git stash; git status'
 # alias pop='git stash pop; git reset HEAD .; git status'
