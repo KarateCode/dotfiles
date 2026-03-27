@@ -5,7 +5,7 @@ bindkey -e
 
 # eval "$(/opt/homebrew/bin/brew shellenv)"
 # export PATH="/opt/homebrew/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/bin:$HOME/.cargo/bin:$PATH"
 export TMUXINATOR_CONFIG=/Users/michaelschneider/code/tmuxinator-configs/configs
 export RIPGREP_CONFIG_PATH=/Users/michaelschneider/.ripgreprc
 # alias ls='gls --color=auto --group-directories-first'

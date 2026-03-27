@@ -413,6 +413,11 @@ https://www.youtube.com/watch?v=uJsZATwQ3R8
 ls | where type == dir
 ls | sort-by modified --reverse
 supports csv toml json sqlite
+awesome-nu # a repo with goodies and plugins
+| explore # brings up a TUI to navigate around the data
+| str replace "hello" "hi"
+open sample.csv | select username password
+http get
 * Devs are better than AI; learn to hack
 https://www.youtube.com/watch?v=iBkDhtjqXhA
 

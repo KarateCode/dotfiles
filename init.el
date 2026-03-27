@@ -175,6 +175,9 @@
 ;; Also update the $PATH environment variable to match the cleaned list
 (setenv "PATH" (mapconcat #'identity exec-path path-separator))
 
+(require 'nushell-mode)
+(add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-mode))
+
 (use-package eglot
   :ensure nil ; built-in in Emacs 29+
   :hook (
@@ -793,7 +796,11 @@ Reselects duplicated region under Spacemacs holy mode."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(breadcrumb consult dirvish doom-modeline doom-themes
+                exec-path-from-shell jq-mode magit marginalia
+                move-text multiple-cursors nushell-mode orderless
+                projectile treesit-auto vertico yasnippet-snippets))
  '(safe-local-variable-directories '("/Users/michaelschneider/appropos/envoy-web/")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
