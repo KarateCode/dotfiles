@@ -43,6 +43,7 @@ alias onering = /Users/michaelschneider/code/tools-and-infrastructure/scripts/de
 
 # Select environment - sources .sh export files via fzf
 def --env se [] {
-    let env_file = (ls ~/code/tools-and-infrastructure/scripts/developer/environments | get name | to text | fzf | str trim)
-    load-sh-exports $env_file
+    let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
+    let filename = (ls $env_dir | get name | each { path basename } | to text | fzf | str trim)
+    load-sh-exports ($env_dir | path join $filename)
 }
