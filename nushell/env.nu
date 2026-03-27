@@ -9,3 +9,10 @@
 # To pretty-print the in-shell documentation for Nushell's various configuration
 # settings, you can run:
 # config nu --doc | nu-highlight | less -R
+
+# Use nushell-specific starship config
+$env.STARSHIP_CONFIG = ($env.HOME | path join "dotfiles/starship-nushell.toml")
+
+# Initialize starship prompt
+mkdir ~/.cache/starship
+starship init nu | save -f ~/.cache/starship/init.nu
