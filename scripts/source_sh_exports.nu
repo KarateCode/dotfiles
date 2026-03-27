@@ -29,8 +29,5 @@ def --env load-sh-exports [file: path] {
     print $"Loaded environment from ($file)"
 }
 
-# "sanity check"
-# When run directly with an argument
-# def --env main [file: path] {
-#     load-sh-exports $file
-# }
+# Needed for `source` to register the function (nushell quirk)
+null

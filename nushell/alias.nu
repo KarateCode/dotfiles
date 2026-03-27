@@ -40,3 +40,9 @@ alias rmautodump = rm auto_dump_*.tar.gz; rm -rf auto_dump_*
 # alias fcode='fzf | cut -d ":" -f 1 | xargs code'
 
 alias onering = /Users/michaelschneider/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh
+
+# Select environment - sources .sh export files via fzf
+def --env se [] {
+    let env_file = (ls ~/code/tools-and-infrastructure/scripts/developer/environments | get name | to text | fzf | str trim)
+    load-sh-exports $env_file
+}

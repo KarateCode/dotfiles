@@ -1,8 +1,9 @@
 
-source ~/dotfiles/nushell/alias.nu
-
 use std "path add"
 path add "~/.cargo/bin"
 
 $env.config.show_banner = false
-use ~/dotfiles/scripts/source_sh_exports.nu *
+
+# source_sh_exports must come before alias.nu (alias.nu uses load-sh-exports)
+source ~/dotfiles/scripts/source_sh_exports.nu
+source ~/dotfiles/nushell/alias.nu
