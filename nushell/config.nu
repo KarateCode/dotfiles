@@ -7,6 +7,7 @@ $env.config.show_banner = false
 
 # source_sh_exports must come before alias.nu (alias.nu uses load-sh-exports)
 source ~/dotfiles/scripts/source_sh_exports.nu
+source ~/dotfiles/scripts/mongo_shell_inline.nu
 source ~/dotfiles/nushell/alias.nu
 
 # Initialize starship prompt

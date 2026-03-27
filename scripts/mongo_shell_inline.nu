@@ -1,8 +1,9 @@
 #!/usr/bin/env nu
-# an alias sets this script to `ms1` in alias.sh
-# Usage: ms1 'Product.findOne({})'
+# Usage: ms 'Product.findOne({})'
+# Can be piped: ms 'Client.findOne()' | select config
 
-def main [query: string] {
+# Mongo shell query function - returns structured data for piping
+def ms [query: string] {
     # Parse collection name from query (e.g., 'Customer.find({...})' -> 'Customer')
     let collection_name = $query | split row '.' | first
 
@@ -28,7 +29,7 @@ def main [query: string] {
         # Build local connection string
         let local_uri = $"mongodb://($credentials)@localhost:27018/envoy-web?authSource=admin&directConnection=true"
 
-        mongosh $local_uri --quiet --eval $eval_expr
+        mongosh $local_uri --quiet --eval $eval_expr | from json
     } else {
         if ($env.NAMING_PREFIX? | is-empty) {
             print --stderr "$env.NAMING_PREFIX not set"
@@ -38,3 +39,6 @@ def main [query: string] {
         mongosh $env.NAMING_PREFIX --quiet --eval $eval_expr | from json
     }
 }
+
+# Needed for `source` to register the function (nushell quirk)
+null
