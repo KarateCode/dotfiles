@@ -10,6 +10,7 @@
 source ~/dotfiles/nushell/snippets/snippets.nu
 
 # Expand abbreviation at cursor position
+# Returns: "placeholder" if expanded and landed on %, "expanded" if expanded without %, "none" if no expansion
 def expand-abbr [] {
     let line = (commandline)
     let cursor = (commandline get-cursor)
@@ -33,10 +34,12 @@ def expand-abbr [] {
         let placeholder_pos = ($new_line | str index-of '%')
         if $placeholder_pos >= 0 {
             commandline set-cursor $placeholder_pos
+            "placeholder"
+        } else {
+            "expanded"
         }
-        true
     } else {
-        false
+        "none"
     }
 }
 
@@ -60,30 +63,25 @@ def jump-to-placeholder [] {
 
 # Handler for space key - expand or insert space
 def handle-space [] {
-    if (expand-abbr) {
-        # Expansion happened - don't insert space if we landed on a placeholder
-        let line = (commandline)
-        let cursor = (commandline get-cursor)
-        let char_at_cursor = ($line | str substring $cursor..($cursor + 1))
-        # Don't insert space if cursor is at a placeholder
-        if $char_at_cursor != '%' {
-            commandline edit --insert ' '
-        }
+    let result = (expand-abbr)
+    if $result == "placeholder" {
+        # Landed on a placeholder, don't insert space
+    } else if $result == "expanded" {
+        # Expanded but no placeholder, insert space
+        commandline edit --insert ' '
     } else {
+        # No expansion, just insert space
         commandline edit --insert ' '
     }
 }
 
 # Handler for dot key
 def handle-dot [] {
-    if (expand-abbr) {
-        # Expansion happened - don't insert dot if we landed on a placeholder
-        let line = (commandline)
-        let cursor = (commandline get-cursor)
-        let char_at_cursor = ($line | str substring $cursor..($cursor + 1))
-        if $char_at_cursor != '%' {
-            commandline edit --insert '.'
-        }
+    let result = (expand-abbr)
+    if $result == "placeholder" {
+        # Landed on a placeholder, don't insert dot
+    } else if $result == "expanded" {
+        commandline edit --insert '.'
     } else {
         commandline edit --insert '.'
     }
@@ -91,14 +89,11 @@ def handle-dot [] {
 
 # Handler for slash key
 def handle-slash [] {
-    if (expand-abbr) {
-        # Expansion happened - don't insert slash if we landed on a placeholder
-        let line = (commandline)
-        let cursor = (commandline get-cursor)
-        let char_at_cursor = ($line | str substring $cursor..($cursor + 1))
-        if $char_at_cursor != '%' {
-            commandline edit --insert '/'
-        }
+    let result = (expand-abbr)
+    if $result == "placeholder" {
+        # Landed on a placeholder, don't insert slash
+    } else if $result == "expanded" {
+        commandline edit --insert '/'
     } else {
         commandline edit --insert '/'
     }
