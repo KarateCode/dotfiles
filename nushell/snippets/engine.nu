@@ -28,14 +28,19 @@ def expand-abbr [] {
         let after_cursor = ($line | str substring $cursor..)
 
         let new_line = $"($prefix)($expansion)($after_cursor)"
-        commandline edit --replace $new_line
 
-        # Find first placeholder and position cursor there
+        # Find first placeholder
         let placeholder_pos = ($new_line | str index-of '%')
         if $placeholder_pos >= 0 {
+            # Remove the first % and position cursor there
+            let before_placeholder = ($new_line | str substring 0..<$placeholder_pos)
+            let after_placeholder = ($new_line | str substring ($placeholder_pos + 1)..)
+            let final_line = $"($before_placeholder)($after_placeholder)"
+            commandline edit --replace $final_line
             commandline set-cursor $placeholder_pos
             "placeholder"
         } else {
+            commandline edit --replace $new_line
             "expanded"
         }
     } else {
