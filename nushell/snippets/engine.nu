@@ -59,10 +59,11 @@ def jump-to-placeholder [] {
 
     if $placeholder_pos >= 0 {
         # Remove the % and position cursor there
-        let before = ($line | str substring 0..($cursor + $placeholder_pos))
-        let after = ($line | str substring ($cursor + $placeholder_pos + 1)..)
+        let abs_pos = $cursor + $placeholder_pos
+        let before = ($line | str substring 0..<$abs_pos)
+        let after = ($line | str substring ($abs_pos + 1)..)
         commandline edit --replace $"($before)($after)"
-        commandline set-cursor ($cursor + $placeholder_pos)
+        commandline set-cursor $abs_pos
     }
 }
 
