@@ -135,7 +135,7 @@ def mongo-field-picker [] {
 
     # Read selection and insert at cursor
     if ($tmp_file | path exists) {
-        let selection = (open $tmp_file | lines | where { $in | str trim | is-not-empty } | each { $"($in): 1" } | str join ", ")
+        let selection = (open $tmp_file | lines | where { $in | str trim | is-not-empty } | str join " ")
         if ($selection | is-not-empty) {
             commandline edit --insert $selection
         }
