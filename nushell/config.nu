@@ -10,5 +10,10 @@ source ~/dotfiles/scripts/source_sh_exports.nu
 source ~/dotfiles/scripts/mongo_shell_inline.nu
 source ~/dotfiles/nushell/alias.nu
 
+# Snippets engine - abbreviation expansion with placeholder jumping
+source ~/dotfiles/nushell/snippets/engine.nu
+source ~/dotfiles/nushell/snippets/keybindings.nu
+$env.config.keybindings = ($env.config.keybindings | append (get-snippet-keybindings))
+
 # Initialize starship prompt
 source ~/.cache/starship/init.nu
