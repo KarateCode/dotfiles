@@ -107,10 +107,10 @@ def deleteMany [] {
     }
 
     # Extract _ids from selected lines - find the _id column value
-    # nushell table format has the _id as the first data column
+    # nushell table format: │ # │ _id │ ... so _id is in column index 2
     let ids = $selected | lines | each {|line|
-        # Split by whitespace and get first non-empty value (skipping the │ border)
-        $line | split row "│" | get 1? | default "" | str trim
+        # Split by │ and get the _id column (index 2, after # column)
+        $line | split row "│" | get 2? | default "" | str trim
     } | where {$in | is-not-empty}
 
     if ($ids | is-empty) {
