@@ -543,6 +543,7 @@ Reselects duplicated region under Spacemacs holy mode."
                 typescript-ts-mode-hook
                 bash-ts-mode-hook
                 ruby-mode-hook
+                nushell-mode-hook
                 go-mode-hook))
   (add-hook hook #'my/set-underscore-as-word))
 
