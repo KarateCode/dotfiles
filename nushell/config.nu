@@ -10,7 +10,7 @@ source ~/dotfiles/scripts/source_sh_exports.nu
 source ~/dotfiles/scripts/mongo_shell_inline.nu
 source ~/dotfiles/scripts/editor.nu
 source ~/dotfiles/scripts/mongo_select.nu
-source ~/dotfiles/scripts/select_from_table.nu
+source ~/dotfiles/scripts/delete_many.nu
 source ~/dotfiles/scripts/update_many.nu
 source ~/dotfiles/nushell/alias.nu
 
