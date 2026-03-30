@@ -67,11 +67,12 @@ def jump-to-placeholder [] {
     }
 }
 
-# Handler for Ctrl+Space - just expand, no character insertion
+# Handler for Ctrl+Space - expand abbreviation or jump to next placeholder
 def handle-expand [] {
     let result = (expand-abbr)
     if $result == "none" {
-        # No expansion happened, do nothing
+        # No expansion happened, try jumping to next placeholder
+        jump-to-placeholder
     }
     # If expanded (with or without placeholder), cursor is already positioned
 }

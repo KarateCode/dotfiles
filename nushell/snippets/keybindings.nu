@@ -14,17 +14,6 @@ def get-snippet-keybindings [] {
                 cmd: "handle-expand"
             }
         }
-        # Tab - jump to next placeholder
-        {
-            name: snippet_tab_jump
-            modifier: none
-            keycode: tab
-            mode: [emacs vi_insert]
-            event: {
-                send: executehostcommand
-                cmd: "jump-to-placeholder"
-            }
-        }
         # Alt+, - MongoDB field picker
         {
             name: mongo_field_picker
