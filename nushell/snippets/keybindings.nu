@@ -3,37 +3,15 @@
 
 def get-snippet-keybindings [] {
     [
-        # Space - expand abbreviation or insert space
+        # Ctrl+Space - expand abbreviation (doesn't interfere with pasting)
         {
-            name: snippet_space
-            modifier: none
+            name: snippet_expand
+            modifier: control
             keycode: space
             mode: [emacs vi_insert]
             event: {
                 send: executehostcommand
-                cmd: "handle-space"
-            }
-        }
-        # Dot - expand abbreviation or insert dot
-        {
-            name: snippet_dot
-            modifier: none
-            keycode: char_.
-            mode: [emacs vi_insert]
-            event: {
-                send: executehostcommand
-                cmd: "handle-dot"
-            }
-        }
-        # Slash - expand abbreviation or insert slash
-        {
-            name: snippet_slash
-            modifier: none
-            keycode: char_/
-            mode: [emacs vi_insert]
-            event: {
-                send: executehostcommand
-                cmd: "handle-slash"
+                cmd: "handle-expand"
             }
         }
         # Tab - jump to next placeholder

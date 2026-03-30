@@ -67,42 +67,13 @@ def jump-to-placeholder [] {
     }
 }
 
-# Handler for space key - expand or insert space
-def handle-space [] {
+# Handler for Ctrl+Space - just expand, no character insertion
+def handle-expand [] {
     let result = (expand-abbr)
-    if $result == "placeholder" {
-        # Landed on a placeholder, don't insert space
-    } else if $result == "expanded" {
-        # Expanded but no placeholder, insert space
-        commandline edit --insert ' '
-    } else {
-        # No expansion, just insert space
-        commandline edit --insert ' '
+    if $result == "none" {
+        # No expansion happened, do nothing
     }
-}
-
-# Handler for dot key
-def handle-dot [] {
-    let result = (expand-abbr)
-    if $result == "placeholder" {
-        # Landed on a placeholder, don't insert dot
-    } else if $result == "expanded" {
-        commandline edit --insert '.'
-    } else {
-        commandline edit --insert '.'
-    }
-}
-
-# Handler for slash key
-def handle-slash [] {
-    let result = (expand-abbr)
-    if $result == "placeholder" {
-        # Landed on a placeholder, don't insert slash
-    } else if $result == "expanded" {
-        commandline edit --insert '/'
-    } else {
-        commandline edit --insert '/'
-    }
+    # If expanded (with or without placeholder), cursor is already positioned
 }
 
 # MongoDB field picker using fzf in tmux popup
