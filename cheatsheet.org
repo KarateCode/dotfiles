@@ -377,7 +377,6 @@ alt-shift-arrow (one of vim keys) does horizontal
 brew services start sketchybar
 brew services stop sketchybar
 brew services restart sketchybar
-Is the Slack icon appearing or not based on if I'm in laptop of docked mode?
 
 * Slack:
 Cmd+o to attach a file (opens in Downloads folder by default)
