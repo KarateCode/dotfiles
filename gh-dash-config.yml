@@ -70,10 +70,19 @@ theme:
             showSeparator: true
             compact: false
     colors:
-        # text:
-        #     secondary: "#ff0000"
-        # background:
-        #     selected: "#ff0000"
+        text:
+            primary: "#f8f8f2"
+            secondary: "#ff79c6"
+            inverted: "#282a36"
+            faint: "#ffb86c"
+            warning: "#ff5555"
+            success: "#50fa7b"
+        background:
+            selected: "#AD85FC"
+        border:
+            primary: "#383B5B"
+            secondary: "#39386B"
+            faint: "#2B2B40"
 pager:
     diff: diffnav
 confirmQuit: false
