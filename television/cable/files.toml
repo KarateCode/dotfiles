@@ -1,0 +1,17 @@
+[metadata]
+name = "files"
+description = "File search with a right-side preview"
+
+[source]
+command = "ls"
+# command = "fd -t f"  # Requires 'fd' installed
+
+[preview]
+# Requires 'bat' installed for syntax highlighting
+command = "bat -n --color=always '{}'"
+
+[ui]
+preview_panel = { "size" = 65, "scrollbar" = true }
+
+[keybindings]
+shortcut = "f1"

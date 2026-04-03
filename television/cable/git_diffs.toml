@@ -1,0 +1,18 @@
+[metadata]
+name = "git-diffs"
+description = "View staged and unstaged git changes"
+
+[source]
+# Lists modified, untracked, and deleted files
+command = "git ls-files --modified --others --exclude-standard"
+
+[preview]
+# Shows the colored diff for the selected file
+command = "git diff --color=always -- '{}'"
+
+[ui]
+preview_panel = { "size" = 65, "scrollbar" = true }
+
+[keybindings]
+# Optional: bind a key to open the file in your editor from the list
+# "enter" = "select"
