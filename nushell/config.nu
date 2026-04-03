@@ -12,6 +12,7 @@ source ~/dotfiles/scripts/editor.nu
 source ~/dotfiles/scripts/mongo_select.nu
 source ~/dotfiles/scripts/delete_many.nu
 source ~/dotfiles/scripts/update_many.nu
+source ~/dotfiles/scripts/rebase_on_develop.nu
 source ~/dotfiles/nushell/alias.nu
 
 # Snippets engine - abbreviation expansion with placeholder jumping
