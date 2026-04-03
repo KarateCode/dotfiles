@@ -426,8 +426,19 @@ https://www.youtube.com/watch?v=iBkDhtjqXhA
 
 * TODO lazysql (TUI app for sqlite)
 
+* TV television:
+tv list-channels
+# fzf can preview files, but this can preview ANYTHING you configure it to
+# Guess I need ideas:
+# fzf preview
+# man pages
+# git differ: files on left, diff on right
+# For anything that gives a list; then I'd have to copy and paste one by one to view them
+
+
 * Brow6el is a browser that runs in a terminal
 * Opencode
+C-x e opens in your editor for multi-line editing
 Big Pickle is an LLM offered for free by opencode
 Is /sessions how you go back to an old thread?
 You can make agents, MD files that help AI do a specific task

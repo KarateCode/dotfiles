@@ -1,6 +1,7 @@
 alias e = cd ~/appropos/envoy-web
 alias van = ~/bin/my-emacs.sh
 alias ds = node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js
+alias la = ls -la
 
 alias cod = git checkout develop
 alias pd = git pull origin develop
