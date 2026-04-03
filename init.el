@@ -190,7 +190,7 @@
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-      '((typescript-mode js-mode typescript-ts-mode) . ("typescript-language-server" "--stdio"))
+      '((typescript-mode js-mode typescript-ts-mode js-ts-mode tsx-ts-mode) . ("typescript-language-server" "--stdio"))
   )
 )
 
@@ -231,7 +231,17 @@
   (define-key eglot-mode-map (kbd "C-c l a") 'eglot-code-actions)
   ;; (define-key eglot-mode-map (kbd "C-c l r") 'eglot-rename)
   ;; (define-key eglot-mode-map (kbd "C-c l f") 'eglot-format-buffer)
+  (define-key eglot-mode-map (kbd "M-.") 'xref-find-definitions)
 )
+
+;; Disable the legacy TAGS fallback so M-. doesn't prompt for a tags table
+(setq xref-prompt-for-identifier nil)
+(setq tags-add-tables nil)
+
+;; Completely disable etags as an xref backend
+(with-eval-after-load 'etags
+  (setq xref-backend-functions (delq 'etags--xref-backend xref-backend-functions)))
+(setq xref-backend-functions '(eglot-xref-backend))
 
 ;; 1. Map file extensions to the new Tree-sitter modes
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
