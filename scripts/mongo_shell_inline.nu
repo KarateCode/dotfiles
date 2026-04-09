@@ -32,8 +32,7 @@ def ms [query: string] {
         mongosh $local_uri --quiet --eval $eval_expr | from json
     } else {
         if ($env.NAMING_PREFIX? | is-empty) {
-            print --stderr "$env.NAMING_PREFIX not set"
-            exit 1
+            error make {msg: "$env.NAMING_PREFIX not set"}
         }
 
         mongosh $env.NAMING_PREFIX --quiet --eval $eval_expr | from json
