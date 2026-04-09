@@ -15,7 +15,6 @@ def ns [] {
     ./bin/run-dev-server
 }
 alias preview = fzf --preview 'bat --style=numbers --color=always {}'
-alias bounceenv = ~/dotfiles/scripts/setup_local_env.sh
 
 alias o = ~/dotfiles/scripts/next_rebase_file.sh
 alias fd = ~/dotfiles/scripts/next_git_diff_file.sh
