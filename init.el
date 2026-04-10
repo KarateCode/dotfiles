@@ -614,6 +614,12 @@ Reselects duplicated region under Spacemacs holy mode."
         '(("TODO" . (:foreground "white" :weight bold))
           ("DONE" . (:foreground "green" :weight bold))))
 
+  ;; Fix mouse scroll wheel in org-mode (org overrides these)
+  (define-key org-mode-map (kbd "<mouse-4>") 'scroll-down-line)
+  (define-key org-mode-map (kbd "<mouse-5>") 'scroll-up-line)
+  (define-key org-mode-map (kbd "<wheel-up>") 'scroll-down-line)
+  (define-key org-mode-map (kbd "<wheel-down>") 'scroll-up-line)
+
   (define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
 		(add-hook 'org-mode-hook (lambda ()
 			(my/org-checkbox-pretty-and-colored)
@@ -644,6 +650,8 @@ Reselects duplicated region under Spacemacs holy mode."
   (xterm-mouse-mode 1)
   (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
   (global-set-key (kbd "<mouse-5>") 'scroll-up-line)
+  (global-set-key (kbd "<wheel-up>") 'scroll-down-line)
+  (global-set-key (kbd "<wheel-down>") 'scroll-up-line)
 )
 ;; Enable mouse wheel scrolling
 (setq mouse-wheel-mode t)
