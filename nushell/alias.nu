@@ -15,6 +15,7 @@ def ns [] {
     ./bin/run-dev-server
 }
 alias preview = fzf --preview 'bat --style=numbers --color=always {}'
+alias ptq = npm run task process-tasks-queue
 
 alias o = ~/dotfiles/scripts/next_rebase_file.sh
 alias fd = ~/dotfiles/scripts/next_git_diff_file.sh
