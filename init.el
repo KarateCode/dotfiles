@@ -620,6 +620,10 @@ Reselects duplicated region under Spacemacs holy mode."
   (define-key org-mode-map (kbd "<wheel-up>") 'scroll-down-line)
   (define-key org-mode-map (kbd "<wheel-down>") 'scroll-up-line)
 
+  ;; Fix multiple-cursors in org-mode (org overrides C-S-<up>/<down>)
+  (define-key org-mode-map (kbd "C-S-<up>") 'mc/mark-previous-like-this)
+  (define-key org-mode-map (kbd "C-S-<down>") 'mc/mark-next-like-this)
+
   (define-key org-mode-map (kbd "C-c -") #'my/org-checkbox-set-indeterminate)
 		(add-hook 'org-mode-hook (lambda ()
 			(my/org-checkbox-pretty-and-colored)
