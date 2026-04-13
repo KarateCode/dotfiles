@@ -18,7 +18,7 @@ alias preview = fzf --preview 'bat --style=numbers --color=always {}'
 alias ptq = npm run task process-tasks-queue
 
 alias o = ~/dotfiles/scripts/next_rebase_file.sh
-alias fd = ~/dotfiles/scripts/next_git_diff_file.sh
+alias gd = ~/dotfiles/scripts/next_git_diff_file.sh
 alias fa = ~/dotfiles/scripts/next_git_add_file.sh
 alias fr = ~/dotfiles/scripts/next_git_checkout_file.sh
 alias fo = ~/dotfiles/scripts/next_git_ours_file.sh
@@ -65,7 +65,12 @@ def pop [] {
     git reset HEAD .
     git status
 }
-alias rmautodump = rm auto_dump_*.tar.gz; rm -rf auto_dump_*
+alias gl = bash ~/dotfiles/scripts/grep-git-log.sh
+
+def rmautodump [] {
+    try { rm -rf auto_dump_* }
+    try { rm auto_dump_*.tar.gz }
+}
 # alias fcode='fzf | cut -d ":" -f 1 | xargs code'
 
 alias onering = /Users/michaelschneider/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh
