@@ -25,7 +25,7 @@ def bounceenv [] {
 
     # Restart dev server in pane 1
     tmux send-keys -t dev-environment:main.1 C-c
-    sleep 200ms
     tmux send-keys -t dev-environment:main.1 $"select_env ($env_name)" C-m
+    sleep 1sec
     tmux send-keys -t dev-environment:main.1 './bin/run-dev-server' C-m
 }

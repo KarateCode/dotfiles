@@ -51,8 +51,12 @@ alias gitl = git log
 def gpull [] {
     git pull origin (git symbolic-ref --short HEAD) --rebase
 }
-def gpush [] {
-    git push origin (git symbolic-ref --short HEAD)
+def gpush [--force (-f)] {
+    if $force {
+        git push origin (git symbolic-ref --short HEAD) --force
+    } else {
+        git push origin (git symbolic-ref --short HEAD)
+    }
 }
 alias cof = bash ~/dotfiles/scripts/checkout_feature.sh
 def stash [] {
