@@ -28,6 +28,7 @@ setopt HIST_REDUCE_BLANKS     # Removes extra blanks from history entries
 # fi
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 export XDG_CONFIG_HOME="$HOME/.config"
 export STARSHIP_CONFIG="$HOME/dotfiles/starship.toml"
 

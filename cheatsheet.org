@@ -435,6 +435,8 @@ tv list-channels
 # git differ: files on left, diff on right
 # For anything that gives a list; then I'd have to copy and paste one by one to view them
 
+* Troubleshooting
+"Could not load credentials from any providers". Check your AWS_PROFILE for unset or typos
 
 * Brow6el is a browser that runs in a terminal
 * Opencode
