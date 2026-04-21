@@ -1,0 +1,20 @@
+[metadata]
+name = "models"
+description = "Browse Envoy server model files"
+
+[source]
+# List all files one level deep in the models subdirectories
+command = "find /Users/michaelschneider/code/envoy-web/server/models -mindepth 2 -maxdepth 2 -type f"
+
+# # Output format: filename:fullpath (display filename, use fullpath for preview)
+# command = "find /Users/michaelschneider/appropos/envoy-web/server/models -mindepth 2 -maxdepth 2 -type f | while read f; do echo \"$(basename \"$f\"):$f\"; done"
+# delimiter = ":"
+# display = "{0}"
+
+[preview]
+# Show the file contents with syntax highlighting (uses the full path from {1})
+command = "bat --style=numbers --color=always '{1}'"
+
+[ui]
+orientation = "landscape"
+preview_panel = { "size" = 60, "scrollbar" = true }
