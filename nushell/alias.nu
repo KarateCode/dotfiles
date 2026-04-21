@@ -1,4 +1,4 @@
-alias e = cd ~/appropos/envoy-web
+alias e = cd ~/code/envoy-web
 alias van = ~/bin/my-emacs.sh
 alias ds = node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js
 alias la = ls -la
@@ -11,9 +11,11 @@ alias pd = git pull origin develop
 # }
 
 def ns [] {
-    cd ~/appropos/envoy-web/server
+    cd ~/code/envoy-web/server
     ./bin/run-dev-server
 }
+alias sl = pmset sleepnow
+alias hss = bash ~/dotfiles/scripts/ssh_fzf.sh
 alias preview = fzf --preview 'bat --style=numbers --color=always {}'
 alias ptq = npm run task process-tasks-queue
 
