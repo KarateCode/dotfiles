@@ -1,0 +1,22 @@
+[metadata]
+name = "pokemon"
+description = "Browse Pokemon database and view cards"
+
+[source]
+# Query all Pokemon from the database
+# Format: id|pokedexId|name|generation
+command = "sqlite3 /Users/michaelschneider/pokemon/poketui/pokemon.db 'SELECT id, pokedexId, name, generation FROM pokemon'"
+# Display: "#0025 Pikachu (Gen 1)" but output the id for preview
+display = "#{split:|:1|pad:4:0:left} {split:|:2} (Gen {split:|:3})"
+output = "{split:|:0}"
+
+[preview]
+# Display the Pokemon card using our nushell function
+# {split:|:0} extracts the id (first field) from "id|pokedexId|name|generation"
+command = "cd /Users/michaelschneider/pokemon/poketui && nu -c 'source pokemon-card.nu; pokeCard --no-images {split:|:0}'"
+
+[ui]
+layout = "landscape"
+
+[ui.preview_panel]
+size = 50
