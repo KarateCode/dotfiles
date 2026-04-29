@@ -1,0 +1,108 @@
+%YAML 1.2
+---
+name: Nushell
+file_extensions:
+  - nu
+scope: source.nushell
+
+contexts:
+  main:
+    - include: comments
+    - include: strings
+    - include: numbers
+    - include: keywords
+    - include: functions
+    - include: variables
+    - include: operators
+
+  comments:
+    - match: '#.*$'
+      scope: comment.line.nushell
+
+  strings:
+    - match: '"'
+      scope: punctuation.definition.string.begin.nushell
+      push: double-quoted-string
+    - match: "'"
+      scope: punctuation.definition.string.begin.nushell
+      push: single-quoted-string
+    - match: '\$"'
+      scope: punctuation.definition.string.begin.nushell
+      push: interpolated-string
+
+  double-quoted-string:
+    - meta_scope: string.quoted.double.nushell
+    - match: '\\.'
+      scope: constant.character.escape.nushell
+    - match: '"'
+      scope: punctuation.definition.string.end.nushell
+      pop: true
+
+  single-quoted-string:
+    - meta_scope: string.quoted.single.nushell
+    - match: "'"
+      scope: punctuation.definition.string.end.nushell
+      pop: true
+
+  interpolated-string:
+    - meta_scope: string.interpolated.nushell
+    - match: '\\.'
+      scope: constant.character.escape.nushell
+    - match: '\('
+      scope: punctuation.section.interpolation.begin.nushell
+      push: interpolation
+    - match: '"'
+      scope: punctuation.definition.string.end.nushell
+      pop: true
+
+  interpolation:
+    - meta_scope: meta.interpolation.nushell
+    - match: '\)'
+      scope: punctuation.section.interpolation.end.nushell
+      pop: true
+    - include: main
+
+  numbers:
+    - match: '\b\d+(\.\d+)?\b'
+      scope: constant.numeric.nushell
+    - match: '\b0x[0-9a-fA-F]+\b'
+      scope: constant.numeric.hex.nushell
+    - match: '\b0b[01]+\b'
+      scope: constant.numeric.binary.nushell
+    - match: '\b0o[0-7]+\b'
+      scope: constant.numeric.octal.nushell
+
+  keywords:
+    - match: '\b(def|def-env|let|let-env|mut|const|alias|extern|module)\b'
+      scope: storage.type.nushell
+    - match: '\b(if|else|for|in|while|loop|break|continue|return|try|catch|match|export|use|source|overlay)\b'
+      scope: keyword.control.nushell
+    - match: '\b(true|false|null)\b'
+      scope: constant.language.nushell
+
+  functions:
+    - match: '\b(def|def-env)\s+(--\w+\s+)*([a-zA-Z_][\w-]*)'
+      captures:
+        1: storage.type.nushell
+        2: storage.modifier.nushell
+        3: support.function.nushell
+
+  variables:
+    - match: '\$[a-zA-Z_][\w]*'
+      scope: variable.other.nushell
+    - match: '\$env\b'
+      scope: variable.language.nushell
+    - match: '\$nu\b'
+      scope: variable.language.nushell
+
+  operators:
+    - match: '\|'
+      scope: keyword.operator.pipe.nushell
+    - match: '(\+|-|\*|/|//|\*\*|==|!=|<|>|<=|>=|=~|!~|&&|\|\|)'
+      scope: keyword.operator.nushell
+    - match: '\b(and|or|not|mod|in|not-in)\b'
+      scope: keyword.operator.nushell
+    - match: '='
+      scope: keyword.operator.assignment.nushell
+    - match: '\.\.'
+      scope: keyword.operator.range.nushell
