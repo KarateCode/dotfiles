@@ -1,5 +1,5 @@
-alias e = cd ~/code/envoy-web
 alias van = ~/bin/my-emacs.sh
+alias e = cd ~/code/envoy-web
 alias ds = node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js
 alias la = ls -la
 
@@ -18,6 +18,9 @@ alias sl = pmset sleepnow
 alias hss = bash ~/dotfiles/scripts/ssh_fzf.sh
 alias preview = fzf --preview 'bat --style=numbers --color=always {}'
 alias ptq = npm run task process-tasks-queue
+alias ccont = git cherry-pick --continue
+alias rcont = git rebase --continue; git status
+alias b = cd -
 
 alias o = ~/dotfiles/scripts/next_rebase_file.sh
 alias gd = ~/dotfiles/scripts/next_git_diff_file.sh
