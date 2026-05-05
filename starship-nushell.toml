@@ -17,7 +17,9 @@ ${custom.tunnel}\
 
 [directory]
 style = "fg:purple bg:#394260"
-format = "[ $path ]($style)"
+# Powerline transition IN from dark, transition OUT to dark (or git if present)
+# format = "[ $path ]($style)"
+format = "[](bg:#394260 fg:#212736)[ $path ](fg:purple bg:#394260)[](fg:#394260 bg:#212736)"
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -51,18 +53,8 @@ symbol = ""
 style = "bg:#212736"
 format = '[[ $symbol ($version) ](fg:purple bg:#394260)]($style)'
 
-[rust]
-symbol = ""
-style = "bg:#212736"
-format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
-
 [golang]
 symbol = ""
-style = "bg:#212736"
-format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
-
-[php]
-symbol = ""
 style = "bg:#212736"
 format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
 
@@ -74,8 +66,9 @@ format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
 
 [custom.tunnel]
 command = "echo 'TUNNEL ACTIVE'"
-when = "lsof -i :27018"
-format = "\n[   $output   ](fg:#212736 bg:yellow)[](fg:yellow)"
+when = "lsof -i :27018 2>/dev/null"
+ignore_timeout = true
+format = "\n[   $output   ](fg:#212736 bg:yellow)[](fg:yellow)"
 
 [character]
 success_symbol = "[▶︎](bold green)" # Symbol on command success ✈︎ ✒︎ ➤ ► ▶︎ ⚡︎ ♜ ☀︎ ➜

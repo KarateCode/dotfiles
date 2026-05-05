@@ -15,4 +15,4 @@ $env.STARSHIP_CONFIG = ($env.HOME | path join "dotfiles/starship-nushell.toml")
 
 # Initialize starship prompt
 mkdir ~/.cache/starship
-starship init nu | save -f ~/.cache/starship/init.nu
+do { starship init nu } | complete | get stdout | save -f ~/.cache/starship/init.nu

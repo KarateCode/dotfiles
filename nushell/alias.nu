@@ -19,7 +19,7 @@ alias hss = bash ~/dotfiles/scripts/ssh_fzf.sh
 alias preview = fzf --preview 'bat --style=numbers --color=always {}'
 alias ptq = npm run task process-tasks-queue
 alias ccont = git cherry-pick --continue
-alias rcont = git rebase --continue; git status
+def rcont [] { git rebase --continue; git status }
 alias b = cd -
 
 alias o = ~/dotfiles/scripts/next_rebase_file.sh
