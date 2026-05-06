@@ -53,7 +53,7 @@ jview() {
     jira issue view "$input" --comments 50
 }
 
-source /opt/homebrew/share/zsh-autopair/autopair.zsh
+# source /opt/homebrew/share/zsh-autopair/autopair.zsh
 
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'

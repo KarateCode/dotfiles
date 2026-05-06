@@ -145,7 +145,7 @@ FZF matches on build/ folder when I type "client standup"
 * Git
 git push --force-with-lease # a safe force push
 
-* Tmux
+* Tmux:
 prefix+n for next window
 prefix+p for previous window
 prefix+S for session manager
@@ -178,6 +178,9 @@ https://www.youtube.com/watch?v=UtINDdy-xBc has a sweet statusbar
         ls /Users/michaelschneider/.config/tmux/plugins/
         echo $TMUX_PLUGIN_MANAGER_PATH
         you can set custom-paths. These will auto attach or create at these paths from sessionX
+hotkey < # brings up little menu to rearrange tabs (windows)
+Left: swap-window -t -1
+Right: swap-window -t +1
 
 * Yassnippets
 Run with M-shift-: #
