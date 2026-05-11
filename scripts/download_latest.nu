@@ -34,20 +34,27 @@ def download-latest [session_id: string] {
     print $"  userId: ($user_id)"
 
     # Get the most recent task for this user
-    let task_id = (mongosh $env.NAMING_PREFIX --quiet --eval $"JSON.stringify\(db.Task.find\({userId: ObjectId\('($user_id)'\)}\).toArray\(\)\)"
-        | from json
-        | sort-by createDate
-        | last
-        | get _id)
+    let tasks = (mongosh $env.NAMING_PREFIX --quiet --eval $"JSON.stringify\(db.Task.find\({userId: ObjectId\('($user_id)'\)}\).toArray\(\)\)"
+        | from json)
+
+    if ($tasks | is-empty) {
+        error make {msg: "There doesn't appear to be any downloads for that User"}
+    }
+
+    let task_id = ($tasks | sort-by createDate | last | get _id)
+    let brandCode = ($tasks | sort-by createDate | last | get brandCode)
 
     print $"  taskId: ($task_id)"
+    print $"  brandCode: ($brandCode)"
 
     # Download to temp file and capture headers to get the filename
     let timestamp = (date now | format date "%s%f")
     let temp_file = $"/tmp/download_latest_($timestamp)"
     let headers_file = $"/tmp/download_latest_headers_($timestamp)"
+    print $"  temp_file: ($temp_file)"
+    print $"  headers_file: ($headers_file)"
 
-    curl --no-remote-name -o $temp_file -D $headers_file -H 'sec-ch-ua: "Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"' -H 'sec-ch-ua-mobile: ?0' -H 'sec-ch-ua-platform: "macOS"' -H 'upgrade-insecure-requests: 1' -H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' -H 'sec-fetch-site: same-origin' -H 'sec-fetch-mode: navigate' -H 'sec-fetch-user: ?1' -H 'sec-fetch-dest: document' -H 'referer: https://seedbrand.awt.loc/envoy/downloads' -H 'accept-language: en-US,en;q=0.9' -H $"cookie: envoy_cookie-consent=true; ENVOY_IS_MAIN_NAV_ACTIVE=true; envoy_language=en-US; ENVOY_PRODUCT_VIEW_MODE=GRID; ENVOY_LAST_SELECTED_LIST=69a1b93de0341c5496d07452; envoy_SESSION=($session_id)" $"http://seedbrand.awt.loc/api/downloads/($task_id)"
+    curl --no-remote-name -o $temp_file -D $headers_file -H 'sec-ch-ua: "Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"' -H 'sec-ch-ua-mobile: ?0' -H 'sec-ch-ua-platform: "macOS"' -H 'upgrade-insecure-requests: 1' -H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' -H 'sec-fetch-site: same-origin' -H 'sec-fetch-mode: navigate' -H 'sec-fetch-user: ?1' -H 'sec-fetch-dest: document' -H 'referer: https://($brandCode).awt.loc/envoy/downloads' -H 'accept-language: en-US,en;q=0.9' -H $"cookie: envoy_cookie-consent=true; ENVOY_IS_MAIN_NAV_ACTIVE=true; envoy_language=en-US; ENVOY_PRODUCT_VIEW_MODE=GRID; ENVOY_LAST_SELECTED_LIST=69a1b93de0341c5496d07452; envoy_SESSION=($session_id)" $"http://($brandCode).awt.loc/api/downloads/($task_id)"
 
     # Extract filename from Content-Disposition header
     let filename = (open $headers_file
@@ -56,7 +63,9 @@ def download-latest [session_id: string] {
         | first
         | parse --regex 'filename="?([^";\r\n]+)"?'
         | get capture0.0
-        | str trim)
+        | str trim
+    )
+    print $"filename ($filename)"
 
     # Get unique filename (increment if exists)
     let final_filename = (get-unique-filename $filename)
