@@ -17,6 +17,7 @@ source ~/dotfiles/scripts/rebase_on_develop.nu
 source ~/dotfiles/scripts/setup_local_env.nu
 source ~/dotfiles/scripts/download_latest.nu
 source ~/dotfiles/nushell/alias.nu
+source ~/dotfiles/nushell/envoy_scripts.nu
 
 # Snippets engine - abbreviation expansion with placeholder jumping
 source ~/dotfiles/nushell/snippets/engine.nu

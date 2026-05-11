@@ -197,6 +197,7 @@ C-K C-S to see shortcut tool
 * dump dev to local:
 mongodump --out=/client/dump/dump_7_21_2025 --excludeCollection=ImportRow --excludeCollection=HouseLogRow --excludeCollection=Event --excludeCollection=EventAggregate --excludeCollection=CardConnectIntegration --uri=$MONGO_CONNECTION_STRING
 aws secretsmanager get-secret-value --secret-id "envoy-dev-na-cf-bauer-na_CONNECTION_STRING" | jq -r '.SecretString'
+# Go into AWS Secrets manager to see all possible values
 history | grep SUBPREFIX # gets you started running tasks on dev server
 
 * Ghostty
@@ -440,6 +441,9 @@ tv list-channels
 
 * Troubleshooting
 "Could not load credentials from any providers". Check your AWS_PROFILE for unset or typos
+
+* Claude:
+C-g pops $EDITOR
 
 * Brow6el is a browser that runs in a terminal
 * Opencode
