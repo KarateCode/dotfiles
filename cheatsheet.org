@@ -194,11 +194,19 @@ clg for console.log() snippet
 * VsCode
 C-K C-S to see shortcut tool
 
-* dump dev to local:
+* Dev Server:
+** dump dev to local:
 mongodump --out=/client/dump/dump_7_21_2025 --excludeCollection=ImportRow --excludeCollection=HouseLogRow --excludeCollection=Event --excludeCollection=EventAggregate --excludeCollection=CardConnectIntegration --uri=$MONGO_CONNECTION_STRING
 aws secretsmanager get-secret-value --secret-id "envoy-dev-na-cf-bauer-na_CONNECTION_STRING" | jq -r '.SecretString'
 # Go into AWS Secrets manager to see all possible values
 history | grep SUBPREFIX # gets you started running tasks on dev server
+** Dump Dev Database
+Log into shared dev server in Studio 3T
+find your db. Right click or Cmd+c
+Right-click localhost or select and Cmd+v
+** Run integration on dev server
+where's the job runner? scripts/run-task-for-env.sh
+where do I drop files? /client/thorogood
 
 * Ghostty
 https://www.youtube.com/watch?v=enwDjM7pNNE (cursor trails)
@@ -327,12 +335,6 @@ jira issue move EP-13221 "Ready For Testing"
 * New Relic:
 Netsuite integration dataposts to our endpoints are keyed by requestId and stored in s3
 
-
-* Dump Dev Database
-Log into shared dev server in Studio 3T
-find your db. Right click or Cmd+c
-Right-click localhost or select and Cmd+v
-
 * SFTP
 sidelines_sftp@sftp.envoyb2b.com password: GoARKiBGhrqzdkH+4gkxdA==
 get Product-2025-11-05-10-16-14.csv
@@ -420,6 +422,12 @@ awesome-nu # a repo with goodies and plugins
 | explore # brings up a TUI to navigate around the data
 | str replace "hello" "hi"
 open sample.csv | select username password
+open data.csv | columns
+ms "Product.find({})" | get skus | flatten | get attributes | each { get 1 }
+group-by
+It's SOOOO close to Ruby syntax! Like only '|' instead of '.'
+$'s to reference variables. So that the parse instantly knows if this a variable vs a string literal arg
+Can convert to CSV or JSON! # | to json # | to csv
 http get
 * Devs are better than AI; learn to hack
 https://www.youtube.com/watch?v=iBkDhtjqXhA

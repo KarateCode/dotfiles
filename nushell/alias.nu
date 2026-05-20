@@ -100,3 +100,16 @@ def --env se [] {
     let filename = (ls $env_dir | get name | each { path basename } | to text | fzf | str trim)
     load-sh-exports ($env_dir | path join $filename)
 }
+
+def --env clientPatchJobRunner [] {
+    if ($env.NAMING_PREFIX? | is-empty) {
+        error make {msg: "$env.NAMING_PREFIX not set"}
+    }
+
+    print ""
+    print $"(ansi yellow)Patching client record for local runs of background-job-runner...(ansi reset)"
+    mongosh $env.NAMING_PREFIX --quiet --eval "db.Client.updateMany({}, {$set: {'config.integrationMoveFiles': false}})"
+    mongosh $env.NAMING_PREFIX --quiet --eval "db.Client.updateMany({}, {$set: {'config.integrationSrcPath': '/Users/michaelschneider/code/envoy-web'}})"
+    print $"(ansi green_bold)Done!(ansi reset)"
+    print ""
+}
