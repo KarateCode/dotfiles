@@ -43,12 +43,18 @@ def editor [] {
     }
 
     # Extract the actual hex string from _id
-    # It could be a plain string, or a record like {"$oid": "..."}
-    let id = if ($raw_id | describe | str starts-with "record") {
-        # BSON extended JSON format: {"$oid": "..."}
-        $raw_id | get "$oid"? | default ($raw_id | values | first)
+    # It could be a plain string, a list, or a record like {"$oid": "..."}
+    # First, unwrap if it's a list
+    let unwrapped = if ($raw_id | describe | str starts-with "list") {
+        $raw_id | first
     } else {
-        $raw_id | into string
+        $raw_id
+    }
+    # Then check if it's BSON extended JSON format
+    let id = if ($unwrapped | describe | str starts-with "record") {
+        $unwrapped | get "$oid"? | default ($unwrapped | values | first)
+    } else {
+        $unwrapped | into string
     }
 
     print $"_id: ($id)"
