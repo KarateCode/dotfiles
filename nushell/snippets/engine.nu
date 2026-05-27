@@ -140,7 +140,7 @@ def mongo-table-picker [] {
         return
     }
 
-    let selection = (ms "getCollectionNames()" | get 0? | to text | fzf | str trim)
+    let selection = (ms "getCollectionNames()" | to text | fzf | str trim)
     if ($selection | is-not-empty) {
         commandline edit --insert $selection
     }

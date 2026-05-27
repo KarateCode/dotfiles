@@ -76,6 +76,8 @@ def pop [] {
 }
 alias gl = bash ~/dotfiles/scripts/grep-git-log.sh
 
+alias job = env AWS_PROFILE=appropos APPROPOS_ENV=local ./server/bin/run-node server/bin/task-runner.js background-job-runner --integrationARN="arn:aws:sns:us-east-1:506597054164:appropos-integration-local-error" --ignoreJobInterval=true
+
 def rmautodump [] {
     try { rm -rf auto_dump_* }
     try { rm auto_dump_*.tar.gz }

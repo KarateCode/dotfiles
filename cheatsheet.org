@@ -207,6 +207,7 @@ Right-click localhost or select and Cmd+v
 ** Run integration on dev server
 where's the job runner? scripts/run-task-for-env.sh
 where do I drop files? /client/thorogood
+SUBPREFIX=thorogood-na LOCK_ALERT_TIME_MINUTES=60 LOCK_ID="Mike_run" ./run_one.sh ./docker-run-task.sh background-job-runner --integrationARN=$INTEGRATION_ARN
 
 * Ghostty
 https://www.youtube.com/watch?v=enwDjM7pNNE (cursor trails)
@@ -390,6 +391,15 @@ Cmd+/ opens the keyboard shortcut cheetsheet
 Cmd+shift+/ react to last line
 cmd+shift+h to start/stop huddle
 
+* Switching between v41 and develop
+nvm use
+npm run install-dev
+manually delete docker containers
+npm run nginx-local
+make sure database (percona) container is running
+start BE
+rebuild FE
+
 * gh:
 gh auth status
 gh repo view
@@ -446,6 +456,19 @@ tv list-channels
 # man pages
 # git differ: files on left, diff on right
 # For anything that gives a list; then I'd have to copy and paste one by one to view them
+
+* XLS notes:
+open vba-template.xlsm
+_Module1.vba has the hide/unhide vba function
+upc_page.ts; console.log the identifiers (first array element) to see if we can dynamicall get upc col
+https://envoyplatform.atlassian.net/wiki/spaces/EP/pages/3822452740/Libxl+Tips
+node_modules/libxl/specs is a good place to look up libXL args
+alerts in VBA are messageBox
+README has documentation
+open server/lib/b2b/offline-multi-order/vba-template.xlsm
+click on developer tab; click on visual basic
+in left file pane, expand Modules folder; double click on Module
+vba logs to /Users/michaelschneider/Library/Containers/com.microsoft.Excel/Data
 
 * Troubleshooting
 "Could not load credentials from any providers". Check your AWS_PROFILE for unset or typos
