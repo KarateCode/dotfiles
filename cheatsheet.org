@@ -431,6 +431,7 @@ supports csv toml json sqlite
 awesome-nu # a repo with goodies and plugins
 | explore # brings up a TUI to navigate around the data
 | str replace "hello" "hi"
+| lines # takes old school output like 'git status' and makes it NuShell structured
 open sample.csv | select username password
 open data.csv | columns
 ms "Product.find({})" | get skus | flatten | get attributes | each { get 1 }

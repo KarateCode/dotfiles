@@ -3,3 +3,4 @@ nushell/history.txt
 nushell/plugin.msgpackz
 nushell/history.sqlite3
 nushell/history.sqlite*
+.DS_Store

@@ -1,0 +1,5 @@
+name: mongo
+root: ~/code/envoy-web
+windows:
+  - EnvoyWeb:
+      layout: tiled
