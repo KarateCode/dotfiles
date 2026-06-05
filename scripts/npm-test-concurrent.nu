@@ -4,7 +4,7 @@
 # Runs 4 test commands in a 2x2 tmux pane grid with staggered creation
 # to avoid NuShell session ID collisions
 
-def main [] {
+def ntc [] {
     let cwd = $env.PWD
     let window_name = "Test Suite"
 
@@ -30,4 +30,9 @@ def main [] {
 
     # Enable synchronized panes (after commands are sent)
     tmux set-window-option synchronize-panes on
+}
+
+# For running as a standalone script
+def main [] {
+    ntc
 }
