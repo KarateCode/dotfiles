@@ -1,5 +1,6 @@
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# NVM - commented out in favor of fnm (see nushell config)
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Set up LS_COLORS for theming
 # export LS_COLORS="$(vivid generate catppuccin-latte)"
@@ -34,6 +35,6 @@ export STARSHIP_CONFIG="$HOME/dotfiles/starship.toml"
 
 bindkey -r "^H"
 
-nvm use default
+# nvm use default
 
 source ~/dotfiles/snippets/engine.sh

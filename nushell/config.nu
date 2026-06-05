@@ -2,6 +2,16 @@
 use std "path add"
 path add "~/.cargo/bin"
 
+# fnm auto-switching: automatically switch Node version when entering a directory
+# with .node-version or .nvmrc file
+# $env.config.hooks.env_change.PWD = (
+#     $env.config.hooks.env_change.PWD | default [] | append {||
+#         if ([.node-version .nvmrc] | any { |f| ($f | path exists) }) {
+#             ^fnm use --silent-if-unchanged
+#         }
+#     }
+# )
+
 $env.config.show_banner = false
 $env.config.history.file_format = "sqlite"
 $env.config.history.isolation = true
