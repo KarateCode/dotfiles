@@ -27,6 +27,7 @@ source ~/dotfiles/scripts/rebase_on_develop.nu
 source ~/dotfiles/scripts/setup_local_env.nu
 source ~/dotfiles/scripts/download_latest.nu
 source ~/dotfiles/scripts/npm-test-concurrent.nu
+source ~/dotfiles/scripts/gitbd.nu
 source ~/dotfiles/nushell/alias.nu
 source ~/dotfiles/nushell/envoy_scripts.nu
 
