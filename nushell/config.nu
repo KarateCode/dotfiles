@@ -18,6 +18,7 @@ $env.config.history.isolation = true
 
 # source_sh_exports must come before alias.nu (alias.nu uses load-sh-exports)
 source ~/dotfiles/scripts/source_sh_exports.nu
+load-sh-exports ~/dotfiles/.sensitive.sh
 source ~/dotfiles/scripts/mongo_shell_inline.nu
 source ~/dotfiles/scripts/editor.nu
 source ~/dotfiles/scripts/mongo_select.nu
@@ -28,6 +29,7 @@ source ~/dotfiles/scripts/setup_local_env.nu
 source ~/dotfiles/scripts/download_latest.nu
 source ~/dotfiles/scripts/npm-test-concurrent.nu
 source ~/dotfiles/scripts/gitbd.nu
+source ~/dotfiles/scripts/netsuite.nu
 source ~/dotfiles/nushell/alias.nu
 source ~/dotfiles/nushell/envoy_scripts.nu
 
