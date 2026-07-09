@@ -25,7 +25,6 @@ source ~/dotfiles/scripts/mongo_select.nu
 source ~/dotfiles/scripts/delete_many.nu
 source ~/dotfiles/scripts/update_many.nu
 source ~/dotfiles/scripts/rebase_on_develop.nu
-source ~/dotfiles/scripts/setup_local_env.nu
 source ~/dotfiles/scripts/download_latest.nu
 source ~/dotfiles/scripts/npm-test-concurrent.nu
 source ~/dotfiles/scripts/gitbd.nu

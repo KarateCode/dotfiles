@@ -124,6 +124,39 @@ def startBackEnd [] {
     tmuxinator backend --append $env_name
 }
 
+# Bounce the backend environment to a new env selection
+def bounceenv [] {
+    let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
+    let env_name = (ls $env_dir
+        | get name
+        | each { path basename | str replace '.sh' '' }
+        | to text
+        | fzf
+        | str trim)
+
+    if ($env_name | is-empty) {
+        print "No environment selected"
+        return
+    }
+
+    print $"Switching to: ($env_name)"
+
+    # Restart dev server in pane 1
+    tmux send-keys -t dev-environment:BE.1 C-c
+    tmux send-keys -t dev-environment:BE.1 $"select_env ($env_name)" C-m
+    sleep 1sec
+    tmux send-keys -t dev-environment:BE.1 './server/bin/run-dev-server' C-m
+
+    # Restart gulp in pane 2
+    tmux send-keys -t dev-environment:BE.2 C-c
+    tmux send-keys -t dev-environment:BE.2 $"select_env ($env_name)" C-m
+    sleep 1sec
+    tmux send-keys -t dev-environment:BE.2 'npm run gulp -- --live-reload' C-m
+
+    # Update env in pane 3
+    tmux send-keys -t dev-environment:BE.3 $"select_env ($env_name)" C-m
+}
+
 def --env clientPatchJobRunner [] {
     if ($env.NAMING_PREFIX? | is-empty) {
         error make {msg: "$env.NAMING_PREFIX not set"}
