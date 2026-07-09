@@ -476,7 +476,10 @@ vba logs to /Users/michaelschneider/Library/Containers/com.microsoft.Excel/Data
 
 * Claude:
 C-g pops $EDITOR
-
+* Supacode:
+A libGhostty based Terminal that managers all your agents
+* Herdr
+Is a tmux replacement, but also has a left pane to manage your agents
 * Brow6el is a browser that runs in a terminal
 * Opencode
 C-x e opens in your editor for multi-line editing

@@ -1,0 +1,5 @@
+name: secondary
+root: ~/code/secondary
+windows:
+  - Secondary:
+      layout: tiled

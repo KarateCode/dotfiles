@@ -31,3 +31,8 @@ def startMongoSession [] {
     printf "\e]11;#0b2912\a"
     tmuxinator mongo
 }
+
+def startSecondary [] {
+    printf "\e]11;#330b0b\a"
+    tmuxinator secondary
+}
