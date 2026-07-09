@@ -105,6 +105,25 @@ def --env se [] {
     load-sh-exports ($env_dir | path join $filename)
 }
 
+# Start backend tmuxinator with fzf environment selection
+def startBackEnd [] {
+    let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
+    let env_name = (ls $env_dir
+        | get name
+        | each { path basename | str replace '.sh' '' }
+        | to text
+        | fzf
+        | str trim)
+
+    if ($env_name | is-empty) {
+        print "No environment selected"
+        return
+    }
+
+    print $"Starting backend with environment: ($env_name)"
+    tmuxinator backend --append $env_name
+}
+
 def --env clientPatchJobRunner [] {
     if ($env.NAMING_PREFIX? | is-empty) {
         error make {msg: "$env.NAMING_PREFIX not set"}

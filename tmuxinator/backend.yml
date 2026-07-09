@@ -1,0 +1,18 @@
+name: backend
+root: ~/code/envoy-web
+windows:
+  - BE:
+      # layout: tiled
+      # layout: be92,204x51,0,0{152x51,0,0,1,51x51,153,0,2}
+      layout: a75d,300x66,0,0{145x66,0,0,9,154x66,146,0[154x23,146,0,11,154x42,146,24,45]}
+      # synchronize: after
+      panes:
+        - |-
+          select_env <%= @args[0] %>
+          ./server/bin/run-dev-server
+        - |-
+          select_env <%= @args[0] %>
+          npm run gulp -- --live-reload
+        - |-
+          select_env <%= @args[0] %>
+

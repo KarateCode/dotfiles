@@ -1,4 +1,5 @@
 .sensitive.sh
+.netsuite-token
 nushell/history.txt
 nushell/plugin.msgpackz
 nushell/history.sqlite3
