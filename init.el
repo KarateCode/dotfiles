@@ -546,6 +546,18 @@ Reselects duplicated region under Spacemacs holy mode."
     (backward-kill-word 1)))
 (global-set-key (kbd "C-w") 'smart-kill-region-or-word)
 
+(defun my/yank-as-single-undo ()
+  "Yank with all changes (including auto-indentation) grouped as a single undo."
+  (interactive)
+  (let ((handle (prepare-change-group)))
+    (unwind-protect
+        (progn
+          (activate-change-group handle)
+          (yank))
+      (accept-change-group handle)
+      (undo-amalgamate-change-group handle))))
+(global-set-key (kbd "C-y") 'my/yank-as-single-undo)
+
 ; ====================
 ; Adjusting Word chars
 ; ====================
