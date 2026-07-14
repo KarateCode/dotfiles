@@ -114,16 +114,17 @@
 
   (setq dirvish-side-follow-mode t)
 
-(use-package jq-mode
-  :ensure t
-  :mode "\\.jq\\'")
-
   ;; --- Keybindings ---
   :bind
   (:map dired-mode-map
         ("TAB" . dirvish-subtree-toggle) ; Folders
         ("M-o" . dired-omit-mode)       ; Toggle hiding files
         ("C-c d" . dirvish-dispatch)))  ; Actions menu
+
+(use-package jq-mode
+  :ensure t
+  :mode "\\.jq\\'")
+
 (use-package treesit-auto
   :ensure t
   :custom
@@ -617,7 +618,7 @@ Gets text directly from pbpaste to avoid terminal paste artifacts."
 ; ====================
 ; Dirvish
 ; ====================
-(setq dirvish-attributes '(file-size vcs-state icons collapse subtree-state))
+;; dirvish-attributes is set in the use-package block above (with nerd-icons)
 
 (defun my/dirvish-copy-relative-path-to-clipboard ()
   "Copy the current file path relative to projectile root directly to macOS clipboard."

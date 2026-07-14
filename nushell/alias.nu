@@ -84,6 +84,7 @@ alias job = env AWS_PROFILE=appropos APPROPOS_ENV=local ./server/bin/run-node se
 def rmautodump [] {
     try { rm -rf auto_dump_* }
     try { rm auto_dump_*.tar.gz }
+    git status
 }
 # alias fcode='fzf | cut -d ":" -f 1 | xargs code'
 
@@ -108,6 +109,7 @@ def --env se [] {
 
 # Start backend tmuxinator with fzf environment selection
 def startBackEnd [] {
+    tmux rename-session dev-environment
     let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
     let env_name = (ls $env_dir
         | get name

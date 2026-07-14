@@ -11,3 +11,4 @@
 - starship.toml
 - television
 - tmuxinator
+- init.el
