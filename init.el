@@ -562,7 +562,20 @@ Reselects duplicated region under Spacemacs holy mode."
   "Paste from system clipboard with proper indentation, grouped as single undo.
 Gets text directly from pbpaste to avoid terminal paste artifacts."
   (interactive)
-  (insert "Sanity Check!"))
+  (let ((handle (prepare-change-group))
+        (text (string-trim-right
+               (shell-command-to-string "pbpaste")
+               "[\n\r]+")))
+    (unwind-protect
+        (progn
+          (activate-change-group handle)
+          (when (use-region-p)
+            (delete-region (region-beginning) (region-end)))
+          (let ((start (point)))
+            (insert text)
+            (indent-region start (point))))
+      (accept-change-group handle)
+      (undo-amalgamate-change-group handle))))
 
 ; ====================
 ; Adjusting Word chars
