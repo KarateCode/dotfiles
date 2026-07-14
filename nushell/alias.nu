@@ -32,6 +32,7 @@ alias cf = ~/dotfiles/scripts/next_vs_code_file.sh
 alias ef = ~/dotfiles/scripts/next_emacs_file.sh
 alias lastc = git log -p -1
 alias lastcfiles = git diff-tree --no-commit-id --name-only -r HEAD
+alias reseed = npm run db:seed -- --email michael.schneider@envoyplatform.com
 
 # ntc is sourced from ~/dotfiles/scripts/npm-test-concurrent.nu
 alias jdev = mb-jira-cli --toggleview="column" --filter="Dev Review"

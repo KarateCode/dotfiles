@@ -558,6 +558,12 @@ Reselects duplicated region under Spacemacs holy mode."
       (undo-amalgamate-change-group handle))))
 (global-set-key (kbd "C-y") 'my/yank-as-single-undo)
 
+(defun my/clipboard-paste-as-single-undo ()
+  "Paste from system clipboard with proper indentation, grouped as single undo.
+Gets text directly from pbpaste to avoid terminal paste artifacts."
+  (interactive)
+  (insert "Sanity Check!"))
+
 ; ====================
 ; Adjusting Word chars
 ; ====================
@@ -790,6 +796,9 @@ Reselects duplicated region under Spacemacs holy mode."
 
 (define-key input-decode-map "\e[109;9z" [cmd-shift-z])
 (global-set-key [cmd-shift-z] 'undo-redo)
+
+;; cmd-v → Ghostty sends F4 (\x1bOS), bind to clean clipboard paste
+(global-set-key (kbd "<f4>") 'my/clipboard-paste-as-single-undo)
 
 ; ====================
 ; More keybindings

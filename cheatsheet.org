@@ -226,7 +226,8 @@ firefly
 github dark
 glacier
 hardcore ** I like this one
-
+* process-task-queue ptq:
+Sometimes it takes a few minutes for the job to show up in SQS
 * RipGrep
 rg -F looks for exact text matches instead of regex
 rg -F -C5 gives 5 lines context around the match
@@ -476,12 +477,17 @@ vba logs to /Users/michaelschneider/Library/Containers/com.microsoft.Excel/Data
 
 * Claude:
 C-g pops $EDITOR
+claude --resume # shows list that you can select from
+claude --continue # jumps you straight into most recent
 * Supacode:
 A libGhostty based Terminal that managers all your agents
 * Herdr
 Is a tmux replacement, but also has a left pane to manage your agents
 * Brow6el is a browser that runs in a terminal
 * Opencode
+opencode --continue
+opencode session list
+opencode --session <sessionId>
 C-x e opens in your editor for multi-line editing
 Big Pickle is an LLM offered for free by opencode
 Is /sessions how you go back to an old thread?
