@@ -117,13 +117,34 @@
   (setq dired-omit-files "^\\.[^.]?\\|^\\.\\.$")
 
   (setq dirvish-side-follow-mode t)
+  (setq dirvish-side-width 35)  ;; Default width in columns
 
   ;; --- Keybindings ---
   :bind
   (:map dired-mode-map
         ("TAB" . dirvish-subtree-toggle) ; Folders
         ("M-o" . dired-omit-mode)       ; Toggle hiding files
-        ("C-c d" . dirvish-dispatch)))  ; Actions menu
+        ("C-c d" . dirvish-dispatch)    ; Actions menu
+        ("<" . my/dirvish-shrink)       ; Shrink side pane
+        (">" . my/dirvish-grow)))       ; Grow side pane
+
+(defun my/dirvish-shrink ()
+  "Shrink the dirvish side window by 5 columns."
+  (interactive)
+  (when-let ((win (dirvish-side--session-visible-p)))
+    (let ((window-size-fixed nil))
+      (with-selected-window win
+        (setq window-size-fixed nil)
+        (shrink-window-horizontally 5)))))
+
+(defun my/dirvish-grow ()
+  "Grow the dirvish side window by 5 columns."
+  (interactive)
+  (when-let ((win (dirvish-side--session-visible-p)))
+    (let ((window-size-fixed nil))
+      (with-selected-window win
+        (setq window-size-fixed nil)
+        (enlarge-window-horizontally 5)))))
 
 (use-package jq-mode
   :ensure t
@@ -706,6 +727,8 @@ Gets text directly from pbpaste to avoid terminal paste artifacts."
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil)            ;; don't accelerate
 (setq mouse-wheel-follow-mouse 't)                  ;; scroll window under mouse
+;; Allow resizing side windows (like dirvish-side)
+(setq window-resize-pixelwise t)
 
 ; ====================
 ; Setting Tweaks
