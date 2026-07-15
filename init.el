@@ -86,7 +86,10 @@
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 )
 (use-package nerd-icons
-  :ensure t)
+  :ensure t
+  :config
+  ;; Fix icon width issues - force nerd font icons to single-width
+  (setq nerd-icons-font-family "Symbols Nerd Font Mono"))
 (use-package dirvish
   :ensure t
   :init
@@ -104,8 +107,9 @@
   (setq dirvish-subtree-state-style 'nerd)
 
   ;; Define the visual elements to display in the buffer
+  ;; Note: file-size attribute causes C-n line-skip issues, so it's excluded
   (setq dirvish-attributes
-        '(nerd-icons subtree-state vc-state git-msg collapse file-size))
+        '(nerd-icons subtree-state vc-state))
 
   ;; --- Omit Configuration (No "." or "..") ---
   ;; Use a specific hook to enable omit mode *after* dirvish has loaded
