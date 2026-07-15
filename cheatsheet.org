@@ -484,6 +484,11 @@ A libGhostty based Terminal that managers all your agents
 * Herdr
 Is a tmux replacement, but also has a left pane to manage your agents
 * Brow6el is a browser that runs in a terminal
+* Sesh:
+tmuxinator replacement
+(integrates with zoxide)
+workplace and context awareness
+Can be triggered from Raycast
 * Opencode
 opencode --continue
 opencode session list

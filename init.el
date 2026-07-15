@@ -114,6 +114,8 @@
   ;; --- Omit Configuration (No "." or "..") ---
   ;; Use a specific hook to enable omit mode *after* dirvish has loaded
   (add-hook 'dired-mode-hook #'dired-omit-mode)
+  ;; Disable line numbers in dirvish/dired buffers
+  (add-hook 'dired-mode-hook (lambda () (display-line-numbers-mode -1)))
   (setq dired-omit-files "^\\.[^.]?\\|^\\.\\.$")
 
   (setq dirvish-side-follow-mode t)
