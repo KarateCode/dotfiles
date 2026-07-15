@@ -585,20 +585,29 @@ Reselects duplicated region under Spacemacs holy mode."
 (global-set-key (kbd "C-w") 'smart-kill-region-or-word)
 
 (defun my/yank-as-single-undo ()
-  "Yank with all changes (including auto-indentation) grouped as a single undo."
+  "Yank with all changes (including auto-indentation) grouped as a single undo.
+In org-mode, skip auto-indentation to preserve original whitespace."
   (interactive)
   (let ((handle (prepare-change-group)))
     (unwind-protect
         (progn
           (activate-change-group handle)
-          (yank))
+          (if (derived-mode-p 'org-mode)
+              ;; In org-mode, do a simple yank without triggering indent
+              (let ((start (point)))
+                (insert (current-kill 0))
+                ;; Don't indent - preserve original whitespace
+                )
+            ;; In other modes, normal yank with auto-indent
+            (yank)))
       (accept-change-group handle)
       (undo-amalgamate-change-group handle))))
 (global-set-key (kbd "C-y") 'my/yank-as-single-undo)
 
 (defun my/clipboard-paste-as-single-undo ()
   "Paste from system clipboard with proper indentation, grouped as single undo.
-Gets text directly from pbpaste to avoid terminal paste artifacts."
+Gets text directly from pbpaste to avoid terminal paste artifacts.
+In org-mode, skip auto-indentation to preserve original whitespace."
   (interactive)
   (let ((handle (prepare-change-group))
         (text (string-trim-right
@@ -611,7 +620,9 @@ Gets text directly from pbpaste to avoid terminal paste artifacts."
             (delete-region (region-beginning) (region-end)))
           (let ((start (point)))
             (insert text)
-            (indent-region start (point))))
+            ;; Only indent in non-org modes
+            (unless (derived-mode-p 'org-mode)
+              (indent-region start (point)))))
       (accept-change-group handle)
       (undo-amalgamate-change-group handle))))
 

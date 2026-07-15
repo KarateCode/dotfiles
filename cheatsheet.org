@@ -474,7 +474,43 @@ vba logs to /Users/michaelschneider/Library/Containers/com.microsoft.Excel/Data
 
 * Troubleshooting
 "Could not load credentials from any providers". Check your AWS_PROFILE for unset or typos
-
+* WireGuard:
+** Raw Tunnel
+[Interface]
+PrivateKey = 4NJIoVo+pixyWkEW+3Zc2pHRrzkgIuNo+KEqN/j8JFA=
+Address = 10.8.0.5/24, fdcc:ad94:bacf:61a4::cafe:5/112
+DNS = 1.1.1.1, 8.8.8.8, 8.8.8.4, 1.0.0.1
+MTU = 1420
+[Peer]
+PublicKey = QYLoXSMmU4aocgGueLef282JiDHhCnwiCTQ9ock9aVs=
+PresharedKey = 9VJnTkPPXdOO8Rc8ay18cUzXc9Ms6FQMDdBO4fkaen4=
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 0
+Endpoint = ec2-44-216-27-206.compute-1.amazonaws.com:51820
+** With IPV6 dropped:
+[Interface]
+PrivateKey = 4NJIoVo+pixyWkEW+3Zc2pHRrzkgIuNo+KEqN/j8JFA=
+Address = 10.8.0.5/24
+DNS = 1.1.1.1, 8.8.8.8, 8.8.8.4, 1.0.0.1
+MTU = 1420
+[Peer]
+PublicKey = QYLoXSMmU4aocgGueLef282JiDHhCnwiCTQ9ock9aVs=
+PresharedKey = 9VJnTkPPXdOO8Rc8ay18cUzXc9Ms6FQMDdBO4fkaen4=
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 0
+Endpoint = ec2-44-216-27-206.compute-1.amazonaws.com:51820
+** With Clean Browsing DNS:
+[Interface]
+PrivateKey = 4NJIoVo+pixyWkEW+3Zc2pHRrzkgIuNo+KEqN/j8JFA=
+Address = 10.8.0.5/24
+DNS = 1.1.1.1, 8.8.8.8, 8.8.8.4, 1.0.0.1
+MTU = 1420
+[Peer]
+PublicKey = QYLoXSMmU4aocgGueLef282JiDHhCnwiCTQ9ock9aVs=
+PresharedKey = 9VJnTkPPXdOO8Rc8ay18cUzXc9Ms6FQMDdBO4fkaen4=
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 0
+Endpoint = ec2-44-216-27-206.compute-1.amazonaws.com:51820
 * Claude:
 C-o to enter transcription viewer: C-d, C-u for pageUp/pageDown. C-n, C-p move by line
 C-g pops $EDITOR
