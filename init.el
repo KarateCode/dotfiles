@@ -304,6 +304,10 @@
   ;; (doom-themes-org-config)
 )
 
+;; Enable terminal transparency (let Ghostty's background-opacity show through)
+(unless (display-graphic-p)
+  (set-face-background 'default "unspecified-bg"))
+
 ; ====================
 ; My Custom Functions
 ; ====================
@@ -530,12 +534,18 @@ Reselects duplicated region under Spacemacs holy mode."
 )
 
 (defun custom-cut-line-or-region ()
-	"If region is active, kill it. Otherwise, kill the current line."
+	"Cut region or current line to system clipboard (not kill-ring)."
 	(interactive)
-	(if (use-region-p)
-		(kill-region (region-beginning) (region-end))
-		(kill-whole-line)
-	)
+	(let* ((start (if (use-region-p) (region-beginning) (line-beginning-position)))
+		   (end (if (use-region-p) (region-end) (line-beginning-position 2)))
+		   (text (buffer-substring-no-properties start end)))
+		;; Put into macOS system clipboard
+		(with-temp-buffer
+			(insert text)
+			(call-process-region (point-min) (point-max) "pbcopy"))
+		;; Delete the text without touching kill-ring
+		(delete-region start end)
+		(message "Cut: %s" (if (use-region-p) "region" "line")))
 )
 
 (defun my/search-region ()

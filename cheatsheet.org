@@ -476,6 +476,7 @@ vba logs to /Users/michaelschneider/Library/Containers/com.microsoft.Excel/Data
 "Could not load credentials from any providers". Check your AWS_PROFILE for unset or typos
 
 * Claude:
+C-o to enter transcription viewer: C-d, C-u for pageUp/pageDown. C-n, C-p move by line
 C-g pops $EDITOR
 claude --resume # shows list that you can select from
 claude --continue # jumps you straight into most recent
