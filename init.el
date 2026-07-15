@@ -608,6 +608,12 @@ Gets text directly from pbpaste to avoid terminal paste artifacts."
 ;; (scroll-bar-mode -1) ;; Remove the scroll bars for a truly clean look
 ;; Disable word wrap (truncate lines) globally
 (setq-default truncate-lines t)
+;; Replace ugly '$' truncation indicator with a cleaner colored ellipsis
+(defface my/truncation-face
+  '((t :foreground "#ff79c6"))  ;; pink
+  "Face for the truncation indicator.")
+(set-display-table-slot standard-display-table 'truncation
+                        (make-glyph-code ?… 'my/truncation-face))
 ;; Enable line numbers globally
 (global-display-line-numbers-mode t)
 ;; Disable line numbers for specific modes where they don't make sense
