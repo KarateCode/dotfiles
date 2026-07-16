@@ -345,17 +345,22 @@
 ) ; Prefix arg 16 sets it to [-]
 
 (defface my/org-checkbox-done-face
-	'((t :foreground "#8aff8a" :weight normal))
+	'((t :weight normal))
 	"Face for checked Org checkbox lines."
 )
 (defface my/org-checkbox-empty-face
-	'((t :foreground "#ffffff" :weight normal))
+	'((t :weight normal))
 	"Face for unchecked Org checkbox lines."
 )
 (defface my/org-checkbox-partial-face
-	'((t :foreground "#ff6666" :weight normal))
+	'((t :weight normal))
 	"Face for partially checked (indeterminate) Org checkbox lines."
 )
+
+;; Set org checkbox faces using theme colors (must be after defface and theme load)
+(set-face-attribute 'my/org-checkbox-done-face nil :foreground (doom-color 'green))
+(set-face-attribute 'my/org-checkbox-empty-face nil :foreground (doom-color 'fg))
+(set-face-attribute 'my/org-checkbox-partial-face nil :foreground (doom-color 'red))
 
 (defun delete-current-line (arg)
 	"If there's a selection, delete it, otherwise delete current line"
@@ -699,8 +704,8 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 (with-eval-after-load 'org
   (my/org-checkbox-pretty-and-colored)
   (setq org-todo-keyword-faces
-        '(("TODO" . (:foreground "white" :weight bold))
-          ("DONE" . (:foreground "green" :weight bold))))
+        `(("TODO" . (:foreground ,(doom-color 'fg) :weight bold))
+          ("DONE" . (:foreground ,(doom-color 'green) :weight bold))))
 
   ;; Fix mouse scroll wheel in org-mode (org overrides these)
   (define-key org-mode-map (kbd "<mouse-4>") 'scroll-down-line)
