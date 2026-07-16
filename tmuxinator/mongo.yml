@@ -1,5 +1,6 @@
 name: mongo
 root: ~/code/envoy-web
+pre_window: $env.NUSHELL_AUTOPAIRS = 1
 windows:
   - EnvoyWeb:
       layout: tiled

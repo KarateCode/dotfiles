@@ -61,5 +61,68 @@ $env.config.keybindings = ($env.config.keybindings | append [
     }
 ])
 
+# Autopairs - enabled when NUSHELL_AUTOPAIRS env var is set (e.g., via tmuxinator pre_window)
+if ($env.NUSHELL_AUTOPAIRS? | is-not-empty) {
+    let curly_pair = (char --unicode "007b") + (char --unicode "007d")
+
+    $env.config.keybindings = ($env.config.keybindings | append [
+        # Parentheses ()
+        {
+            name: autopair_paren
+            modifier: none
+            keycode: "char_("
+            mode: [emacs, vi_insert]
+            event: [
+                { edit: InsertString, value: '()' }
+                { edit: MoveLeft }
+            ]
+        }
+        # Curly braces {}
+        {
+            name: autopair_brace
+            modifier: none
+            keycode: "char_{"
+            mode: [emacs, vi_insert]
+            event: [
+                { edit: InsertString, value: $curly_pair }
+                { edit: MoveLeft }
+            ]
+        }
+        # Square brackets []
+        {
+            name: autopair_bracket
+            modifier: none
+            keycode: "char_["
+            mode: [emacs, vi_insert]
+            event: [
+                { edit: InsertString, value: '[]' }
+                { edit: MoveLeft }
+            ]
+        }
+        # Single quotes ''
+        {
+            name: autopair_single_quote
+            modifier: none
+            keycode: "char_'"
+            mode: [emacs, vi_insert]
+            event: [
+                { edit: InsertString, value: "''" }
+                { edit: MoveLeft }
+            ]
+        }
+        # Double quotes ""
+        {
+            name: autopair_double_quote
+            modifier: none
+            keycode: 'char_"'
+            mode: [emacs, vi_insert]
+            event: [
+                { edit: InsertString, value: '""' }
+                { edit: MoveLeft }
+            ]
+        }
+    ])
+}
+
 # Initialize starship prompt
 source ~/.cache/starship/init.nu
