@@ -362,6 +362,7 @@ AWS_PROFILE=appropos-admin AWS_REGION=us-east-1 script_to_run.sh
 
 * Node
 rm -rf node_modules && npm cache clear --force && rm -f .stylelintcache .eslintcache && nvm install && nvm use && npm run install-dev
+rm -f .stylelintcache .eslintcache
 
 * Nginx
 nginx is now booted up from docker dashboard on my system

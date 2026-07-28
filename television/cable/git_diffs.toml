@@ -7,12 +7,16 @@ description = "View staged and unstaged git changes"
 command = "git ls-files --modified --others --exclude-standard"
 
 [preview]
-# Shows the colored diff for the selected file
-command = "git diff --color=always -- '{}'"
+# Shows git diff for tracked files, bat for untracked files
+command = "bash -c 'if git ls-files --error-unmatch \"$1\" >/dev/null 2>&1; then git diff --color=always -- \"$1\"; else bat --color=always --style=numbers \"$1\"; fi' -- {}"
 
 [ui]
 preview_panel = { "size" = 65, "scrollbar" = true }
 
 [keybindings]
-# Optional: bind a key to open the file in your editor from the list
-# "enter" = "select"
+alt-a = ["actions:stage", "reload_source"]
+
+[actions.stage]
+description = "Stage file with git add"
+command = "git add {}"
+mode = "fork"
