@@ -1,5 +1,5 @@
 [metadata]
-name = "git-diffs"
+name = "git-diff"
 description = "View staged and unstaged git changes"
 
 [source]
