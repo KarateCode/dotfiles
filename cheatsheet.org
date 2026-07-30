@@ -411,6 +411,16 @@ gh pr status
 gh pr merge PR_NUMBER --squash --delete-branch
 gh pr diff | delta (or `gh pr diff PR_NUMBER | delta`)
 gh pr diff | diffnav
+* gh dash:
+# zsh:
+gh dash -c <(echo "prSections: [{title: 'PR #123', filters: '123'}]")
+# nushell:
+def ghd [pr: string] {
+    let tmp = (mktemp --suffix .yml)
+    $"prSections: [{title: 'PR #($pr)', filters: '($pr)'}]" | save -f $tmp
+    gh dash -c $tmp
+    rm -f $tmp
+}
 
 * Carapace
 auto completion for Go and pretty much everything else

@@ -1,0 +1,5 @@
+name: AntiGravity
+root: ~/code/envoy-web
+windows:
+  - Secondary:
+      layout: tiled

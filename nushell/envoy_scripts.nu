@@ -36,3 +36,8 @@ def startSecondary [] {
     printf "\e]11;#330b0b\a"
     tmuxinator secondary
 }
+
+def startAntiGravity [] {
+    printf "\e]11;#0f172a\a"
+    tmuxinator antiGravity
+}
