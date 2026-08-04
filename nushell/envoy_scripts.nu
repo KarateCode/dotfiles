@@ -41,3 +41,8 @@ def startAntiGravity [] {
     printf "\e]11;#0f172a\a"
     tmuxinator antiGravity
 }
+
+def ghd [pr: string] {
+    gh dash -c (mktemp --suffix .yml | do { let f = $in; $"prSections: [{title: 'PR #($pr)',
+    filters: 'is:pr ($pr)'}]" | save -f $f; $f })
+}

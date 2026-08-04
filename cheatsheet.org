@@ -415,12 +415,7 @@ gh pr diff | diffnav
 # zsh:
 gh dash -c <(echo "prSections: [{title: 'PR #123', filters: '123'}]")
 # nushell:
-def ghd [pr: string] {
-    let tmp = (mktemp --suffix .yml)
-    $"prSections: [{title: 'PR #($pr)', filters: '($pr)'}]" | save -f $tmp
-    gh dash -c $tmp
-    rm -f $tmp
-}
+gh dash -c (mktemp --suffix .yml | do { let f = $in; "prSections: [{title: 'PR #7741', filters: 'is:pr 7741'}]" | save -f $f; $f })
 
 * Carapace
 auto completion for Go and pretty much everything else
