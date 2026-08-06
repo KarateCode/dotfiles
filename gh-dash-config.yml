@@ -60,6 +60,10 @@ defaults:
     refetchIntervalMinutes: 30
 keybindings:
     prs:
+      - key: m
+        command: gh pr merge --squash --delete-branch {{.PrNumber}} -R {{.RepoName}}
+      - key: M
+        command: gh pr merge --merge --delete-branch {{.PrNumber}} -R {{.RepoName}}
       - key: i
         command: jira issue view $(echo {{.HeadRefName}} | sed -nE 's|.*(EP-[0-9]+).*|\1|p') --comments 50
 repoPaths: {}
