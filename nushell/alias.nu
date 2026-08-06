@@ -128,36 +128,47 @@ def startBackEnd [] {
 }
 
 # Bounce the backend environment to a new env selection
-def bounceenv [] {
+def bounceEnv [env_name?: string] {
     let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
-    let env_name = (ls $env_dir
+    let available_envs = (ls $env_dir
         | get name
-        | each { path basename | str replace '.sh' '' }
-        | to text
-        | fzf
-        | str trim)
+        | each { path basename | str replace '.sh' '' })
 
-    if ($env_name | is-empty) {
+    let selected_env = if ($env_name | is-empty) {
+        # No argument provided, show fzf menu
+        $available_envs | to text | fzf | str trim
+    } else {
+        # Argument provided, validate it exists
+        if ($env_name not-in $available_envs) {
+            print $"Error: '($env_name)' is not a valid environment"
+            print "Available environments:"
+            $available_envs | each { print $"  ($in)" }
+            return
+        }
+        $env_name
+    }
+
+    if ($selected_env | is-empty) {
         print "No environment selected"
         return
     }
 
-    print $"Switching to: ($env_name)"
+    print $"Switching to: ($selected_env)"
 
     # Restart dev server in pane 1
     tmux send-keys -t dev-environment:BE.1 C-c
-    tmux send-keys -t dev-environment:BE.1 $"select_env ($env_name)" C-m
+    tmux send-keys -t dev-environment:BE.1 $"select_env ($selected_env)" C-m
     sleep 1sec
     tmux send-keys -t dev-environment:BE.1 './server/bin/run-dev-server' C-m
 
     # Restart gulp in pane 2
     tmux send-keys -t dev-environment:BE.2 C-c
-    tmux send-keys -t dev-environment:BE.2 $"select_env ($env_name)" C-m
+    tmux send-keys -t dev-environment:BE.2 $"select_env ($selected_env)" C-m
     sleep 1sec
     tmux send-keys -t dev-environment:BE.2 'npm run gulp -- --live-reload' C-m
 
     # Update env in pane 3
-    tmux send-keys -t dev-environment:BE.3 $"select_env ($env_name)" C-m
+    tmux send-keys -t dev-environment:BE.3 $"select_env ($selected_env)" C-m
 }
 
 def --env clientPatchJobRunner [] {
