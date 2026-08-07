@@ -171,6 +171,31 @@ def bounceEnv [env_name?: string] {
     tmux send-keys -t dev-environment:BE.3 $"select_env ($selected_env)" C-m
 }
 
+# Dump remote DB to local, bounce environment, and check indexes
+def dumpToLocalBounceEnv [] {
+    let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
+    let env_name = (ls $env_dir
+        | get name
+        | each { path basename | str replace '.sh' '' }
+        | to text
+        | fzf
+        | str trim)
+
+    if ($env_name | is-empty) {
+        print "No environment selected"
+        return
+    }
+
+    print $"Dumping to local: ($env_name)"
+    ds dump-to-local $env_name
+
+    bounceEnv $env_name
+
+    sleep 1sec
+    print "Checking DB indexes..."
+    npm run task check-db-indexes
+}
+
 def --env clientPatchJobRunner [] {
     if ($env.NAMING_PREFIX? | is-empty) {
         error make {msg: "$env.NAMING_PREFIX not set"}
