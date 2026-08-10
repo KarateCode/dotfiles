@@ -46,3 +46,30 @@ def ghd [pr: string] {
     gh dash -c (mktemp --suffix .yml | do { let f = $in; $"prSections: [{title: 'PR #($pr)',
     filters: 'is:pr ($pr)'}]" | save -f $f; $f })
 }
+
+def spawnEnvoyWeb [] {
+    cd ~/code
+
+    # Find the next available folder name
+    let base_name = "envoy-web"
+    let folder_name = if not ($base_name | path exists) {
+        $base_name
+    } else {
+        let suffix = (2.. | each { |n|
+            let name = $"($base_name)($n)"
+            if not ($name | path exists) { $n } else { null }
+        } | first)
+        $"($base_name)($suffix)"
+    }
+
+    print $"Cloning into ($folder_name)..."
+    git clone git@github.com:appropos/envoy-web.git $folder_name
+
+    cd $folder_name
+    fnm use
+    npm run install-dev
+
+    # Create symlinks for claude and opencode config directories
+    ln -s ~/code/claude .claude
+    ln -s ~/code/claude .opencode
+}

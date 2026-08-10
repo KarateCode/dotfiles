@@ -1,0 +1,21 @@
+onboarding = false
+
+[terminal]
+default_shell = "nu"
+
+[keys]
+prefix = "ctrl+a"
+focus_pane_left = "prefix+ctrl+h"
+focus_pane_down = "prefix+ctrl+j"
+focus_pane_up = "prefix+ctrl+k"
+focus_pane_right = "prefix+ctrl+l"
+split_vertical = "prefix+\\"
+rename_tab = "prefix+,"
+previous_workspace = "prefix+p"
+next_workspace = "prefix+n"
+previous_tab = "f2"
+next_tab = "f3"
+
+[theme]
+name = "dracula"
+auto_switch = false
