@@ -5,10 +5,10 @@ default_shell = "nu"
 
 [keys]
 prefix = "ctrl+a"
-focus_pane_left = "prefix+ctrl+h"
-focus_pane_down = "prefix+ctrl+j"
-focus_pane_up = "prefix+ctrl+k"
-focus_pane_right = "prefix+ctrl+l"
+focus_pane_left = ["prefix+ctrl+h", "ctrl+left"]
+focus_pane_down = ["prefix+ctrl+j", "ctrl+down"]
+focus_pane_up = ["prefix+ctrl+k", "ctrl+up"]
+focus_pane_right = ["prefix+ctrl+l", "ctrl+right"]
 split_vertical = "prefix+\\"
 rename_tab = "prefix+,"
 previous_workspace = "prefix+p"

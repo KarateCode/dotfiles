@@ -831,16 +831,16 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 ; ===========================
 ; Ghostty cmd interpretations
 ; ===========================
-(define-key input-decode-map "\e[111;9z" [cmd-enter])
+(define-key input-decode-map "\e[15~" [cmd-enter])
 (global-set-key [cmd-enter] #'insert-line)
 
 (define-key input-decode-map "\e[111;10z" [cmd-shift-enter])
 (global-set-key [cmd-shift-enter] #'insert-line-above)
 
-(define-key input-decode-map "\e[110;9z" [cmd-d])
+(define-key input-decode-map "\e[20~" [cmd-d])
 (global-set-key [cmd-d] #'duplicate-line)
 
-(define-key input-decode-map "\e[114;9z" [cmd-j])
+(define-key input-decode-map "\e[24~" [cmd-j])
 (global-set-key [cmd-j] 'custom-join-lines)
 
 (define-key input-decode-map "\e[119;9z" [cmd-s])
@@ -848,13 +848,13 @@ In org-mode, skip auto-indentation to preserve original whitespace."
   (lambda () (interactive) (execute-kbd-macro (kbd "C-x C-s")))
 )
 
-(define-key input-decode-map "\e[122;9z" [cmd-e])
+(define-key input-decode-map "\e[21~" [cmd-e])
 (global-set-key [cmd-e] 'my/search-region)
 
-(define-key input-decode-map "\e[118;9z" [cmd-c])
+(define-key input-decode-map "\e[18~" [cmd-c])
 (global-set-key [cmd-c] 'custom-copy-line-or-region)
 
-(define-key input-decode-map "\e[120;9z" [cmd-x])
+(define-key input-decode-map "\e[17~" [cmd-x])
 (global-set-key [cmd-x] 'custom-cut-line-or-region)
 
 (define-key input-decode-map "\e[115;9z" [cmd-ctrl-up])
@@ -869,7 +869,7 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 (define-key input-decode-map "\e[108;9z" [cmd-z])
 (global-set-key [cmd-z] 'undo)
 
-(define-key input-decode-map "\e[109;9z" [cmd-shift-z])
+(define-key input-decode-map "\e[19~" [cmd-shift-z])
 (global-set-key [cmd-shift-z] 'undo-redo)
 
 ;; cmd-v → Ghostty sends F4 (\x1bOS), bind to clean clipboard paste

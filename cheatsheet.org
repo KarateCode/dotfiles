@@ -525,6 +525,9 @@ claude --continue # jumps you straight into most recent
 claude && osascript -e 'display notification "Claude may need input" with title "Claude CLI"'
 * Herdr
 Is a tmux replacement, but also has a left pane to manage your agents
+prefix+g shows all agents
+prefix+N new workspace
+prefix+W rename workspace
 * Brow6el is a browser that runs in a terminal
 * Sesh:
 tmuxinator replacement
