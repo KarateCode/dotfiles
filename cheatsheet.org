@@ -528,6 +528,7 @@ Is a tmux replacement, but also has a left pane to manage your agents
 prefix+g shows all agents
 prefix+N new workspace
 prefix+W rename workspace
+prefix+X close entire tab
 * Brow6el is a browser that runs in a terminal
 * Sesh:
 tmuxinator replacement
