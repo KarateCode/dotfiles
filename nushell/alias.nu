@@ -3,6 +3,15 @@ alias e = cd ~/code/envoy-web
 alias ds = node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js
 alias la = ls -la
 
+# Environment detection helpers
+def is-in-herdr [] {
+    ($env.HERDR_ENV? | is-not-empty)
+}
+
+def is-in-tmux [] {
+    ($env.TMUX? | is-not-empty)
+}
+
 alias cod = git checkout develop
 alias pd = git pull origin develop
 # def select_env [] {
@@ -107,9 +116,51 @@ def --env se [] {
     load-sh-exports ($env_dir | path join $filename)
 }
 
-# Start backend tmuxinator with fzf environment selection
-def startBackEnd [] {
+# Start backend with fzf environment selection - tmux implementation
+def startBackEnd-tmux [env_name: string] {
     tmux rename-session dev-environment
+    print $"Starting backend with environment: ($env_name)"
+    tmuxinator backend --append $env_name
+}
+
+# Start backend with fzf environment selection - herdr implementation
+def startBackEnd-herdr [env_name: string] {
+    let cwd = "~/code/envoy-web" | path expand
+
+    print $"Starting backend with environment: ($env_name)"
+
+    # Create new tab labeled "BE" and get the initial pane_id (server pane)
+    let server_pane = (herdr tab create --label "BE" --cwd $cwd --focus | jq -r '.result.root_pane.pane_id')
+    print "server pane:"
+    print $server_pane
+    sleep 100ms
+    herdr pane rename $server_pane "server"
+
+    # Split right 50/50 for frontend pane
+    let frontend_pane = (herdr pane split $server_pane --direction right --cwd $cwd | jq -r '.result.pane.pane_id')
+    print "frontend_pane:"
+    print $frontend_pane
+    sleep 100ms
+    herdr pane rename $frontend_pane "frontend"
+
+    # Split frontend pane down 50/50 for shell pane
+    let shell_pane = (herdr pane split $frontend_pane --direction down --cwd $cwd | jq -r '.result.pane.pane_id')
+    print "shell pane:"
+    print $shell_pane
+    sleep 100ms
+    herdr pane rename $shell_pane "shell"
+
+    # Run startup commands in each pane
+    herdr pane run $server_pane $"select_env ($env_name); ./server/bin/run-dev-server"
+    herdr pane run $frontend_pane $"select_env ($env_name); npm run gulp -- --live-reload"
+    herdr pane run $shell_pane $"select_env ($env_name)"
+
+    herdr pane focus --direction right
+    herdr pane focus --direction down
+}
+
+# Start backend with fzf environment selection - detects environment
+def startBackEnd [] {
     let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
     let env_name = (ls $env_dir
         | get name
@@ -123,11 +174,81 @@ def startBackEnd [] {
         return
     }
 
-    print $"Starting backend with environment: ($env_name)"
-    tmuxinator backend --append $env_name
+    if (is-in-herdr) {
+        startBackEnd-herdr $env_name
+    } else if (is-in-tmux) {
+        startBackEnd-tmux $env_name
+    } else {
+        error make {msg: "startBackEnd requires either tmux or herdr environment"}
+    }
 }
 
-# Bounce the backend environment to a new env selection
+# Bounce the backend environment - tmux implementation
+def bounceEnv-tmux [selected_env: string] {
+    print $"Switching to: ($selected_env)"
+
+    # Restart dev server in pane 1 (with symlink-aware cd)
+    tmux send-keys -t dev-environment:BE.1 C-c
+    tmux send-keys -t dev-environment:BE.1 "cd ~/code/envoy-web" C-m
+    tmux send-keys -t dev-environment:BE.1 $"select_env ($selected_env)" C-m
+    sleep 1sec
+    tmux send-keys -t dev-environment:BE.1 './server/bin/run-dev-server' C-m
+
+    # Restart gulp in pane 2 (with symlink-aware cd)
+    tmux send-keys -t dev-environment:BE.2 C-c
+    tmux send-keys -t dev-environment:BE.2 "cd ~/code/envoy-web" C-m
+    tmux send-keys -t dev-environment:BE.2 $"select_env ($selected_env)" C-m
+    sleep 1sec
+    tmux send-keys -t dev-environment:BE.2 'npm run gulp -- --live-reload' C-m
+
+    # Update env in pane 3 (with symlink-aware cd)
+    tmux send-keys -t dev-environment:BE.3 "cd ~/code/envoy-web" C-m
+    tmux send-keys -t dev-environment:BE.3 $"select_env ($selected_env)" C-m
+}
+
+# Bounce the backend environment - herdr implementation
+def bounceEnv-herdr [selected_env: string] {
+    print $"Switching to: ($selected_env)"
+
+    # Find the BE tab in the current workspace
+    let current_workspace = $env.HERDR_WORKSPACE_ID
+    let be_tab = (herdr tab list | jq -r --arg ws $current_workspace '.result.tabs[] | select(.workspace_id == $ws and .label == "BE") | .tab_id')
+
+    if ($be_tab | is-empty) {
+        print "Error: Could not find 'BE' tab in current workspace."
+        print "Run 'startBackEnd' first to create the backend panes."
+        return
+    }
+
+    # Get all panes in the BE tab
+    let panes = (herdr pane list | jq -r --arg tab $be_tab '[.result.panes[] | select(.tab_id == $tab)]')
+
+    # Find panes by label
+    let server_pane = ($panes | jq -r '.[] | select(.label == "server") | .pane_id')
+    let frontend_pane = ($panes | jq -r '.[] | select(.label == "frontend") | .pane_id')
+    let shell_pane = ($panes | jq -r '.[] | select(.label == "shell") | .pane_id')
+
+    if ($server_pane | is-empty) or ($frontend_pane | is-empty) or ($shell_pane | is-empty) {
+        print "Error: Could not find labeled panes (server, frontend, shell) in BE tab."
+        print "Run 'startBackEnd' first to create properly labeled backend panes."
+        return
+    }
+
+    # Restart server pane (Ctrl+C, cd, select_env, run server)
+    herdr pane send-keys $server_pane ctrl+c
+    sleep 100ms
+    herdr pane run $server_pane $"cd ~/code/envoy-web; select_env ($selected_env); ./server/bin/run-dev-server"
+
+    # Restart frontend pane (Ctrl+C, cd, select_env, run gulp)
+    herdr pane send-keys $frontend_pane ctrl+c
+    sleep 100ms
+    herdr pane run $frontend_pane $"cd ~/code/envoy-web; select_env ($selected_env); npm run gulp -- --live-reload"
+
+    # Update shell pane (cd, select_env)
+    herdr pane run $shell_pane $"cd ~/code/envoy-web; select_env ($selected_env)"
+}
+
+# Bounce the backend environment to a new env selection - detects environment
 def bounceEnv [env_name?: string] {
     let env_dir = "~/code/tools-and-infrastructure/scripts/developer/environments" | path expand
     let available_envs = (ls $env_dir
@@ -153,22 +274,13 @@ def bounceEnv [env_name?: string] {
         return
     }
 
-    print $"Switching to: ($selected_env)"
-
-    # Restart dev server in pane 1
-    tmux send-keys -t dev-environment:BE.1 C-c
-    tmux send-keys -t dev-environment:BE.1 $"select_env ($selected_env)" C-m
-    sleep 1sec
-    tmux send-keys -t dev-environment:BE.1 './server/bin/run-dev-server' C-m
-
-    # Restart gulp in pane 2
-    tmux send-keys -t dev-environment:BE.2 C-c
-    tmux send-keys -t dev-environment:BE.2 $"select_env ($selected_env)" C-m
-    sleep 1sec
-    tmux send-keys -t dev-environment:BE.2 'npm run gulp -- --live-reload' C-m
-
-    # Update env in pane 3
-    tmux send-keys -t dev-environment:BE.3 $"select_env ($selected_env)" C-m
+    if (is-in-herdr) {
+        bounceEnv-herdr $selected_env
+    } else if (is-in-tmux) {
+        bounceEnv-tmux $selected_env
+    } else {
+        error make {msg: "bounceEnv requires either tmux or herdr environment"}
+    }
 }
 
 # Dump remote DB to local, bounce environment, and check indexes
