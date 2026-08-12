@@ -116,6 +116,53 @@ def --env se [] {
     load-sh-exports ($env_dir | path join $filename)
 }
 
+# Switch the ~/code/envoy-web symlink to point to a different envoy-web folder
+def symEnvoyWeb [] {
+    let code_dir = "~/code" | path expand
+    let symlink_path = $code_dir | path join "envoy-web"
+
+    # Find all envoy-web folders with numeric suffix (e.g., envoy-web1, envoy-web2)
+    let envoy_folders = (ls $code_dir
+        | where type == "dir"
+        | get name
+        | each { path basename }
+        | where { $in =~ '^envoy-web\d+$' }
+        | sort)
+
+    if ($envoy_folders | is-empty) {
+        print $"(ansi red)No envoy-web folders found(ansi reset) (looking for envoy-web1, envoy-web2, etc.)"
+        return
+    }
+
+    # Present fzf menu
+    let selected = ($envoy_folders | to text | fzf | str trim)
+
+    if ($selected | is-empty) {
+        print $"(ansi yellow)No folder selected(ansi reset)"
+        return
+    }
+
+    let target_path = $code_dir | path join $selected
+
+    # Remove old symlink if it exists (but not if it's a real directory)
+    if ($symlink_path | path exists) {
+        let link_type = (ls -l $code_dir | where name == $symlink_path | get type | first)
+        if ($link_type == "symlink") {
+            rm $symlink_path
+            print $"(ansi yellow)Removed old symlink:(ansi reset) ($symlink_path)"
+        } else {
+            print $"(ansi red_bold)Error:(ansi reset) ($symlink_path) exists but is not a symlink. Aborting."
+            return
+        }
+    } else {
+        print $"(ansi cyan)No existing symlink at ($symlink_path), creating new one...(ansi reset)"
+    }
+
+    # Create new symlink
+    ln -s $target_path $symlink_path
+    print $"(ansi green_bold)Created symlink:(ansi reset) ($symlink_path) -> (ansi cyan_bold)($target_path)(ansi reset)"
+}
+
 # Start backend with fzf environment selection - tmux implementation
 def startBackEnd-tmux [env_name: string] {
     tmux rename-session dev-environment
