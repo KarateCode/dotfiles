@@ -117,7 +117,7 @@ def --env se [] {
 }
 
 # Switch the ~/code/envoy-web symlink to point to a different envoy-web folder
-def symEnvoyWeb [] {
+def --env symEnvoyWeb [] {
     let code_dir = "~/code" | path expand
     let symlink_path = $code_dir | path join "envoy-web"
 
@@ -161,6 +161,9 @@ def symEnvoyWeb [] {
     # Create new symlink
     ln -s $target_path $symlink_path
     print $"(ansi green_bold)Created symlink:(ansi reset) ($symlink_path) -> (ansi cyan_bold)($target_path)(ansi reset)"
+
+    # cd into the new symlink location
+    cd $symlink_path
 }
 
 # Start backend with fzf environment selection - tmux implementation

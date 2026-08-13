@@ -52,22 +52,22 @@ def ntc-herdr [] {
 
     # Run first command in top-left pane
     sleep 100ms
-    herdr pane run $pane1 "npm run test:server"
+    herdr pane run $pane1 "fnm use; sleep 100ms; npm run test:server"
 
     # Split right for top-right pane
     sleep 100ms
     let pane2 = (herdr pane split $pane1 --direction right --cwd $cwd | jq -r '.result.pane.pane_id')
-    herdr pane run $pane2 "npm run test:client"
+    herdr pane run $pane2 "fnm use; sleep 100ms; npm run test:client"
 
     # Split pane2 down for bottom-right pane
     sleep 100ms
     let pane3 = (herdr pane split $pane2 --direction down --cwd $cwd | jq -r '.result.pane.pane_id')
-    herdr pane run $pane3 "npm run lint"
+    herdr pane run $pane3 "fnm use; sleep 100ms; npm run lint"
 
     # Split pane1 down for bottom-left pane
     sleep 100ms
     let pane4 = (herdr pane split $pane1 --direction down --cwd $cwd | jq -r '.result.pane.pane_id')
-    herdr pane run $pane4 "npm run test:shared"
+    herdr pane run $pane4 "fnm use; sleep 100ms; npm run test:shared"
 }
 
 # Main entry point - detects environment and runs appropriate implementation

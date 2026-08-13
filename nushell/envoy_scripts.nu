@@ -47,7 +47,7 @@ def ghd [pr: string] {
     filters: 'is:pr ($pr)'}]" | save -f $f; $f })
 }
 
-def spawnEnvoyWeb [] {
+def --env spawnEnvoyWeb [] {
     cd ~/code
 
     # Find the next available folder name

@@ -19,3 +19,11 @@ next_tab = "f3"
 [theme]
 name = "dracula"
 auto_switch = false
+
+[[keys.command]]
+# This is technically cmd+k
+# ghostty is sending it as F1 to work around our cmd issue
+key = "f1"
+type = "shell"
+command = "herdr pane run $HERDR_ACTIVE_PANE_ID clear"
+description = "clear screen and scrollback"
