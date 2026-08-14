@@ -95,6 +95,29 @@
                                 "type": "basic"
                             },
                             {
+                                "description": "C-w copies and exits (sends y)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 0 } },
+                                    { "key_code": "y" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
                                 "description": "C-f -> l (char right)",
                                 "conditions": [
                                     {
