@@ -118,6 +118,31 @@
                                 "type": "basic"
                             },
                             {
+                                "description": "C-k selects to EOL and copies ($ then y)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "k",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [
+                                    { "key_code": "v" },
+                                    { "key_code": "4", "modifiers": ["shift"], "hold_down_milliseconds": 100 },
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 0 } },
+                                    { "key_code": "y" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
                                 "description": "C-f -> l (char right)",
                                 "conditions": [
                                     {
