@@ -118,6 +118,46 @@
                                 "type": "basic"
                             },
                             {
+                                "description": "C-s -> n (next search match)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "s",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "n" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-r -> N (previous search match)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "r",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "n", "modifiers": ["shift"] }],
+                                "type": "basic"
+                            },
+                            {
                                 "description": "C-k selects to EOL and copies ($ then y)",
                                 "conditions": [
                                     {
