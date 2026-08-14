@@ -46,6 +46,7 @@ alias reseed = npm run db:seed -- --email michael.schneider@envoyplatform.com
 # ntc is sourced from ~/dotfiles/scripts/npm-test-concurrent.nu
 alias jdev = mb-jira-cli --toggleview="column" --filter="Dev Review"
 alias jme = mb-jira-cli --toggleview="table" --filter="Me"
+alias jSupport = mb-jira-cli --toggleview="table" --filter="Dev Support"
 
 alias nr = npm run
 alias nt = npm run test:concurrent
