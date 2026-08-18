@@ -27,3 +27,9 @@ key = "f1"
 type = "shell"
 command = "herdr pane run $HERDR_ACTIVE_PANE_ID clear"
 description = "clear screen and scrollback"
+
+[[keys.command]]
+key = "prefix+ctrl+r"
+type = "shell"
+command = "/Users/michaelschneider/dotfiles/herdr/herdr-emacs-search.sh"
+description = "enter copy-mode with emacs keys and search"
