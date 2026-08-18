@@ -27,3 +27,16 @@ key = "f1"
 type = "shell"
 command = "herdr pane run $HERDR_ACTIVE_PANE_ID clear"
 description = "clear screen and scrollback"
+
+[[keys.command]]
+key = "prefix+ctrl+r"
+type = "shell"
+command = "/Users/michaelschneider/dotfiles/herdr/herdr-emacs-search.sh"
+description = "enter copy-mode with emacs keys and search"
+
+[[keys.command]]
+# Ghostty sends cmd+v as F4
+key = "f4"
+type = "shell"
+command = "/Users/michaelschneider/dotfiles/herdr/herdr-paste.sh"
+description = "smart paste: clipboard or pass to emacs"

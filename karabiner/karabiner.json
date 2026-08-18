@@ -1,0 +1,601 @@
+{
+    "profiles": [
+        {
+            "complex_modifications": {
+                "rules": [
+                    {
+                        "description": "Herdr Emacs Copy-Mode: M-[ to enter, M-] or C-g to exit",
+                        "manipulators": [
+                            {
+                                "description": "M-[ enters herdr copy-mode and enables emacs keybindings",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "open_bracket",
+                                    "modifiers": { "mandatory": ["option"] }
+                                },
+                                "to": [
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 1 } },
+                                    { "key_code": "a", "modifiers": ["control"] },
+                                    { "key_code": "open_bracket" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "M-] exits emacs mode and sends q to herdr",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "close_bracket",
+                                    "modifiers": { "mandatory": ["option"] }
+                                },
+                                "to": [
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 0 } },
+                                    { "key_code": "q" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-g exits emacs mode and sends q to herdr",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "g",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 0 } },
+                                    { "key_code": "q" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "M-w copies and exits (sends y)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": { "mandatory": ["option"] }
+                                },
+                                "to": [
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 0 } },
+                                    { "key_code": "y" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-w copies and exits (sends y)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 0 } },
+                                    { "key_code": "y" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-s -> n (next search match)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "s",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "n" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-r -> N (previous search match)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "r",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "n", "modifiers": ["shift"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-k selects to EOL and copies ($ then y)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "k",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [
+                                    { "key_code": "v" },
+                                    { "key_code": "4", "modifiers": ["shift"], "hold_down_milliseconds": 100 },
+                                    { "set_variable": { "name": "herdr_emacs_copy_mode", "value": 0 } },
+                                    { "key_code": "y" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-f -> l (char right)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "l" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-b -> h (char left)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "b",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "h" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-n -> j (line down)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "n",
+                                    "modifiers": { "mandatory": ["left_control"], "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "j" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-p -> k (line up)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "p",
+                                    "modifiers": { "mandatory": ["left_control"], "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "k" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "M-f -> w (word forward)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": { "mandatory": ["option"] }
+                                },
+                                "to": [{ "key_code": "w" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "M-b -> b (word backward)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "b",
+                                    "modifiers": { "mandatory": ["option"] }
+                                },
+                                "to": [{ "key_code": "b" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-a -> 0 (beginning of line)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "a",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "0" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-e -> $ (end of line)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "e",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "4", "modifiers": ["shift"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-v -> ctrl+f (page down)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "v",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "f", "modifiers": ["control"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "M-v -> ctrl+b (page up)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "v",
+                                    "modifiers": { "mandatory": ["option"] }
+                                },
+                                "to": [{ "key_code": "b", "modifiers": ["control"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "M-< -> g (top of buffer)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "comma",
+                                    "modifiers": { "mandatory": ["option", "shift"] }
+                                },
+                                "to": [{ "key_code": "g" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "M-> -> G (bottom of buffer)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "period",
+                                    "modifiers": { "mandatory": ["option", "shift"] }
+                                },
+                                "to": [{ "key_code": "g", "modifiers": ["shift"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-s -> / (search forward)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "s",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "slash" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-r -> ? (search backward)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "r",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "slash", "modifiers": ["shift"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "C-space -> v (start selection)",
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "name": "herdr_emacs_copy_mode",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "spacebar",
+                                    "modifiers": { "mandatory": ["left_control"] }
+                                },
+                                "to": [{ "key_code": "v" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Map Ctrl-W to Option-Delete outside terminal apps",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.googlecode\\.iterm2$",
+                                            "^com\\.mitchellh\\.ghostty$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": {
+                                        "mandatory": ["control"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "delete_or_backspace",
+                                        "modifiers": ["option"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "New Rule (change left_shift+caps_lock to page_down, right_shift+caps_lock to left_command+mission_control)",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^org\\.gnu\\.Emacs$",
+                                            "^org\\.gnu\\.AquamacsEmacs$",
+                                            "^org\\.gnu\\.Emacs\\-nightly$",
+                                            "^io\\.emacs\\.emacs$",
+                                            "^com\\.terminal\\.Terminal$",
+                                            "^com\\.googlecode\\.iterm2$",
+                                            "^com\\.microsoft\\.VSCode$",
+                                            "^com\\.mitchellh\\.ghostty$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": {
+                                        "mandatory": ["option"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "right_arrow",
+                                        "modifiers": ["option"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^org\\.gnu\\.Emacs$",
+                                            "^org\\.gnu\\.AquamacsEmacs$",
+                                            "^org\\.gnu\\.Emacs\\-nightly$",
+                                            "^io\\.emacs\\.emacs$",
+                                            "^com\\.terminal\\.Terminal$",
+                                            "^com\\.googlecode\\.iterm2$",
+                                            "^com\\.microsoft\\.VSCode$",
+                                            "^com\\.mitchellh\\.ghostty$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "b",
+                                    "modifiers": {
+                                        "mandatory": ["option"],
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "left_arrow",
+                                        "modifiers": ["option"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "name": "Default profile",
+            "selected": true,
+            "simple_modifications": [
+                {
+                    "from": { "key_code": "caps_lock" },
+                    "to": [{ "key_code": "left_control" }]
+                },
+                {
+                    "from": { "key_code": "right_command" },
+                    "to": [{ "key_code": "right_option" }]
+                }
+            ],
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
+        }
+    ]
+}
