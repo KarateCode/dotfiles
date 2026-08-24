@@ -11,10 +11,11 @@ focus_pane_up = ["prefix+ctrl+k", "ctrl+up"]
 focus_pane_right = ["prefix+ctrl+l", "ctrl+right"]
 split_vertical = "prefix+\\"
 rename_tab = "prefix+,"
-previous_workspace = "prefix+p"
-next_workspace = "prefix+n"
+previous_workspace = "prefix+ctrl+p"
+next_workspace = "prefix+ctrl+n"
 previous_tab = "f2"
 next_tab = "f3"
+close_tab = "prefix+ctrl+x"
 
 [theme]
 name = "dracula"

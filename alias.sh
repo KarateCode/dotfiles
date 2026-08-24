@@ -79,5 +79,5 @@ alias gtr="~/dotfiles/scripts/colorize_go_test_run.bash"
 alias lastc='git log -p -1'
 
 # alias emacs='emacs -nw'
-alias fix_know_hosts="cd ~/.ssh; sed -i '' '/UserKnownHostsFile/d' config; cd -"
+alias fix_known_hosts="cd ~/.ssh; sed -i '' '/UserKnownHostsFile/d' config; cd -"
 alias onering='/Users/michaelschneider/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh'

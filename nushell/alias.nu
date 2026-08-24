@@ -371,3 +371,11 @@ def --env clientPatchJobRunner [] {
     print $"(ansi green_bold)Done!(ansi reset)"
     print ""
 }
+
+# Remove UserKnownHostsFile lines from ~/.ssh/config
+def fix_known_hosts [] {
+    let config_path = "~/.ssh/config" | path expand
+    let content = open $config_path | lines | where { $in !~ 'UserKnownHostsFile' } | str join "\n"
+    $content | save -f $config_path
+    print $"(ansi green)Removed UserKnownHostsFile lines from ($config_path)(ansi reset)"
+}
