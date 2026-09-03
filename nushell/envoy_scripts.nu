@@ -48,22 +48,26 @@ def ghd [pr: string] {
 }
 
 def --env spawnEnvoyWeb [] {
-    cd ~/code
+    let main_worktree = $"($env.HOME)/code/envoy-web1"
 
-    # Find the next available folder name
-    let base_name = "envoy-web"
-    let folder_name = if not ($base_name | path exists) {
-        $base_name
-    } else {
-        let suffix = (2.. | each { |n|
-            let name = $"($base_name)($n)"
-            if not ($name | path exists) { $n } else { null }
-        } | first)
-        $"($base_name)($suffix)"
+    # Ensure main worktree exists
+    if not ($main_worktree | path exists) {
+        print --stderr "Error: Main worktree not found at ($main_worktree)"
+        return
     }
 
-    print $"Cloning into ($folder_name)..."
-    git clone git@github.com:appropos/envoy-web.git $folder_name
+    cd ~/code
+
+    # Find the next available folder name (starting at 2 since envoy-web1 is the main repo)
+    let base_name = "envoy-web"
+    let suffix = (2.. | each { |n|
+        let name = $"($base_name)($n)"
+        if not ($name | path exists) { $n } else { null }
+    } | first)
+    let folder_name = $"($base_name)($suffix)"
+
+    print $"Creating worktree ($folder_name) from develop..."
+    git -C $main_worktree worktree add $"($env.HOME)/code/($folder_name)" develop
 
     cd $folder_name
     fnm use
