@@ -43,6 +43,9 @@ alias lastc = git log -p -1
 alias lastcfiles = git diff-tree --no-commit-id --name-only -r HEAD
 alias reseed = npm run db:seed -- --email michael.schneider@envoyplatform.com
 
+alias zoomStandup = ^open "https://www.google.com/url?q=https://us02web.zoom.us/j/82805374636?pwd%3DNwXUUX2gzxKnGS3RPbtkajA8XbPO9P.1&sa=D&source=calendar&ust=1788267953010219&usg=AOvVaw0Owhubit6EB_ckCfPn6HEH"
+alias zoomSprintPlanning = ^open "https://www.google.com/url?q=https://us02web.zoom.us/j/81579226907?pwd%3DRlNOV29VVGZiV0ppbWJjc2FvMVphQT09&sa=D&source=calendar&ust=1788267954294587&usg=AOvVaw3WLdfPmsW4MeX5m7_6dhnQ"
+
 # ntc is sourced from ~/dotfiles/scripts/npm-test-concurrent.nu
 alias jdev = mb-jira-cli --toggleview="column" --filter="Dev Review"
 alias jme = mb-jira-cli --toggleview="table" --filter="Me"

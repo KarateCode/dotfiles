@@ -5,6 +5,7 @@ default_shell = "nu"
 
 [keys]
 prefix = "ctrl+a"
+remote_image_paste = ""
 focus_pane_left = ["prefix+ctrl+h", "ctrl+left"]
 focus_pane_down = ["prefix+ctrl+j", "ctrl+down"]
 focus_pane_up = ["prefix+ctrl+k", "ctrl+up"]
