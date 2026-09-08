@@ -209,8 +209,8 @@
 ;; Also update the $PATH environment variable to match the cleaned list
 (setenv "PATH" (mapconcat #'identity exec-path path-separator))
 
-(require 'nushell-mode)
-(add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-mode))
+;; (require 'nushell-mode)
+;; (add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-mode))
 
 (use-package eglot
   :ensure nil ; built-in in Emacs 29+
