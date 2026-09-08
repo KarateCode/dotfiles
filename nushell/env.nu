@@ -11,7 +11,7 @@
 # config nu --doc | nu-highlight | less -R
 
 # Use nushell-specific starship config
-$env.STARSHIP_CONFIG = ($env.HOME | path join "dotfiles/starship-nushell.toml")
+$env.STARSHIP_CONFIG = ($env.HOME | path join "dotfiles/starship/starship-nushell.toml")
 
 # Initialize starship prompt
 mkdir ~/.cache/starship

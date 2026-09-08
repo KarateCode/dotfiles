@@ -67,7 +67,7 @@ def --env spawnEnvoyWeb [] {
     let folder_name = $"($base_name)($suffix)"
 
     print $"Creating worktree ($folder_name) from develop..."
-    git -C $main_worktree worktree add $"($env.HOME)/code/($folder_name)" develop
+    git -C $main_worktree worktree add --detach $"($env.HOME)/code/($folder_name)" develop
 
     cd $folder_name
     fnm use

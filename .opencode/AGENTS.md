@@ -8,7 +8,7 @@
 - iterm2/AppSupport
 - nushell
 - sketchybar
-- starship.toml
+- starship/
 - television
 - tmuxinator
 - init.el

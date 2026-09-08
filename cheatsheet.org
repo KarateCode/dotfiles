@@ -119,7 +119,7 @@ C-c C-c toggles checkboxes
 * Golang:
 
 * Starship
-~/.config/starship.toml
+~/dotfiles/starship/starship.toml
 ${env_var.DEPLOY_ENV}\
 [env_var.DEPLOY_ENV]
 variable = "DEPLOY_ENV"
