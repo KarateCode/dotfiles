@@ -7,3 +7,5 @@ echo "source ~/dotfiles/nushell/config.nu" >> ~/.config/nushell/config.nu
 sudo pacman -S starship
 ln -s ~/dotfiles/starship/init.nu ~/.cache/starship/init.nu
 
+sudo pacman -S zsh
+sudo pacman -S herdr

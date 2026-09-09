@@ -211,6 +211,9 @@
 
 ;; (require 'nushell-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-mode))
+(use-package nushell-ts-mode
+  :ensure t
+  :mode "\\.nu\\'")
 
 (use-package eglot
   :ensure nil ; built-in in Emacs 29+

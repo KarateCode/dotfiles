@@ -1,4 +1,5 @@
-alias van = ~/bin/my-emacs.sh
+# alias van = ~/bin/my-emacs.sh
+alias van = emacs -nw
 alias e = cd ~/code/envoy-web
 alias ds = node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js
 alias la = ls -la
