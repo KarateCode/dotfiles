@@ -72,6 +72,28 @@ end)
 
 -- o.bind("ALT + 2", "Workspace 2", "workspace, 2")
 
+-- Move the focused window to a workspace: ALT+SHIFT+1..9
+-- (replaces the SUPER+SHIFT+1..9 default, unbound below to match the ALT
+-- scheme used for switching above).
+--
+-- These use "code:10".."code:18" rather than "ALT + SHIFT + 1".."9" because
+-- with SHIFT held the keysym for the 1 key becomes "!" on most layouts, so a
+-- keysym-based bind would not match. Keycodes are layout- and shift-independent,
+-- which is why Omarchy's own defaults use the code: form here too.
+--
+-- Note SUPER+SHIFT+ALT+code:N (move *silently*, without following the window)
+-- is left untouched, as is workspace 10.
+for workspace = 1, 9 do
+    local key = "code:" .. tostring(workspace + 9)
+
+    hl.unbind("SUPER + SHIFT + " .. key)
+    o.bind(
+        "ALT + SHIFT + " .. key,
+        "Move window to workspace " .. workspace,
+        hl.dsp.window.move({ workspace = tostring(workspace) })
+    )
+end
+
 -- Chromium tab navigation: CTRL+ALT+Left / CTRL+ALT+Right.
 --
 -- Chromium's own prev/next tab keys are CTRL+Page_Up / CTRL+Page_Down, so these
