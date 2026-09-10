@@ -71,3 +71,30 @@ o.bind("ALT + 9", "Switch to workspace 9", function()
 end)
 
 -- o.bind("ALT + 2", "Workspace 2", "workspace, 2")
+
+-- Chromium tab navigation: CTRL+ALT+Left / CTRL+ALT+Right.
+--
+-- Chromium's own prev/next tab keys are CTRL+Page_Up / CTRL+Page_Down, so these
+-- bindings just forward that shortcut to the focused window.
+--
+-- The class check matters: send_shortcut with window = "class:chromium" would
+-- fire even when Chromium is NOT focused, flipping tabs in a background window
+-- while you type somewhere else. Guarding on the active window means the keys
+-- are inert unless Chromium actually has focus.
+--
+-- Note the class is lowercase "chromium" (verify with `hyprctl clients`).
+local function chromium_tab(key)
+    return function()
+        local win = hl.get_active_window()
+        if win and win.class == "chromium" then
+            hl.dispatch(hl.dsp.send_shortcut({
+                mods = "CTRL",
+                key = key,
+                window = "activewindow",
+            }))
+        end
+    end
+end
+
+o.bind("CTRL + ALT + Left", "Chromium: previous tab", chromium_tab("Page_Up"))
+o.bind("CTRL + ALT + Right", "Chromium: next tab", chromium_tab("Page_Down"))
