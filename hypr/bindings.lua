@@ -143,3 +143,41 @@ end
 
 hl.on("window.active", sync_chromium_tab_binds)
 sync_chromium_tab_binds()
+
+-- Omarchy menu on LEFT Ctrl + SPACE (SUPER + SPACE is deliberately kept too).
+--
+-- Hyprland matches modifiers as a bitmask, so a plain "CTRL + SPACE" bind
+-- cannot tell left Ctrl from right Ctrl -- and it would grab the key at the
+-- compositor before any app saw it. Right Ctrl + SPACE must keep reaching
+-- Emacs as C-SPC (set-mark-command), so an unconditional bind is not an option.
+--
+-- Instead the bind is only ENABLED while Control_L is held and Control_R is
+-- not. While disabled Hyprland does not grab the key at all, so it passes
+-- straight through to the focused app (same mechanism as the Chromium binds
+-- above).
+--
+-- hl.is_key_down returns a boolean for the exact keysym names "Control_L" and
+-- "Control_R", and nil for unrecognised spellings such as "ctrl_l" -- hence the
+-- explicit `== true` / `~= true` comparisons rather than bare truthiness.
+--
+-- This installs a callback on every key event. It inspects modifier state only
+-- and records nothing. It defaults to disabled, so if the event ever fails to
+-- fire the failure mode is a menu that does not open, never a swallowed C-SPC.
+local omarchy_menu_bind = hl.bind("CTRL + SPACE", hl.dsp.exec_cmd("omarchy-menu toggle"), {
+    description = "Omarchy menu (left Ctrl)",
+})
+
+local omarchy_menu_enabled = false
+omarchy_menu_bind:set_enabled(false)
+
+hl.on("input.keyboard.key", function()
+    local left_only = (hl.is_key_down("Control_L") == true)
+        and (hl.is_key_down("Control_R") ~= true)
+
+    -- Only touch the bind when the state actually changes, to keep the
+    -- per-keystroke cost negligible.
+    if left_only ~= omarchy_menu_enabled then
+        omarchy_menu_enabled = left_only
+        omarchy_menu_bind:set_enabled(left_only)
+    end
+end)
