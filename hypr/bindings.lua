@@ -116,6 +116,15 @@ for _, motion in ipairs(focus_motions) do
     )
 end
 
+-- Former workspace (jump back to the previously active one) on CTRL + TAB,
+-- replacing the SUPER + CTRL + TAB default.
+--
+-- Heads up: this grabs Ctrl+Tab globally, so Chromium, VS Code, file managers
+-- and friends no longer get their native next-tab. Accepted deliberately --
+-- Chromium tab navigation is covered by the CTRL+ALT+Left/Right bindings above.
+hl.unbind("SUPER + CTRL + TAB")
+o.bind("CTRL + TAB", "Former workspace", hl.dsp.focus({ workspace = "previous" }))
+
 -- Chromium tab navigation: CTRL+ALT+Left / CTRL+ALT+Right.
 --
 -- Chromium's own prev/next tab keys are CTRL+Page_Up / CTRL+Page_Down, so these
