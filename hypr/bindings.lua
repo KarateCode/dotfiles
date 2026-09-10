@@ -94,6 +94,28 @@ for workspace = 1, 9 do
     )
 end
 
+-- Focus window by direction, vim-style: ALT + h/j/k/l.
+-- The SUPER + arrow defaults are deliberately kept as well.
+--
+-- Heads up: a Hyprland bind grabs the key globally, before any app sees it, so
+-- these take M-h/M-j/M-k/M-l away from Emacs and readline -- including the
+-- custom M-k (custom-move-down-7-lines) in init.el. That is an accepted
+-- tradeoff here, the same one ALT+1..9 already makes with digit-argument.
+local focus_motions = {
+    { key = "H", direction = "l", label = "left" },
+    { key = "J", direction = "d", label = "below" },
+    { key = "K", direction = "u", label = "above" },
+    { key = "L", direction = "r", label = "right" },
+}
+
+for _, motion in ipairs(focus_motions) do
+    o.bind(
+        "ALT + " .. motion.key,
+        "Focus on " .. motion.label .. " window",
+        hl.dsp.focus({ direction = motion.direction })
+    )
+end
+
 -- Chromium tab navigation: CTRL+ALT+Left / CTRL+ALT+Right.
 --
 -- Chromium's own prev/next tab keys are CTRL+Page_Up / CTRL+Page_Down, so these
