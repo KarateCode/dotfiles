@@ -77,24 +77,47 @@ end)
 -- Chromium's own prev/next tab keys are CTRL+Page_Up / CTRL+Page_Down, so these
 -- bindings just forward that shortcut to the focused window.
 --
--- The class check matters: send_shortcut with window = "class:chromium" would
--- fire even when Chromium is NOT focused, flipping tabs in a background window
--- while you type somewhere else. Guarding on the active window means the keys
--- are inert unless Chromium actually has focus.
+-- IMPORTANT: these keys are shared. tmux binds C-M-Left/C-M-Right to
+-- previous-window/next-window (tmux_omarchy.conf). A Hyprland bind grabs the
+-- key at the compositor, BEFORE any app sees it, so an always-on bind here
+-- silently steals the keys from tmux. Checking the focused class inside the
+-- handler does not help -- the key is already swallowed by then.
+--
+-- So the binds are only ENABLED while Chromium is focused. While they are
+-- disabled Hyprland does not grab the keys at all, and they pass through to
+-- the terminal (and therefore tmux) normally.
+--
+-- hl.bind is used instead of o.bind because o.bind returns nil, and we need
+-- the HL.Keybind handles to call set_enabled on.
 --
 -- Note the class is lowercase "chromium" (verify with `hyprctl clients`).
 local function chromium_tab(key)
     return function()
-        local win = hl.get_active_window()
-        if win and win.class == "chromium" then
-            hl.dispatch(hl.dsp.send_shortcut({
-                mods = "CTRL",
-                key = key,
-                window = "activewindow",
-            }))
-        end
+        hl.dispatch(hl.dsp.send_shortcut({
+            mods = "CTRL",
+            key = key,
+            window = "activewindow",
+        }))
     end
 end
 
-o.bind("CTRL + ALT + Left", "Chromium: previous tab", chromium_tab("Page_Up"))
-o.bind("CTRL + ALT + Right", "Chromium: next tab", chromium_tab("Page_Down"))
+local chromium_tab_binds = {
+    hl.bind("CTRL + ALT + Left", chromium_tab("Page_Up"), {
+        description = "Chromium: previous tab",
+    }),
+    hl.bind("CTRL + ALT + Right", chromium_tab("Page_Down"), {
+        description = "Chromium: next tab",
+    }),
+}
+
+local function sync_chromium_tab_binds()
+    local win = hl.get_active_window()
+    local focused = (win ~= nil and win.class == "chromium")
+
+    for _, keybind in ipairs(chromium_tab_binds) do
+        keybind:set_enabled(focused)
+    end
+end
+
+hl.on("window.active", sync_chromium_tab_binds)
+sync_chromium_tab_binds()
