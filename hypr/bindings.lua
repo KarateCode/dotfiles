@@ -125,6 +125,16 @@ end
 hl.unbind("SUPER + CTRL + TAB")
 o.bind("CTRL + TAB", "Former workspace", hl.dsp.focus({ workspace = "previous" }))
 
+-- Close the focused window on CTRL + Q, replacing the SUPER + W default.
+--
+-- Heads up, two things this takes globally:
+--   * Emacs quoted-insert (C-q), e.g. C-q TAB to insert a literal tab.
+--   * Terminal XON flow control -- the Ctrl+Q that resumes output after Ctrl+S.
+-- It is also a destructive action on an easy-to-hit chord, right next to
+-- Ctrl+W and Ctrl+A. SUPER + Q is free if this proves too twitchy.
+hl.unbind("SUPER + W")
+o.bind("CTRL + Q", "Close window", hl.dsp.window.close())
+
 -- Chromium tab navigation: CTRL+ALT+Left / CTRL+ALT+Right.
 --
 -- Chromium's own prev/next tab keys are CTRL+Page_Up / CTRL+Page_Down, so these
