@@ -133,7 +133,47 @@ o.bind("CTRL + TAB", "Former workspace", hl.dsp.focus({ workspace = "previous" }
 -- It is also a destructive action on an easy-to-hit chord, right next to
 -- Ctrl+W and Ctrl+A. SUPER + Q is free if this proves too twitchy.
 hl.unbind("SUPER + W")
-o.bind("CTRL + Q", "Close window", hl.dsp.window.close())
+
+-- Chromium gets a macOS-style "hold Ctrl+Q to quit" guard; everywhere else
+-- CTRL + Q closes instantly.
+--
+-- Three binds share CTRL + Q, and exactly one set is enabled at a time (driven
+-- by the window.active hook below), so Hyprland's firing order between a plain
+-- and a long-press bind on the same key can never matter. If both were live at
+-- once, a long hold could plausibly fire the plain bind AND then the long-press
+-- one, closing two windows.
+--
+--   not Chromium -> close_instant only
+--   Chromium     -> close_hold + close_swallow
+--
+-- close_swallow is the important one. With no plain bind enabled, a short
+-- CTRL + Q inside Chromium would fall through to Chromium itself, and
+-- Chromium's own Ctrl+Q quits the ENTIRE browser -- strictly worse than closing
+-- a single window. The no-op consumes the short press so nothing happens.
+local close_instant = hl.bind("CTRL + Q", hl.dsp.window.close(), {
+    description = "Close window",
+})
+
+local close_hold = hl.bind("CTRL + Q", hl.dsp.window.close(), {
+    long_press = true,
+    description = "Close window (hold Ctrl+Q)",
+})
+
+local close_swallow = hl.bind("CTRL + Q", hl.dsp.no_op(), {
+    description = "Hold Ctrl+Q to close",
+})
+
+local function sync_close_binds()
+    local win = hl.get_active_window()
+    local chromium = (win ~= nil and win.class == "chromium")
+
+    close_instant:set_enabled(not chromium)
+    close_hold:set_enabled(chromium)
+    close_swallow:set_enabled(chromium)
+end
+
+hl.on("window.active", sync_close_binds)
+sync_close_binds()
 
 -- Chromium tab navigation: CTRL+ALT+Left / CTRL+ALT+Right.
 --
