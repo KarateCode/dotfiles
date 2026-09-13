@@ -1,3 +1,5 @@
+;;; init.el --- Personal Emacs configuration -*- lexical-binding: t; -*-
+
 (require 'package)
 (add-to-list 'package-archives '("gnu" . "elpa.gnu.org") t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -133,7 +135,7 @@
 (defun my/dirvish-shrink ()
   "Shrink the dirvish side window by 5 columns."
   (interactive)
-  (when-let ((win (dirvish-side--session-visible-p)))
+  (when-let* ((win (dirvish-side--session-visible-p)))
     (let ((window-size-fixed nil))
       (with-selected-window win
         (setq window-size-fixed nil)
@@ -142,7 +144,7 @@
 (defun my/dirvish-grow ()
   "Grow the dirvish side window by 5 columns."
   (interactive)
-  (when-let ((win (dirvish-side--session-visible-p)))
+  (when-let* ((win (dirvish-side--session-visible-p)))
     (let ((window-size-fixed nil))
       (with-selected-window win
         (setq window-size-fixed nil)
