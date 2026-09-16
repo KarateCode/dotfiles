@@ -76,4 +76,8 @@ def --env spawnEnvoyWeb [] {
     # Create symlinks for claude and opencode config directories
     ln -s ~/code/claude .claude
     ln -s ~/code/claude .opencode
+
+    # Copy personal config-overrides over
+    rm shared/config-overrides.js
+    cp ~/code/envoy-web1/shared/config-overrides.js shared/config-overrides.js
 }

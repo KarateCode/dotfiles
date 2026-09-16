@@ -114,7 +114,11 @@ z k drop stash
 ** ORG mode
 How do I set a todo? Appears to be only in ** precursed things
 C-c C-c toggles checkboxes
-
+* Omarchy:
+** keyd:
+located at /etc/keyd/default.conf
+sudo keyd reload # to bounce it
+sudo keyd -m # watch keypresses in real time
 
 * Golang:
 
@@ -312,6 +316,9 @@ msa "ShipMethod.find({})" | jq '.[] | {code: .code, desc: .languages[].descripti
 yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_status.251202010530.csv
 yq -p=csv '.[] |= "\"" + .key + "\"" | join(", ")'
 
+* op: (1pass CLI)
+op signin
+op whoami
 
 * Jira UI
 To filter and use JQL:
@@ -430,7 +437,8 @@ Has cool looking display modal
 https://www.youtube.com/watch?v=wnsJ0vxQms0
 * Curl
 https://www.youtube.com/watch?v=3xmD4E2aqxo
-* TODO NuShell
+* NuShell:
+job unfreeze
 https://www.youtube.com/watch?v=uJsZATwQ3R8
 ls | where type == dir
 ls | sort-by modified --reverse
@@ -480,6 +488,7 @@ vba logs to /Users/michaelschneider/Library/Containers/com.microsoft.Excel/Data
 
 * Troubleshooting
 "Could not load credentials from any providers". Check your AWS_PROFILE for unset or typos
+"Credential should be scoped to a valid region." Did your config-overrides get copied into shared?
 * WireGuard:
 ** Raw Tunnel
 [Interface]
