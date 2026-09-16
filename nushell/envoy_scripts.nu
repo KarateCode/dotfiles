@@ -70,7 +70,9 @@ def --env spawnEnvoyWeb [] {
     git -C $main_worktree worktree add --detach $"($env.HOME)/code/($folder_name)" develop
 
     cd $folder_name
-    fnm use
+    # Ensure the node version pinned by the worktree's .nvmrc is installed before
+    # npm runs; mise shims then resolve it automatically from this directory.
+    mise install
     npm run install-dev
 
     # Create symlinks for claude and opencode config directories

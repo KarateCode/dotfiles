@@ -1,19 +1,16 @@
 alias ss='cd ~/.ssh'
 
-alias ls='ls -G'
 alias la='eza -l --icons --git -a'
 alias lt='eza --tree --level=2 --long --icons --git'
 alias b='cd -'
 alias e='cd ~/code/envoy-web'
 alias weather='curl wttr.in/Belmont,Michigan'
-alias se='ls ~/code/tools-and-infrastructure/scripts/developer/environments | fzf | while read -r env; do select_env "$env"; done'
 alias gitbd='~/dotfiles/scripts/delete_local_git_branches.sh'
 alias bounceenv='~/dotfiles/scripts/setup_local_env.sh'
 alias ddownloads='~/dotfiles/scripts/delete_download_files.sh'
 alias hss='~/dotfiles/scripts/ssh_fzf.sh'
 alias tssh='~/dotfiles/scripts/tunnel_ssh.sh'
 alias tkill='if pids=$(lsof -t -i :27018); then echo "$pids" | xargs kill && echo "Tunnel killed"; else echo "No tunnel active"; fi'
-alias sl='pmset sleepnow'
 alias van='emacs -nw'
 # alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
 alias jdev='mb-jira-cli --toggleview="column" --filter="Dev Review"'
@@ -52,10 +49,34 @@ alias mt='~/dotfiles/scripts/mongo_tui_launch.sh'
 alias editor='~/dotfiles/scripts/editor.sh'
 alias deleteMany='~/dotfiles/scripts/select_from_table.sh'
 
+alias ds='node ~/code/tools-and-infrastructure/webdev-tools/menu.js'
+alias onering='~/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh'
+
 if [[ "$(uname)" == "Linux" ]]; then
-    alias ds='node /home/michael/code/tools-and-infrastructure/webdev-tools/menu.js'
+    # GNU coreutils: -G means "hide the group column", not "colorize".
+    alias ls='ls --color=auto'
+
+    # bash runs EVERY element of a pipeline in a subshell, so `... | while read`
+    # would run select_env in a subshell and throw away everything it exports.
+    # Capture fzf's choice first, then call select_env in the current shell.
+    alias se='_envfile=$(ls ~/code/tools-and-infrastructure/scripts/developer/environments | fzf) && select_env "$_envfile"'
+
+    alias sl='systemctl suspend'
+
+    # GNU sed: -i takes no argument.
+    alias fix_known_hosts="cd ~/.ssh; sed -i '/UserKnownHostsFile/d' config; cd -"
 else
-    alias ds='node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js'
+    # BSD ls: -G colorizes.
+    alias ls='ls -G'
+
+    # zsh runs the LAST element of a pipeline in the current shell, so the vars
+    # select_env exports survive the loop.
+    alias se='ls ~/code/tools-and-infrastructure/scripts/developer/environments | fzf | while read -r env; do select_env "$env"; done'
+
+    alias sl='pmset sleepnow'
+
+    # BSD sed: -i requires an (empty) backup-suffix argument.
+    alias fix_known_hosts="cd ~/.ssh; sed -i '' '/UserKnownHostsFile/d' config; cd -"
 fi
 
 alias gl='bash ~/dotfiles/scripts/grep-git-log.sh'
@@ -85,5 +106,3 @@ alias gtr="~/dotfiles/scripts/colorize_go_test_run.bash"
 alias lastc='git log -p -1'
 
 # alias emacs='emacs -nw'
-alias fix_known_hosts="cd ~/.ssh; sed -i '' '/UserKnownHostsFile/d' config; cd -"
-alias onering='/Users/michaelschneider/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh'
