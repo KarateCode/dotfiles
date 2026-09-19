@@ -53,6 +53,17 @@ alias ds='node ~/code/tools-and-infrastructure/webdev-tools/menu.js'
 alias onering='~/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh'
 
 if [[ "$(uname)" == "Linux" ]]; then
+    # Stop Ctrl-Z from suspending foreground jobs (bat, less, man, psql...).
+    # This is the tty line discipline's `susp' control character, handled by
+    # the kernel -- not by bash, and not by Ghostty. It resets on every new
+    # pty, so it has to run per-shell here rather than in a one-time setup
+    # script. Emacs is unaffected either way: it puts the tty in raw mode and
+    # handles C-z itself (see init_omarchy.el, where C-z is bound to undo).
+    # Trade-off: no more `C-z` + `bg`. Use `kill -STOP <pid>` if you need it,
+    # or swap `undef` for '^]' to relocate suspend instead of removing it.
+    # Verify with: stty -a | tr ';' '\n' | grep susp
+    [[ -t 0 ]] && stty susp undef
+
     # GNU coreutils: -G means "hide the group column", not "colorize".
     alias ls='ls --color=auto'
 
