@@ -1,5 +1,29 @@
 ;;; init.el --- Personal Emacs configuration -*- lexical-binding: t; -*-
 
+; ===================================
+; Platform overrides (Linux/Omarchy)
+; ===================================
+;; On the Omarchy box, init_omarchy.el redefines a few things this file
+;; sets up (C-z, C-x, <f4>).  Declared here at the top so it is obvious
+;; that a second file may be in play, but DEFERRED to `after-init-hook'
+;; so it actually runs LAST.
+;;
+;; The deferral is load-bearing, not style: a plain (load ...) here would
+;; run before the rest of this file, and the <f4> binding further down
+;; would then clobber the Linux override instead of the other way round.
+;;
+;; No-op on macOS.  Symlink on Omarchy with:
+;;   ln -s ~/dotfiles/init_omarchy.el ~/.config/emacs/init_omarchy.el
+(when (eq system-type 'gnu/linux)
+  (add-hook 'after-init-hook
+            (lambda ()
+              (let ((omarchy-init (expand-file-name "init_omarchy.el"
+                                                    user-emacs-directory)))
+                (if (file-exists-p omarchy-init)
+                    (load omarchy-init nil t)
+                  (message "init.el: %s not found, Omarchy overrides skipped"
+                           omarchy-init))))))
+
 (require 'package)
 (add-to-list 'package-archives '("gnu" . "elpa.gnu.org") t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
