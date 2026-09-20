@@ -37,6 +37,26 @@ keybind = cmd+shift+v=paste_from_clipboard
 keybind = cmd+d=unbind
 # unset, so that I can use it to grow pane size in tmux
 keybind = ctrl+8=unbind
+# --- tmux pane resizing --------------------------------------------------
+# A terminal cannot encode Shift on a control character (C-o is 0x0f, no bit
+# left for shift), so tmux could not distinguish C-S-o from C-o and the
+# `bind -n C-S-o` bindings never fired. tmux does negotiate the `extkeys`
+# feature with Ghostty, but Ghostty still replies with legacy encodings, so
+# the protocol route does not work. Send explicit private sequences instead
+# and match them in tmux with `user-keys` -- same trick as the cmd+ keys.
+#
+# Unbind first: ctrl+shift+o and ctrl+shift+, are Ghostty DEFAULTS
+# (new_split:right, and reload_config -- the "Reload the configuration"
+# flash). ctrl+, further down is a DIFFERENT key and stays mapped for Emacs.
+#
+# Paired with tmux_omarchy.conf `set -s user-keys[0..3]` + `bind -n User0..3`.
+# Keep both sides in sync; a mismatch just makes the key do nothing.
+keybind = ctrl+shift+o=unbind
+keybind = ctrl+shift+,=unbind
+keybind = ctrl+shift+u=text:\x1b[124;9z
+keybind = ctrl+shift+o=text:\x1b[125;9z
+keybind = ctrl+shift+y=text:\x1b[126;9z
+keybind = ctrl+shift+,=text:\x1b[127;9z
 
 keybind = PageUp=text:\x1b[5~
 keybind = PageDown=text:\x1b[6~
