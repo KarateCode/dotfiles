@@ -262,3 +262,32 @@ hl.on("input.keyboard.key", function()
         omarchy_menu_bind:set_enabled(left_only)
     end
 end)
+
+-- Swap the active window, mirroring the ALT + H/J/K/L focus motions above:
+-- ALT moves focus, ALT + SHIFT moves the window itself.
+--
+-- Omarchy's defaults for this are SUPER + SHIFT + LEFT/RIGHT/UP/DOWN (see
+-- $OMARCHY_PATH/default/hypr/bindings/tiling.lua); those are left in place,
+-- so both work. Note keyd maps leftcontrol = leftmeta, so the physical Ctrl
+-- key emits SUPER -- physical Ctrl+Shift+Arrow therefore also swaps windows.
+--
+-- CONFLICT: ALT + SHIFT + L is Chromium's "Copy URL" extension shortcut
+-- (suggested_key in $OMARCHY_PATH/default/chromium/extensions/copy-url/
+-- manifest.json). A Hyprland binding is grabbed by the compositor before
+-- Chromium ever sees it, so Copy URL is shadowed while this binding exists.
+-- To get it back, remap the extension at chrome://extensions/shortcuts.
+-- ALT + SHIFT + D ("Download Video") is untouched.
+local swap_motions = {
+    { key = "H", direction = "l", label = "left" },
+    { key = "J", direction = "d", label = "down" },
+    { key = "K", direction = "u", label = "up" },
+    { key = "L", direction = "r", label = "right" },
+}
+
+for _, motion in ipairs(swap_motions) do
+    o.bind(
+        "ALT + SHIFT + " .. motion.key,
+        "Swap window " .. motion.label,
+        hl.dsp.window.swap({ direction = motion.direction })
+    )
+end
