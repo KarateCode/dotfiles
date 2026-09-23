@@ -860,7 +860,10 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 ; ===========================
 ; Ghostty cmd interpretations
 ; ===========================
-(define-key input-decode-map "\e[15~" [cmd-enter])
+;; Was "\e[15~" (which is F5) -- nothing has ever sent that, so this binding
+;; was dead on both machines. Ghostty sends \x1b[111;9z for cmd+enter, matching
+;; the \x1b[111;10z used by cmd-shift-enter just below.
+(define-key input-decode-map "\e[111;9z" [cmd-enter])
 (global-set-key [cmd-enter] #'insert-line)
 
 (define-key input-decode-map "\e[111;10z" [cmd-shift-enter])

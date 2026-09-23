@@ -92,6 +92,24 @@ keybind = ctrl+shift+h=text:\x1b[128;9z
 keybind = ctrl+shift+i=text:\x1b[129;9z
 keybind = ctrl+shift+k=text:\x1b[130;9z
 
+# --- Cmd+Enter -> insert-line in Emacs ------------------------------------
+# keyd turns the physical Cmd key into Control, so Cmd+Enter arrives here as
+# ctrl+enter -- which Ghostty binds BY DEFAULT to toggle_fullscreen. That was
+# the surprise fullscreen; it never reached Emacs.
+#
+# Deliberately emits the SAME \x1b[111;9z as super+enter further down, so both
+# physical keys land on Emacs' [cmd-enter] -> insert-line. On macOS that same
+# config line fires from the real Cmd key via super+enter.
+# Decoded by init.el: (define-key input-decode-map "\e[111;9z" [cmd-enter])
+keybind = ctrl+enter=unbind
+keybind = ctrl+enter=text:\x1b[111;9z
+
+# Same story for Cmd+Shift+Enter -> Emacs insert-line-above. Ghostty's default
+# on ctrl+shift+enter is toggle_split_zoom, which swallowed it.
+# Decoded by init.el: "\e[111;10z" -> [cmd-shift-enter]
+keybind = ctrl+shift+enter=unbind
+keybind = ctrl+shift+enter=text:\x1b[111;10z
+
 keybind = PageUp=text:\x1b[5~
 keybind = PageDown=text:\x1b[6~
 
