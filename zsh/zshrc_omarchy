@@ -5,10 +5,19 @@
 # Symlinked into place with:
 #   ln -s ~/dotfiles/zsh/zshrc_omarchy ~/.zshrc
 #
-# NOTE: the login shell here is still bash (see `getent passwd michael`), so
-# zsh is started by hand. ~/.bashrc carries the Omarchy env bootstrap, the
-# $HOME/bin PATH setup and `stty susp undef`; none of that is sourced below.
-# Sort that out before running `chsh -s /usr/bin/zsh`.
+# The login shell is bash ON PURPOSE -- do NOT `chsh -s /usr/bin/zsh`.
+# Omarchy expects bash as the login shell: it bootstraps OMARCHY_PATH and PATH
+# from /usr/share/omarchy/default/bash/env-bootstrap and loads its own rc.
+# ~/.bashrc runs all of that and then hands off with `exec zsh` on its last
+# line, so zsh inherits a fully prepared environment.
+#
+# What survives that handoff and what doesn't:
+#   INHERITED  exported vars -- OMARCHY_PATH, PATH, the exports in
+#              ~/dotfiles/.sensitive.sh (all 2 of them are exports)
+#   LOST       aliases and shell functions, which are shell state rather than
+#              environment. That is why Omarchy's alias/function files are
+#              re-sourced below; without them bash had 100 aliases and zsh
+#              only 77.
 
 # Lines configured by zsh-newuser-install
 bindkey -e
@@ -45,5 +54,14 @@ setopt HIST_VERIFY         # !! and friends expand for review, not instant run
 
 # alias ls='gls --color=auto --group-directories-first'
 eval "$(starship init zsh)"
+
+# --- Omarchy aliases + functions ----------------------------------------
+# Not inherited from bash (see the note at the top). Both files are written in
+# bash syntax but source cleanly under zsh -- verified: 20 aliases and ~150
+# functions load with no errors. Sourced BEFORE alias.sh so that personal
+# aliases win on any collision, matching the order ~/.bashrc uses.
+[[ -r "$OMARCHY_PATH/default/bash/aliases" ]]   && source "$OMARCHY_PATH/default/bash/aliases"
+[[ -r "$OMARCHY_PATH/default/bash/functions" ]] && source "$OMARCHY_PATH/default/bash/functions"
+
 source ~/dotfiles/alias.sh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
