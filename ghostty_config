@@ -104,6 +104,17 @@ keybind = ctrl+shift+k=text:\x1b[130;9z
 keybind = ctrl+enter=unbind
 keybind = ctrl+enter=text:\x1b[111;9z
 
+# Cmd+Shift+F -> Emacs "find in project" (my/project-grep-empty, a
+# consult-ripgrep rooted at the projectile project). Ghostty's default on
+# ctrl+shift+f is start_search, which swallowed it.
+#
+# Trade-off: this gives up Ghostty's own in-terminal search, which had no
+# other binding. Scrollback search is still available via tmux copy-mode
+# (prefix C-r, tmux_omarchy.conf), so nothing is really lost here.
+# Decoded by init.el: "\e[113;9z" -> [cmd-shift-f]
+keybind = ctrl+shift+f=unbind
+keybind = ctrl+shift+f=text:\x1b[113;9z
+
 # Same story for Cmd+Shift+Enter -> Emacs insert-line-above. Ghostty's default
 # on ctrl+shift+enter is toggle_split_zoom, which swallowed it.
 # Decoded by init.el: "\e[111;10z" -> [cmd-shift-enter]
