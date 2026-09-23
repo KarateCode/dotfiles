@@ -5,3 +5,5 @@ nushell/plugin.msgpackz
 nushell/history.sqlite3
 nushell/history.sqlite*
 .DS_Store
+zsh/.zsh_history
+zsh/*history*

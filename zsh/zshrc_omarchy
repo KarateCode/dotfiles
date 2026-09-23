@@ -1,0 +1,49 @@
+# zshrc for the Omarchy (Linux) box. The macOS files live beside this one as
+# zshrc_mac / zprofile_mac / zlogin_mac and are NOT shared -- they reference
+# /opt/homebrew, gls, and /Users/michaelschneider paths.
+#
+# Symlinked into place with:
+#   ln -s ~/dotfiles/zsh/zshrc_omarchy ~/.zshrc
+#
+# NOTE: the login shell here is still bash (see `getent passwd michael`), so
+# zsh is started by hand. ~/.bashrc carries the Omarchy env bootstrap, the
+# $HOME/bin PATH setup and `stty susp undef`; none of that is sourced below.
+# Sort that out before running `chsh -s /usr/bin/zsh`.
+
+# Lines configured by zsh-newuser-install
+bindkey -e
+# End of lines configured by zsh-newuser-install
+
+# --- History -------------------------------------------------------------
+# zsh-newuser-install did not write any history config, and zsh's defaults are
+# useless for this: HISTFILE is unset, HISTSIZE=30, and SAVEHIST=0 -- meaning
+# NOTHING is ever written to disk. Every new shell therefore started with an
+# empty history, so zsh-autosuggestions could only suggest commands typed in
+# that same window. Verify the live values any time with:
+#     zsh -i -c 'echo "$HISTFILE $HISTSIZE $SAVEHIST"'
+HISTFILE=~/.zsh_history
+HISTSIZE=100000            # entries held in memory for this session
+SAVEHIST=100000            # entries written to $HISTFILE (0 = save nothing)
+
+setopt EXTENDED_HISTORY    # store timestamp + duration per entry
+setopt INC_APPEND_HISTORY  # append each command as it runs, not at shell exit
+setopt HIST_IGNORE_DUPS    # skip a command identical to the one before it
+setopt HIST_IGNORE_SPACE   # a leading space keeps a command out of history
+setopt HIST_REDUCE_BLANKS  # tidy up redundant whitespace
+setopt HIST_VERIFY         # !! and friends expand for review, not instant run
+
+# INC_APPEND_HISTORY means a NEW terminal loads everything previous terminals
+# have run. It deliberately does not push new commands into already-open
+# shells -- that is SHARE_HISTORY, left off because it makes autosuggestions
+# jumpy (history shifts under you mid-keystroke) and reorders Up-arrow
+# unexpectedly. Uncomment if you want live sharing between open windows:
+# setopt SHARE_HISTORY
+#
+# Also available if suggestions feel cluttered by repeats -- it drops older
+# duplicates instead of only consecutive ones:
+# setopt HIST_IGNORE_ALL_DUPS
+
+# alias ls='gls --color=auto --group-directories-first'
+eval "$(starship init zsh)"
+source ~/dotfiles/alias.sh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
