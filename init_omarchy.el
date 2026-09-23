@@ -28,7 +28,7 @@
 ;;    line discipline's `susp' control character, handled by the kernel,
 ;;    not by any program.  No Emacs setting can touch it.
 ;;    => Handled in dotfiles/alias.sh with `stty susp undef' (commit
-;;       4a6c998).  Not init_omarchy.bash: that is one-time setup, and
+;;       4a6c998).  Not bash/init_omarchy.bash: that is one-time setup, and
 ;;       tty settings reset on every new pty, so it must run per-shell.
 ;;       Verify with:  stty -a | tr ';' '\n' | grep susp
 

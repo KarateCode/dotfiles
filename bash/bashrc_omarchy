@@ -1,0 +1,76 @@
+# bashrc for the Omarchy (Linux) box.
+#
+# Symlinked into place with:
+#   ln -s ~/dotfiles/bash/bashrc_omarchy ~/.bashrc
+#
+# bash is the login shell deliberately (do NOT `chsh -s /usr/bin/zsh`):
+# Omarchy's env-bootstrap and rc only run for bash. This file does that setup
+# and then hands off to zsh at the very bottom -- see ~/dotfiles/zsh/zshrc_omarchy.
+#
+# ~/.bash_profile is stock Arch boilerplate (`[[ -f ~/.bashrc ]] && . ~/.bashrc`)
+# and is left untracked in $HOME, since it is identical on every Arch install.
+#
+# Shell-agnostic aliases live in ~/dotfiles/alias.sh, kept at the dotfiles root
+# rather than in bash/ because zshrc_omarchy sources the same file.
+#
+# Safe to symlink: nothing in Omarchy writes to ~/.bashrc -- the only mentions
+# in /usr/share/omarchy are comments referring to /etc/skel/.bashrc.
+
+# Omarchy environment (OMARCHY_PATH + PATH), needed even for non-interactive shells
+[[ -r /usr/share/omarchy/default/bash/env-bootstrap ]] && source /usr/share/omarchy/default/bash/env-bootstrap
+
+# If not running interactively, don't do anything else (leave this above the rc source)
+[[ $- != *i* ]] && return
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$HOME/go/bin:$PATH"
+fi
+
+# All the default Omarchy aliases and functions
+# (don't mess with these directly, just overwrite them here!)
+source "$OMARCHY_PATH/default/bash/rc"
+
+# Add your own exports, aliases, and functions here.
+#
+# Make an alias for invoking commands you use constantly
+# alias p='python'
+source ~/dotfiles/alias.sh
+source ~/dotfiles/.sensitive.sh
+
+select_env() {
+    local arg="$1"
+    eval "$("$HOME/code/tools-and-infrastructure/scripts/developer/select_env_menu.sh" "$arg")"
+}
+
+# Node is managed by mise (Omarchy puts ~/.local/share/mise/shims on PATH via
+# /etc/security/pam_env.conf). Per-project versions come from .nvmrc /
+# .node-version via the idiomatic_version_file_enable_tools setting in
+# ~/.config/mise/config.toml. fnm was removed -- it only applied to interactive
+# shells, so GUI-launched and non-interactive processes silently got a
+# different node than your terminal did.
+
+# LazyVPN
+export PATH="/home/michael/.local/bin:$PATH"
+
+# source ~/code/ble.sh/out/ble.sh
+
+# --- Hand off to zsh -----------------------------------------------------
+# Deliberately NOT `chsh -s /usr/bin/zsh`: Omarchy expects bash as the login
+# shell, because everything above (env-bootstrap -> OMARCHY_PATH/PATH, then
+# $OMARCHY_PATH/default/bash/rc) only runs for bash. Starting bash, letting it
+# do that setup, then replacing it keeps Omarchy intact and still lands in zsh.
+#
+# `exec` is the important part. A bare `zsh` left bash sitting underneath, so
+# exiting zsh dropped you at a bash prompt and closing a terminal took two
+# exits. exec replaces the process instead.
+#
+# The guard prevents a second handoff if something later starts `bash -i`
+# from inside zsh -- without it that would stack another zsh on top.
+#
+# Note this line is below the `[[ $- != *i* ]] && return` on line 5, so
+# non-interactive bash (scp, ssh command, scripts) is unaffected.
+if [[ -z $OMARCHY_ZSH_HANDOFF ]] && command -v zsh >/dev/null 2>&1; then
+    export OMARCHY_ZSH_HANDOFF=1
+    exec zsh
+fi

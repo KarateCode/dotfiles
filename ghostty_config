@@ -33,6 +33,23 @@ keybind = "cmd+alt+right=text:\x1bOR"
 keybind = "cmd+v=text:\x1bOS"
 keybind = cmd+shift+v=paste_from_clipboard
 
+# --- tmux window (tab) navigation: Cmd+Alt+Left/Right ---------------------
+# keyd turns the physical Cmd key into Control (leftmeta = layer(cmd), and the
+# cmd layer is [cmd:C]), so pressing Cmd+Alt+Left actually arrives here as
+# ctrl+alt+arrow_left. Ghostty binds that BY DEFAULT to goto_split:left, which
+# swallowed it before tmux ever saw it. Splits are tmux's job here.
+#
+# Unbinding is all that is needed -- unlike Ctrl+Shift+<letter>, arrow keys
+# carry their modifiers natively in the escape sequence (CSI 1;7D for
+# ctrl+alt+left), so tmux can match `C-M-Left` directly with no user-keys
+# indirection. Paired with tmux_omarchy.conf `bind -n C-M-Left/-Right`.
+#
+# NB these are the ctrl+alt+* pair. The super+alt+* pair just above
+# (cmd+alt+left/right -> \x1bOQ / \x1bOR) is a DIFFERENT physical key: keyd
+# maps the physical Ctrl key to Super, so those fire from Ctrl+Alt+Arrow.
+keybind = ctrl+alt+arrow_left=unbind
+keybind = ctrl+alt+arrow_right=unbind
+
 # unset, so that I can use it as duplicate line in emacs
 keybind = cmd+d=unbind
 # unset, so that I can use it to grow pane size in tmux
