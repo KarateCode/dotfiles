@@ -115,6 +115,28 @@ z k drop stash
 How do I set a todo? Appears to be only in ** precursed things
 C-c C-c toggles checkboxes
 * Omarchy:
+Super + c/v # Copy/paste everywhere!
+Super + Control + v # search clipboard
+Hold Super + mouse # drags windows around
+Super + l # toggles windows between tiling and scrolling
+Super + f # fullscreen
+Super + Alt + s # app to scratchpad
+Super + s # toggles in and out of scratchpad
+Super + g # groups apps
+Super + alt + g # ungroup
+YouTube has a hotkey
+Create Web Apps on the fly!
+Create TUIs on the fly!
+Super + Control + O # toggle menu
+Super + Shift + Backspace # gets rid of gaps between windows
+Super + Control + t # floating top
+Super + t # toggle as floating tile
+Can read QR codes without a phone!
+Has a 'Share' airdrop replacement thingie!!!
+omacut is video editing
+can download videos from the internet
+Aether is preinstalled and will create a whole theme based on a wallpaper you give it
+Double-click header bar makes it transparent
 ** keyd:
 located at /etc/keyd/default.conf
 sudo keyd reload # to bounce it
@@ -185,7 +207,11 @@ https://www.youtube.com/watch?v=UtINDdy-xBc has a sweet statusbar
 hotkey < # brings up little menu to rearrange tabs (windows)
 Left: swap-window -t -1
 Right: swap-window -t +1
-
+* Workmux
+workmux was suggested by AI and endorsed by devops toolbox
+workmux list
+wm dashboard
+wm sidebar
 * Yassnippets
 Run with M-shift-: #
 (message "Snippet dir: ~/.emacs.d/private/snippets/%s/" major-mode)
