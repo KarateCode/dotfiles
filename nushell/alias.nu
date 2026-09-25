@@ -1,5 +1,7 @@
 alias van = ~/bin/my-emacs.sh
 alias wm = workmux
+# open an existing worktree, resuming claude's last conversation there
+alias wmo = workmux open --continue
 # alias van = emacs -nw
 alias e = cd ~/code/envoy-web
 alias ds = node /Users/michaelschneider/code/tools-and-infrastructure/webdev-tools/menu.js

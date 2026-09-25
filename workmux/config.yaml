@@ -1,0 +1,22 @@
+# Global workmux config. Symlinked to ~/.config/workmux/config.yaml
+# Full reference: workmux config reference
+
+nerdfont: true
+agent: claude
+
+# One tmux session per worktree (instead of a window in the current session).
+mode: session
+
+# Session to return to when a workmux session is closed or removed.
+# default_session: main
+
+# Single window, two panes, both cd'd into the worktree:
+#   left  = plain shell (focused)
+#   right = claude
+# NOTE: split: horizontal == side-by-side. split: vertical == stacked.
+panes:
+  - name: shell
+    focus: true
+  - name: agent
+    command: <agent>
+    split: horizontal
