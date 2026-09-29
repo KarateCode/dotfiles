@@ -564,6 +564,7 @@ prefix+g shows all agents
 prefix+N new workspace
 prefix+W rename workspace
 prefix+X close entire tab
+herdr server stop
 * Brow6el is a browser that runs in a terminal
 * Sesh:
 tmuxinator replacement

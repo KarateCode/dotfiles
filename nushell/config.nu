@@ -2,8 +2,10 @@
 use std "path add"
 path add "~/.cargo/bin"
 
-# Node auto-switching is handled by mise shims, which resolve the version from
-# .nvmrc / .node-version per directory. No PWD hook required.
+# Initialize mise (manages node versions from .nvmrc / .node-version)
+mkdir ~/.cache/mise
+mise activate nu | save -f ~/.cache/mise/init.nu
+source ~/.cache/mise/init.nu
 
 $env.config.show_banner = false
 $env.config.history.file_format = "sqlite"
