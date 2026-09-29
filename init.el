@@ -953,12 +953,7 @@ In org-mode, skip auto-indentation to preserve original whitespace."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(breadcrumb consult dirvish doom-modeline doom-themes
-                exec-path-from-shell jq-mode magit marginalia
-                markdown-mode move-text multiple-cursors nushell-mode
-                orderless projectile treesit-auto vertico yascroll
-                yasnippet-snippets))
+ '(package-selected-packages nil)
  '(safe-local-variable-directories '("/Users/michaelschneider/appropos/envoy-web/")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

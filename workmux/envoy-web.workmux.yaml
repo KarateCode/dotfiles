@@ -1,0 +1,25 @@
+# Workmux configuration for envoy-web
+# Worktrees are created in ~/code/envoy-web__worktrees/
+
+base_branch: develop
+
+# Place worktrees in a sibling directory (without the "-base" suffix)
+worktree_dir: ../envoy-web__worktrees
+
+# Use just the last part of branch names (e.g., "EP-1234" from "feature/EP-1234")
+worktree_naming: basename
+
+files:
+  # Symlink config directories (point to base repo's symlinks which go to ~/code/claude)
+  symlink:
+    - .claude
+    - .opencode
+
+  # Copy files that may need per-worktree modifications
+  copy:
+    - shared/config-overrides.js
+
+# Commands to run after creating a new worktree
+post_create:
+  - mise install
+  - npm run install-dev

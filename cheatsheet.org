@@ -212,6 +212,7 @@ workmux was suggested by AI and endorsed by devops toolbox
 workmux list
 wm dashboard
 wm sidebar
+wmo # workmux open --continue
 * Yassnippets
 Run with M-shift-: #
 (message "Snippet dir: ~/.emacs.d/private/snippets/%s/" major-mode)

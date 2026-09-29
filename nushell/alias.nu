@@ -127,19 +127,24 @@ def --env se [] {
 # Switch the ~/code/envoy-web symlink to point to a different envoy-web folder
 def --env symEnvoyWeb [] {
     let code_dir = "~/code" | path expand
+    let worktrees_dir = $code_dir | path join "envoy-web__worktrees"
     let symlink_path = $code_dir | path join "envoy-web"
 
-    # Find all envoy-web folders with numeric suffix (e.g., envoy-web1, envoy-web2)
-    let envoy_folders = (ls $code_dir
-        | where type == "dir"
-        | get name
-        | each { path basename }
-        | where { $in =~ '^envoy-web\d+$' }
-        | sort)
+    # Build list of available targets:
+    # 1. envoy-web-base (the main repo)
+    # 2. All worktrees in envoy-web__worktrees/
+    mut envoy_folders = ["envoy-web-base"]
 
-    if ($envoy_folders | is-empty) {
-        print $"(ansi red)No envoy-web folders found(ansi reset) (looking for envoy-web1, envoy-web2, etc.)"
-        return
+    if ($worktrees_dir | path exists) {
+        let worktrees = (ls $worktrees_dir
+            | where type == "dir"
+            | get name
+            | each { path basename })
+        $envoy_folders = ($envoy_folders | append $worktrees)
+    }
+
+    if ($envoy_folders | length) == 1 {
+        print $"(ansi yellow)Only envoy-web-base found(ansi reset) (no worktrees in envoy-web__worktrees/)"
     }
 
     # Present fzf menu
@@ -150,7 +155,12 @@ def --env symEnvoyWeb [] {
         return
     }
 
-    let target_path = $code_dir | path join $selected
+    # Determine the full target path
+    let target_path = if $selected == "envoy-web-base" {
+        $code_dir | path join "envoy-web-base"
+    } else {
+        $worktrees_dir | path join $selected
+    }
 
     # Remove old symlink if it exists (but not if it's a real directory)
     if ($symlink_path | path exists) {
