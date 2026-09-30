@@ -70,7 +70,20 @@ o.bind("ALT + 9", "Switch to workspace 9", function()
     hl.dispatch(hl.dsp.focus({ workspace = "9" }))
 end)
 
--- o.bind("ALT + 2", "Workspace 2", "workspace, 2")
+hl.unbind("SUPER + SHIFT + ALT + G")
+
+o.bind("SUPER + SHIFT + ALT + C", "Switch to workspace 1", function()
+    hl.dispatch(hl.dsp.focus({ workspace = "1" }))
+end)
+o.bind("SUPER + SHIFT + ALT + G", "Switch to workspace 2", function()
+    hl.dispatch(hl.dsp.focus({ workspace = "2" }))
+end)
+o.bind("SUPER + SHIFT + ALT + S", "Switch to workspace 3", function()
+    hl.dispatch(hl.dsp.focus({ workspace = "3" }))
+end)
+o.bind("SUPER + SHIFT + ALT + V", "Switch to workspace 6", function()
+    hl.dispatch(hl.dsp.focus({ workspace = "6" }))
+end)
 
 -- Move the focused window to a workspace: ALT+SHIFT+1..9
 -- (replaces the SUPER+SHIFT+1..9 default, unbound below to match the ALT
