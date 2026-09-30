@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: updateOne
+# key: uo
+# --
+updateOne(
+    {$1},
+    {$set: {$2}}
+)

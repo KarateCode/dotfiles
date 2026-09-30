@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: console.log util
+# key: clgutil
+# --
+console.log('$1:');
+console.log(require('util').inspect($1, false, null));

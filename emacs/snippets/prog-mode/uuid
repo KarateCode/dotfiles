@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: uuid import
+# key: uuid
+# --
+import {v4} from 'uuid';

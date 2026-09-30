@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: findOne
+# key: fo
+# --
+findOne(
+    {$1}
+)

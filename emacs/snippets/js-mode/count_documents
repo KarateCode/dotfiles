@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: countDocuments
+# key: cd
+# --
+countDocuments()

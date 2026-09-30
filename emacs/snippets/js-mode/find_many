@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: find
+# key: fm
+# --
+find(
+    {$1}
+)
