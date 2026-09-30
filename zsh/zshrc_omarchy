@@ -52,6 +52,35 @@ setopt HIST_VERIFY         # !! and friends expand for review, not instant run
 # duplicates instead of only consecutive ones:
 # setopt HIST_IGNORE_ALL_DUPS
 
+# --- Completion ----------------------------------------------------------
+# zsh-newuser-install never ran compinit here, so the modern completion system
+# (compsys) was never loaded at all. Tab was bound to `expand-or-complete` --
+# the primitive pre-compsys builtin, which does plain glob-based filename
+# completion and has NO notion of match specs. That is why `cd docu<TAB>`
+# could never find Documents/: case-insensitivity is a compsys feature.
+# Check what Tab is actually bound to with:
+#     zsh -i -c 'bindkey "^I"'
+# It should say `complete-word` (or `expand-or-complete` with compsys loaded,
+# which is fine) once compinit has run.
+autoload -Uz compinit
+compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump"
+
+# matcher-list is tried left to right; zsh stops at the first spec that yields
+# matches, so these are ordered cheapest/least-surprising first:
+#   1. m:{a-zA-Z}={A-Za-z}  case-insensitive both ways -- `docu` -> Documents/
+#   2. r:|[._-]=* r:|=*     match on word boundaries -- `f.b` -> foo.bar
+#   3. l:|=* r:|=*          substring anywhere -- `chine` -> machine
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+# When a prefix is ambiguous, show an interactive menu instead of just beeping.
+# Arrow keys (or repeated Tab) cycle through candidates.
+zstyle ':completion:*' menu select
+
+# Color the menu like `ls`. Guarded because LS_COLORS is NOT set on this box --
+# only zshrc_mac exports it (via vivid). Setting list-colors to an empty value
+# is worse than leaving it alone, so this no-ops until LS_COLORS exists.
+[[ -n "$LS_COLORS" ]] && zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
 # alias ls='gls --color=auto --group-directories-first'
 eval "$(starship init zsh)"
 
