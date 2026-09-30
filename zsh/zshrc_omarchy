@@ -93,4 +93,10 @@ eval "$(starship init zsh)"
 [[ -r "$OMARCHY_PATH/default/bash/functions" ]] && source "$OMARCHY_PATH/default/bash/functions"
 
 source ~/dotfiles/alias.sh
+
+# Envoy work functions (select_env, startBackEnd, ...). Must come AFTER
+# alias.sh, whose `se` alias calls select_env. Functions do not survive the
+# bash `exec zsh` handoff, so zsh has to load these itself.
+source ~/dotfiles/envoy_scripts.sh
+
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
