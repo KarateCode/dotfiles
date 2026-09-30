@@ -99,4 +99,28 @@ source ~/dotfiles/alias.sh
 # bash `exec zsh` handoff, so zsh has to load these itself.
 source ~/dotfiles/envoy_scripts.sh
 
+source <(fzf --zsh)
+
+# Mirrors the Mac box. NOTE: ctrl-a never reaches fzf inside tmux, because C-a
+# is the tmux prefix and tmux swallows it first. Harmless, and it still works
+# in a bare Ghostty window.
+export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border --bind "ctrl-a:select-all,ctrl-d:deselect-all"'
+
+# fd instead of find: it honours .gitignore and skips .git, which is what makes
+# C-t usable inside envoy-web rather than drowning in node_modules.
+if command -v fd >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+fi
+
+# Preview pane for C-t, matching the `preview` alias in alias.sh.
+if command -v bat >/dev/null 2>&1; then
+    export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range :200 {}' --preview-window=right:60%:wrap"
+fi
+
+# History entries can be long; let C-r wrap the highlighted one instead of
+# truncating it, and keep the list newest-first.
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window=down:3:hidden:wrap --bind '?:toggle-preview'"
+
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
