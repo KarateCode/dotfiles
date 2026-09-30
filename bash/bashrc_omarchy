@@ -68,9 +68,25 @@ export PATH="/home/michael/.local/bin:$PATH"
 # The guard prevents a second handoff if something later starts `bash -i`
 # from inside zsh -- without it that would stack another zsh on top.
 #
-# Note this line is below the `[[ $- != *i* ]] && return` on line 5, so
+# The guard asks "is my PARENT zsh?" rather than reading an exported marker
+# variable. An exported marker was the previous approach and it broke tmux:
+# `export OMARCHY_ZSH_HANDOFF=1` leaked into the environment of every
+# descendant, including the tmux SERVER (started from zsh). tmux then spawned
+# each pane as $SHELL (= bash), that bash saw the inherited marker, skipped the
+# handoff, and every pane sat in bash -- no zsh-autosuggestions, no zsh
+# history, none of ~/.zshrc. Vanilla Ghostty was fine because it is launched by
+# the compositor, which never saw the marker.
+#
+# Parent-process inspection has no such leak, because it describes the actual
+# relationship instead of a sticky flag:
+#   Ghostty  -> parent is ghostty    -> hand off   (correct)
+#   tmux pane-> parent is tmux server-> hand off   (correct; was broken)
+#   `bash` typed at a zsh prompt -> parent is zsh -> stay in bash (correct)
+# Cost is one `ps` fork per interactive bash, once per terminal.
+#
+# Note this line is below the `[[ $- != *i* ]] && return` near the top, so
 # non-interactive bash (scp, ssh command, scripts) is unaffected.
-if [[ -z $OMARCHY_ZSH_HANDOFF ]] && command -v zsh >/dev/null 2>&1; then
-    export OMARCHY_ZSH_HANDOFF=1
+if command -v zsh >/dev/null 2>&1 &&
+   [[ $(ps -o comm= -p "$PPID" 2>/dev/null) != zsh ]]; then
     exec zsh
 fi

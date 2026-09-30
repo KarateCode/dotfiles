@@ -48,3 +48,4 @@ sudo ufw allow from 172.16.0.0/12 to any port 3000 proto tcp comment 'docker to 
 printf '127.0.0.1 seedbrand.awt.loc seedclient.awt.loc sodbrand.awt.loc sodclient.awt.loc\n' | sudo tee -a /etc/hosts
 
 yay -S spotify-player
+yay -S mongosh-bin
