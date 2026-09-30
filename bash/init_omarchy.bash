@@ -33,6 +33,8 @@ npm run nginx-local
 # runs the yml file automatically if you're cd'd into the directory
 docker compose up -d
 # docker ps -a # shows all iamges, even if not running
+cd ~/code/envoy-web && docker compose -f docker-compose.nginx.yml -f ~/dotfiles/docker/envoy-nginx-restart.yml up -d
+
 
 # op signin
 # op whoami
@@ -49,3 +51,4 @@ printf '127.0.0.1 seedbrand.awt.loc seedclient.awt.loc sodbrand.awt.loc sodclien
 
 yay -S spotify-player
 yay -S mongosh-bin
+sudo pacman -S diffnav

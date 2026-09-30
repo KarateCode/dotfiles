@@ -11,7 +11,7 @@ alias ddownloads='~/dotfiles/scripts/delete_download_files.sh'
 alias hss='~/dotfiles/scripts/ssh_fzf.sh'
 alias tssh='~/dotfiles/scripts/tunnel_ssh.sh'
 alias tkill='if pids=$(lsof -t -i :27018); then echo "$pids" | xargs kill && echo "Tunnel killed"; else echo "No tunnel active"; fi'
-alias van='emacs -nw'
+alias van='~/dotfiles/scripts/emacs-editor.sh'
 alias wm='workmux'
 # open an existing worktree, resuming claude's last conversation there
 alias wmo='workmux open --continue'

@@ -1,0 +1,15 @@
+# Compose override: keep the envoy-web nginx container alive across reboots.
+#
+# Kept here rather than edited into the repo's docker-compose.nginx.yml, which
+# is git-tracked and whose .gitignore does not cover override files -- adding
+# `restart:` there would show up as a permanent local diff in every worktree.
+#
+# NOTE: this only takes effect once the docker DAEMON runs at boot. On this box
+# docker.service is disabled and only docker.socket is enabled, so dockerd is
+# socket-activated and nothing starts it at login. Pair this with:
+#     sudo systemctl enable --now docker.service
+# Proof it is needed: percona-mongodb already had restart: unless-stopped and
+# still did not come back until dockerd was first touched, 70 minutes after boot.
+services:
+  nginx:
+    restart: unless-stopped

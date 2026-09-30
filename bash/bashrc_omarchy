@@ -27,6 +27,44 @@ if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$HOME/go/bin:$PATH"
 fi
 
+# --- Editor ---------------------------------------------------------------
+# Terminal Emacs, not a detached GUI frame.
+#
+# Omarchy ships EDITOR="omarchy-launch-editor --inline". That launcher reads
+# ~/.local/state/omarchy/defaults/editor (currently "emacs") and then decides:
+#
+#     case "${editor##*/}" in
+#     nvim | vim | nano | micro | hx | helix | fresh)   # TUI whitelist
+#       ... exec "$editor" "$@"                         # runs in this terminal
+#     *)
+#       exec setsid uwsm-app -- "$editor" "$@"          # GUI, detached
+#
+# "emacs" is not on that whitelist, so it always falls to the GUI branch. That
+# is the whole bug -- and `omarchy-default-editor` cannot fix it, because it
+# only accepts a fixed list of editor NAMES and has no way to express a flag
+# like -nw.
+#
+# Setting EDITOR here is the sanctioned escape hatch rather than a hack:
+# omarchy's default/bash/envs is written as
+#     export EDITOR="${EDITOR:-omarchy-launch-editor --inline}"
+#     export SUDO_EDITOR="$EDITOR"
+# so a pre-set EDITOR is deliberately left alone, and SUDO_EDITOR follows it
+# for free. This MUST stay above the rc source below for that :- to see it.
+#
+# One assignment covers both shells: exported variables survive the `exec zsh`
+# handoff at the bottom of this file, which is exactly why the lost-functions
+# problem documented in zshrc_omarchy does NOT apply to env vars.
+#
+# Leaves ~/.local/state/omarchy/defaults/editor alone at "emacs", so anything
+# that asks omarchy which editor you use still gets the right answer.
+#
+# The wrapper goes through emacsclient against the systemd-managed daemon:
+# ~1.5s of init.el startup per invocation becomes ~0.2s. It is a script rather
+# than an inline "emacsclient -nw -a ''" so that $EDITOR stays a single
+# space-free token -- omarchy copies it into SUDO_EDITOR, and sudo splits that
+# on whitespace without honouring quotes. See the script for the full reasoning.
+export EDITOR="$HOME/dotfiles/scripts/emacs-editor.sh"
+
 # All the default Omarchy aliases and functions
 # (don't mess with these directly, just overwrite them here!)
 source "$OMARCHY_PATH/default/bash/rc"
