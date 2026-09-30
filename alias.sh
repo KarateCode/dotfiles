@@ -18,7 +18,7 @@ alias wmo='workmux open --continue'
 # alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
 alias jdev='mb-jira-cli --toggleview="column" --filter="Dev Review"'
 alias jme='mb-jira-cli --toggleview="table" --filter="Me"'
-alias ntc='tmuxinator npm-test-concurrent --append'
+alias ntc='~/dotfiles/scripts/npm-test-concurrent.sh'
 
 alias nr='npm run'
 alias nt='npm run test:concurrent'
