@@ -12,8 +12,13 @@
 ;; run before the rest of this file, and the <f4> binding further down
 ;; would then clobber the Linux override instead of the other way round.
 ;;
+;; Resolved against `user-emacs-directory', NOT against this file's own
+;; location -- so the override must be symlinked into ~/.config/emacs/
+;; alongside init.el, even though both live in ~/dotfiles/emacs/.
+;;
 ;; No-op on macOS.  Symlink on Omarchy with:
-;;   ln -s ~/dotfiles/init_omarchy.el ~/.config/emacs/init_omarchy.el
+;;   ln -s ~/dotfiles/emacs/init.el          ~/.config/emacs/init.el
+;;   ln -s ~/dotfiles/emacs/init_omarchy.el  ~/.config/emacs/init_omarchy.el
 (when (eq system-type 'gnu/linux)
   (add-hook 'after-init-hook
             (lambda ()
@@ -857,48 +862,69 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 ; ===========================
 ; Ghostty cmd interpretations
 ; ===========================
-;; Was "\e[15~" (which is F5) -- nothing has ever sent that, so this binding
+;; `input-decode-map' is TERMINAL-LOCAL, not global. Every tty gets a fresh
+;; one, built from terminfo by `terminal-init-xterm'. A bare
+;; `(define-key input-decode-map ...)' at top level therefore only touches
+;; whatever terminal happens to be current while init.el loads.
+;;
+;; Under `emacs -nw' that terminal IS the one you are typing into, so this all
+;; used to work. Once EDITOR moved to emacsclient (scripts/emacs-editor.sh),
+;; init.el started running in the daemon, whose current terminal is the
+;; headless "initial_terminal" -- so every sequence below was decoded on a
+;; terminal nobody types into, and all of these keys silently went dead in
+;; real frames. Verify with, in a client frame:
+;;   M-: (lookup-key input-decode-map "\e[111;9z")
+;; => [cmd-enter] when healthy, an integer (no match) when broken.
+;;
+;; Fix: register them per-terminal from `tty-setup-hook', which runs at the
+;; end of terminal initialization for each new tty, with that tty current.
+;; The matching `global-set-key' calls stay at top level -- the global keymap
+;; really is global, only the decoding is per-terminal.
+(defun my/ghostty-setup-input-decode-map ()
+  "Teach the current terminal Ghostty's private \\e[N;Mz key sequences.
+Safe to run more than once on the same terminal."
+  (define-key input-decode-map "\e[111;9z"  [cmd-enter])
+  (define-key input-decode-map "\e[111;10z" [cmd-shift-enter])
+  (define-key input-decode-map "\e[20~"     [cmd-d])
+  (define-key input-decode-map "\e[24~"     [cmd-j])
+  (define-key input-decode-map "\e[119;9z"  [cmd-s])
+  (define-key input-decode-map "\e[21~"     [cmd-e])
+  (define-key input-decode-map "\e[18~"     [cmd-c])
+  (define-key input-decode-map "\e[17~"     [cmd-x])
+  (define-key input-decode-map "\e[115;9z"  [cmd-ctrl-up])
+  (define-key input-decode-map "\e[116;9z"  [cmd-ctrl-down])
+  (define-key input-decode-map "\e[113;9z"  [cmd-shift-f])
+  (define-key input-decode-map "\e[117;9z"  [C-S-backspace])
+  (define-key input-decode-map "\e[108;9z"  [cmd-z])
+  (define-key input-decode-map "\e[19~"     [cmd-shift-z]))
+
+(add-hook 'tty-setup-hook #'my/ghostty-setup-input-decode-map)
+
+;; ...and catch the terminals that already exist: the daemon's initial
+;; terminal when init.el loads normally, plus every live client frame when
+;; this file is re-evaluated by hand against a running daemon.
+(my/ghostty-setup-input-decode-map)
+(dolist (frame (frame-list))
+  (when (eq (framep frame) t)                 ; t = text terminal frame
+    (with-selected-frame frame
+      (my/ghostty-setup-input-decode-map))))
+
+;; Was "\e[15~" (which is F5) -- nothing has ever sent that, so that binding
 ;; was dead on both machines. Ghostty sends \x1b[111;9z for cmd+enter, matching
-;; the \x1b[111;10z used by cmd-shift-enter just below.
-(define-key input-decode-map "\e[111;9z" [cmd-enter])
+;; the \x1b[111;10z used by cmd-shift-enter.
 (global-set-key [cmd-enter] #'insert-line)
-
-(define-key input-decode-map "\e[111;10z" [cmd-shift-enter])
 (global-set-key [cmd-shift-enter] #'insert-line-above)
-
-(define-key input-decode-map "\e[20~" [cmd-d])
 (global-set-key [cmd-d] #'duplicate-line)
-
-(define-key input-decode-map "\e[24~" [cmd-j])
 (global-set-key [cmd-j] 'custom-join-lines)
-
-(define-key input-decode-map "\e[119;9z" [cmd-s])
 (global-set-key [cmd-s]
   (lambda () (interactive) (execute-kbd-macro (kbd "C-x C-s")))
 )
-
-(define-key input-decode-map "\e[21~" [cmd-e])
 (global-set-key [cmd-e] 'my/search-region)
-
-(define-key input-decode-map "\e[18~" [cmd-c])
 (global-set-key [cmd-c] 'custom-copy-line-or-region)
-
-(define-key input-decode-map "\e[17~" [cmd-x])
 (global-set-key [cmd-x] 'custom-cut-line-or-region)
-
-(define-key input-decode-map "\e[115;9z" [cmd-ctrl-up])
-(define-key input-decode-map "\e[116;9z" [cmd-ctrl-down])
-
-(define-key input-decode-map "\e[113;9z" [cmd-shift-f])
 (global-set-key [cmd-shift-f] #'my/project-grep-empty)
-
-(define-key input-decode-map "\e[117;9z" [C-S-backspace])
 (global-set-key [C-S-backspace] #'delete-current-line)
-
-(define-key input-decode-map "\e[108;9z" [cmd-z])
 (global-set-key [cmd-z] 'undo)
-
-(define-key input-decode-map "\e[19~" [cmd-shift-z])
 (global-set-key [cmd-shift-z] 'undo-redo)
 
 ;; cmd-v → Ghostty sends F4 (\x1bOS), bind to clean clipboard paste
