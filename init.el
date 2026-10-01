@@ -189,10 +189,7 @@
 (use-package yasnippet
   :ensure t
   :init
-  (yas-global-mode 1)
-  :config
-  ;; Optional: Add a personal snippets directory for your own creations
-  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets")))
+  (yas-global-mode 1))
 (use-package yasnippet-snippets
   :ensure t
   :after yasnippet)
