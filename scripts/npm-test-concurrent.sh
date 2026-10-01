@@ -32,11 +32,23 @@ set -u
 
 WINDOW_NAME="Test Suite"
 
-# Pane commands, clockwise from the top left.
+# Status glyph shown in the tmux window name while the suites run. The pass and
+# fail glyphs live in ntc-slot.sh, which owns every transition after launch.
+# nf-md-timer_sand. Verified present in the Nerd Font actually in use.
+GLYPH_PENDING=$'\Uf051b'
+
+# Pane commands, clockwise from the top left. SLOT_* names are the keys
+# ntc-slot.sh records results under, and double as the pane titles, so the
+# notification body reads in the same order as the grid.
 CMD_TOP_LEFT="npm run test:server"
 CMD_TOP_RIGHT="npm run test:client"
 CMD_BOTTOM_RIGHT="npm run lint"
 CMD_BOTTOM_LEFT="npm run test:shared"
+
+SLOT_TOP_LEFT=server
+SLOT_TOP_RIGHT=client
+SLOT_BOTTOM_RIGHT=lint
+SLOT_BOTTOM_LEFT=shared
 
 if [ -z "${TMUX:-}" ]; then
     print -u2 "ntc: must be run from inside tmux"
@@ -59,7 +71,16 @@ done
 # Build the grid. Panes are tracked by id (%12) rather than by leaving the
 # newly created one active and sending to it implicitly, which is what the
 # nushell version does -- that breaks if anything steals focus mid-build.
-p1=$(tmux new-window   -P -F '#{pane_id}' -n "$WINDOW_NAME" -c "$PWD") || exit 1
+#
+# The window is born already carrying the pending glyph, so the tab shows
+# 󰔛 from the first frame instead of only once a pane gets going.
+#
+# Naming the window with -n also switches automatic-rename OFF for it (man
+# tmux: "automatically disabled for an individual window when a name is
+# specified at creation with new-window"). That is what keeps the global
+# `automatic-rename on` / `#{b:pane_current_path}` in tmux_omarchy.conf from
+# overwriting the status glyph a moment later.
+p1=$(tmux new-window   -P -F '#{pane_id}' -n "$GLYPH_PENDING $WINDOW_NAME" -c "$PWD") || exit 1
 p2=$(tmux split-window -P -F '#{pane_id}' -h -c "$PWD" -t "$p1")       || exit 1
 p3=$(tmux split-window -P -F '#{pane_id}' -v -c "$PWD" -t "$p2")       || exit 1
 p4=$(tmux split-window -P -F '#{pane_id}' -v -c "$PWD" -t "$p1")       || exit 1
@@ -86,18 +107,46 @@ grid=( ${(f)"$(tmux list-panes -t "$p1" -F '#{pane_top} #{pane_left} #{pane_id}'
                 | sort -n -k1,1 -k2,2 | awk '{print $3}')"} )
 tl=$grid[1]; tr=$grid[2]; bl=$grid[3]; br=$grid[4]
 
-tmux select-pane -t "$tl" -T server
-tmux select-pane -t "$tr" -T client
-tmux select-pane -t "$bl" -T shared
-tmux select-pane -t "$br" -T lint
+tmux select-pane -t "$tl" -T "$SLOT_TOP_LEFT"
+tmux select-pane -t "$tr" -T "$SLOT_TOP_RIGHT"
+tmux select-pane -t "$bl" -T "$SLOT_BOTTOM_LEFT"
+tmux select-pane -t "$br" -T "$SLOT_BOTTOM_RIGHT"
+
+# --- notification state ---------------------------------------------------
+# ntc-slot.sh records each suite's exit code here and the last suite to finish
+# reports on the set. See that file for why it is an election and not "ask the
+# slowest pane".
+#
+# Keyed by window id so two concurrent `ntc` runs (different projects, same
+# tmux server) cannot read each other's results.
+#
+# The `slots` manifest is the single definition of "the set is complete";
+# ntc-slot.sh records results but stays silent without it, so a half-created
+# run directory degrades to no notification rather than a wrong one.
+window_id=$(tmux display-message -p -t "$p1" '#{window_id}')
+rundir="${XDG_RUNTIME_DIR:-/tmp}/ntc/${window_id#@}"
+# Guarded: only ever remove a path we just built from a non-empty window id.
+[[ -n "${window_id#@}" ]] && rm -rf "$rundir"
+mkdir -p "$rundir"
+print -rl -- "$SLOT_TOP_LEFT" "$SLOT_TOP_RIGHT" "$SLOT_BOTTOM_LEFT" "$SLOT_BOTTOM_RIGHT" > "$rundir/slots"
+print -r -- "$WINDOW_NAME" > "$rundir/name"
+
+# Absolute path, so a pane whose shell never sourced alias.sh still finds it;
+# displayed with ~ so the line recalled by up-arrow stays readable.
+slot_script="${0:A:h}/ntc-slot.sh"
+slot_disp="${slot_script/#$HOME/~}"
 
 # Commands go out AFTER select-layout, unlike the nushell version. Panes reach
 # their final width first, so test output and progress bars wrap correctly
 # instead of being laid out for the pre-tiled geometry.
-tmux send-keys -t "$tl" "$CMD_TOP_LEFT"     C-m
-tmux send-keys -t "$tr" "$CMD_TOP_RIGHT"    C-m
-tmux send-keys -t "$bl" "$CMD_BOTTOM_LEFT"  C-m
-tmux send-keys -t "$br" "$CMD_BOTTOM_RIGHT" C-m
+#
+# Wrapped in ntc-slot.sh, which passes output and exit status straight through.
+# The wrapper is part of the recalled line on purpose: up-arrow + Enter re-runs
+# the suite AND re-arms the notification.
+tmux send-keys -t "$tl" "$slot_disp $SLOT_TOP_LEFT -- $CMD_TOP_LEFT"         C-m
+tmux send-keys -t "$tr" "$slot_disp $SLOT_TOP_RIGHT -- $CMD_TOP_RIGHT"       C-m
+tmux send-keys -t "$bl" "$slot_disp $SLOT_BOTTOM_LEFT -- $CMD_BOTTOM_LEFT"   C-m
+tmux send-keys -t "$br" "$slot_disp $SLOT_BOTTOM_RIGHT -- $CMD_BOTTOM_RIGHT" C-m
 
 # Synchronize so one up-arrow + Enter re-runs all four suites at once, each
 # pane replaying its own last command. This also means ANY typing in this
@@ -105,3 +154,4 @@ tmux send-keys -t "$br" "$CMD_BOTTOM_RIGHT" C-m
 tmux set-window-option -t "$p1" synchronize-panes on >/dev/null
 
 print "Started 4 test panes in '$WINDOW_NAME' (synchronize-panes ON, M-s toggles)"
+print "Tab shows $GLYPH_PENDING while running; ding + notification when all four finish. Mute with NTC_DING=0"
