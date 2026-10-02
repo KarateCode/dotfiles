@@ -26,12 +26,29 @@
 -- })
 
 -- https://wiki.hypr.land/Configuring/Basics/Variables/#animations
+-- To disable all animations instead:
 -- hl.config({
 --   animations = {
---     -- Disable all animations.
 --     enabled = false,
 --   },
 -- })
+
+hl.animation({
+  leaf = "workspaces",
+  enabled = true,
+  speed = 4,
+  bezier = "easeOutQuint",
+  -- style = "fade",
+  style = "slidefade 80%",
+  -- style = "slidefadevert 80%",
+  gaps_workspaces = "100",
+})
+
+hl.config({
+  animations = {
+    workspace_wraparound = true,
+  },
+})
 
 -- https://wiki.hypr.land/Configuring/Basics/Variables/#layout
 -- hl.config({
