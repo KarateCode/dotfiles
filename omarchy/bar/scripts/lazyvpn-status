@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Bar status for lazyvpn, emitted as Waybar-style JSON for an Omarchy
+# custom command module (bar/README.md -> "Custom user modules").
+#
+# lazyvpn's own `waybar` output hides the icon entirely when disconnected
+# (text: ""), which would leave nothing to click. This wrapper always emits
+# a visible glyph and remaps lazyvpn's 5 states onto the bar's styling:
+#
+#   connected / connecting  -> vpn glyph, normal foreground
+#   disconnected            -> shield-outline glyph, normal foreground
+#   ks-blocking / error     -> vpn glyph, class "active" (urgent color)
+#
+# "active" is the only class the bar reacts to, and it renders in the
+# theme's urgent color (Ui/WidgetButton.qml), so it is reserved for states
+# that genuinely need attention rather than for "connected".
+
+set -uo pipefail
+
+LAZYVPN="$HOME/.local/bin/lazyvpn"
+ICON_ON="󰖂"   # U+F0582 nf-md-vpn
+ICON_OFF="󰒃"  # U+F0483 nf-md-shield-outline
+
+emit() { # text, tooltip, class
+  jq -cn --arg t "$1" --arg tt "$2" --arg c "$3" \
+    '{text:$t, tooltip:$tt, class:$c, alt:$c}'
+}
+
+if [[ ! -x "$LAZYVPN" ]]; then
+  emit "$ICON_OFF" "lazyvpn not installed" ""
+  exit 0
+fi
+
+raw="$("$LAZYVPN" waybar 2>/dev/null)"
+if [[ -z "$raw" ]] || ! jq -e . >/dev/null 2>&1 <<<"$raw"; then
+  emit "$ICON_OFF" "VPN: status unavailable" ""
+  exit 0
+fi
+
+state="$(jq -r '.alt // ""' <<<"$raw")"
+tooltip="$(jq -r '.tooltip // ""' <<<"$raw")"
+[[ -z "$tooltip" ]] && tooltip="VPN"
+
+case "$state" in
+  connected)
+    emit "$ICON_ON" "$tooltip"$'\n\n''Left-click: disconnect' "" ;;
+  connecting)
+    emit "$ICON_ON" "$tooltip" "" ;;
+  ks-blocking|error)
+    emit "$ICON_ON" "$tooltip" "active" ;;
+  *)
+    emit "$ICON_OFF" "VPN: Disconnected"$'\n\n''Left-click: connect' "" ;;
+esac

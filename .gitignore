@@ -7,3 +7,10 @@ nushell/history.sqlite*
 .DS_Store
 zsh/.zsh_history
 zsh/*history*
+
+# omarchy: `omarchy theme install` and `omarchy plugin add` git-clone into
+# these, which would nest foreign repos inside this one. Wallpapers are
+# large binaries. Runtime state lives in ~/.local/state/omarchy, not here.
+omarchy/themes/
+omarchy/plugins/
+omarchy/backgrounds/
