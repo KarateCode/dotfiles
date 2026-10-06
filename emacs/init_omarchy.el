@@ -182,6 +182,19 @@ Linux counterpart of `my/clipboard-paste-as-single-undo' in init.el."
 ;; anyway -- no room for a shift bit on a control byte -- which is why the
 ;; macOS side of init.el resorts to escape sequences like \e[108;9z.)
 
+;; ===================================================================
+;; 4. Clipboard copy -- the other half of section 3
+;; ===================================================================
+;; M-w is stock `kill-ring-save' -> `kill-new' -> `interprogram-cut-function'
+;; -> `gui-select-text', and that last step is a silent no-op on a TTY frame,
+;; which is every frame here (`van' runs `emacsclient -nw').  The Mac copies
+;; via [cmd-c] -> pbcopy, a binding that needs a cmd key, so Linux had nothing.
+;; Replacing the hook rather than binding a command covers M-w, C-w, C-k and
+;; cua's C-x cut all at once.
+;;
+;; Needs WAYLAND_DISPLAY in the daemon; emacs.service lacked it until
+;; ~/.config/systemd/user/emacs.service.d/wayland-env.conf reordered it.
+
 (defvar omarchy/wl-copy-log
   (expand-file-name (format "emacs-wl-copy-%s.log" (user-real-login-name))
                    temporary-file-directory)
@@ -189,14 +202,13 @@ Linux counterpart of `my/clipboard-paste-as-single-undo' in init.el."
 
 (defun omarchy/clipboard-set-text (text &rest _)
   "Put TEXT on the Wayland clipboard with wl-copy.
-
-Installed as `interprogram-cut-function', so it runs on every kill.
-Linux counterpart of the pbcopy calls in init.el.  Trailing arguments are
-accepted and ignored: older Emacs passed a PUSH flag here."
+Installed as `interprogram-cut-function', so it runs on every kill."
   (when (and (stringp text) (not (string-empty-p text)))
     (if (not (executable-find "wl-copy"))
         (message "wl-copy not found: kill-ring only, nothing sent to the clipboard")
-      ;; START as a string sends TEXT on stdin, so no temp buffer is needed.
+      ;; Output MUST go to a file, not a buffer: wl-copy forks a server that
+      ;; inherits stdout, so a buffer destination makes Emacs read a pipe that
+      ;; never reaches EOF and the whole daemon freezes.
       (let* ((coding-system-for-write 'utf-8)
              (status (call-process-region
                       text nil "wl-copy" nil
