@@ -182,5 +182,33 @@ Linux counterpart of `my/clipboard-paste-as-single-undo' in init.el."
 ;; anyway -- no room for a shift bit on a control byte -- which is why the
 ;; macOS side of init.el resorts to escape sequences like \e[108;9z.)
 
+(defvar omarchy/wl-copy-log
+  (expand-file-name (format "emacs-wl-copy-%s.log" (user-real-login-name))
+                   temporary-file-directory)
+  "Scratch file collecting wl-copy's output.  Read only when it fails.")
+
+(defun omarchy/clipboard-set-text (text &rest _)
+  "Put TEXT on the Wayland clipboard with wl-copy.
+
+Installed as `interprogram-cut-function', so it runs on every kill.
+Linux counterpart of the pbcopy calls in init.el.  Trailing arguments are
+accepted and ignored: older Emacs passed a PUSH flag here."
+  (when (and (stringp text) (not (string-empty-p text)))
+    (if (not (executable-find "wl-copy"))
+        (message "wl-copy not found: kill-ring only, nothing sent to the clipboard")
+      ;; START as a string sends TEXT on stdin, so no temp buffer is needed.
+      (let* ((coding-system-for-write 'utf-8)
+             (status (call-process-region
+                      text nil "wl-copy" nil
+                      (list (list :file omarchy/wl-copy-log) t) nil)))
+        (unless (eq status 0)
+          (message "wl-copy failed (exit %s): %s" status
+                   (string-trim
+                    (with-temp-buffer
+                      (ignore-errors (insert-file-contents omarchy/wl-copy-log))
+                      (buffer-string)))))))))
+
+(setq interprogram-cut-function #'omarchy/clipboard-set-text)
+
 (provide 'init_omarchy)
 ;;; init_omarchy.el ends here
