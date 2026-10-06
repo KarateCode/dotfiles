@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Emacs-style cursor keys (C-f/C-b/M-f/M-b/C-d/M-d/C-a/C-e/C-k/...) in GTK apps
+# and in Chromium -- both web page text fields and the address bar.
+#
+# The bindings themselves ship with GTK: /usr/share/themes/Emacs/gtk-3.0/gtk-keys.css
+# All that's needed is to select that key theme.
+#
+# IMPORTANT: ~/.config/gtk-3.0/settings.ini is NOT enough on Hyprland. GTK3
+# resolves settings through xdg-desktop-portal, and a value served by the
+# portal outranks settings.ini. The portal reads the gsettings key below, so
+# that is the one that actually takes effect. settings.ini is kept in sync
+# anyway for the odd client that reads it directly.
+#
+# Verify with:  ~/dotfiles/scripts/emacs-keys-smoke-test.sh
+# Spot check:   python3 -c "import gi;gi.require_version('Gtk','3.0');\
+#                 from gi.repository import Gtk;\
+#                 print(Gtk.Settings.get_default().get_property('gtk-key-theme-name'))"
+
+set -e
+
+SCHEMA=org.gnome.desktop.interface
+KEY=gtk-key-theme
+WANT=Emacs
+
+command -v gsettings >/dev/null || exit 0
+
+if [[ $(gsettings get "$SCHEMA" "$KEY" 2>/dev/null) != "'$WANT'" ]]; then
+  gsettings set "$SCHEMA" "$KEY" "$WANT"
+fi
+
+# Keep settings.ini consistent (belt and braces; the portal is what wins).
+INI="$HOME/.config/gtk-3.0/settings.ini"
+if [[ ! -f $INI ]]; then
+  mkdir -p "$(dirname "$INI")"
+  printf '[Settings]\ngtk-key-theme-name = %s\n' "$WANT" >"$INI"
+elif ! grep -q "^gtk-key-theme-name *= *$WANT$" "$INI"; then
+  if grep -q '^gtk-key-theme-name' "$INI"; then
+    sed -i "s/^gtk-key-theme-name *=.*/gtk-key-theme-name = $WANT/" "$INI"
+  elif grep -q '^\[Settings\]' "$INI"; then
+    sed -i "0,/^\[Settings\]/s//[Settings]\ngtk-key-theme-name = $WANT/" "$INI"
+  else
+    printf '[Settings]\ngtk-key-theme-name = %s\n%s\n' "$WANT" "$(cat "$INI")" >"$INI.tmp"
+    mv "$INI.tmp" "$INI"
+  fi
+fi
