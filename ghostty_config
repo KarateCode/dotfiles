@@ -21,9 +21,9 @@ adjust-cursor-thickness = 2
 
 keybind = ctrl+,=text:\x1b[121;9z
 
-# Tmux can't handle random byte strings.
-# It must be an actual key on the keyboard
-# So here, we're generating the F1 key
+# F1-F4 below are caught by tmux.conf (`bind -n F1/F2/F3/F4`).
+# tmux matches arbitrary sequences via `user-keys`, as tmux_omarchy.conf does
+# seven times over (user-keys[0..6]). F-keys here are a choice, not a limit.
 keybind = "cmd+k=text:\x1bOP"
 # cmd+alt+left → F2
 keybind = "cmd+alt+left=text:\x1bOQ"
