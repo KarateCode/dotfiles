@@ -1,0 +1,270 @@
+# Ghostty config for the Omarchy (Linux) box.
+# Symlinked into place: ~/.config/ghostty/config -> ~/dotfiles/ghostty/config
+#
+# The Mac keeps its own copy at dotfiles/ghostty_config (copyConfigs.sh). The
+# two differ only in custom-shader paths; keybinds are identical.
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+
+background = "#000000"
+# key-encoding = xterm
+# keybind = ctrl+,=text:\x1b[27;5;44~
+# keybind = ctrl+, send_text "\x1b[27;5;44~"
+
+cursor-style = bar
+cursor-style-blink = true
+cursor-color = #ff8800
+adjust-cursor-thickness = 2
+
+keybind = ctrl+,=text:\x1b[121;9z
+
+# These four emit real F-key sequences (F1-F4) rather than private \x1b[N;9z
+# ones. The original reason given -- "tmux can't handle random byte strings" --
+# is wrong: tmux matches arbitrary sequences via `user-keys`, which
+# tmux_omarchy.conf already does seven times over (user-keys[0..6]). The actual
+# constraint is upstream: keyd's [cmd:C] layer makes the physical Cmd key
+# arrive as plain Control, so Ghostty cannot tell cmd+k from capslock+k -- the
+# F-key is what makes the chord unique, not what makes tmux understand it.
+# Replacing it needs a different carrier (ctrl+alt+<letter> is free; Super is
+# not -- Omarchy binds SUPER+K and SUPER+V in Hyprland).
+keybind = "cmd+k=text:\x1bOP"
+# cmd+alt+left → F2, cmd+alt+right → F3. Mac-only in practice: only the Mac
+# tmux.conf binds F2/F3, tmux_omarchy.conf navigates with C-M-Left/Right.
+keybind = "cmd+alt+left=text:\x1bOQ"
+keybind = "cmd+alt+right=text:\x1bOR"
+# cmd+v → F4, for init.el's <f4> paste. Also Mac-only: here keyd sends
+# cmd.v = C-S-v straight to Ghostty's own paste_from_clipboard, and the only
+# other route (physical Ctrl = Super) is taken by Hyprland's SUPER+V.
+keybind = "cmd+v=text:\x1bOS"
+keybind = cmd+shift+v=paste_from_clipboard
+
+# --- tmux window (tab) navigation: Cmd+Alt+Left/Right ---------------------
+# keyd turns the physical Cmd key into Control (leftmeta = layer(cmd), and the
+# cmd layer is [cmd:C]), so pressing Cmd+Alt+Left actually arrives here as
+# ctrl+alt+arrow_left. Ghostty binds that BY DEFAULT to goto_split:left, which
+# swallowed it before tmux ever saw it. Splits are tmux's job here.
+#
+# Unbinding is all that is needed -- unlike Ctrl+Shift+<letter>, arrow keys
+# carry their modifiers natively in the escape sequence (CSI 1;7D for
+# ctrl+alt+left), so tmux can match `C-M-Left` directly with no user-keys
+# indirection. Paired with tmux_omarchy.conf `bind -n C-M-Left/-Right`.
+#
+# NB these are the ctrl+alt+* pair. The super+alt+* pair just above
+# (cmd+alt+left/right -> \x1bOQ / \x1bOR) is a DIFFERENT physical key: keyd
+# maps the physical Ctrl key to Super, so those fire from Ctrl+Alt+Arrow.
+keybind = ctrl+alt+arrow_left=unbind
+keybind = ctrl+alt+arrow_right=unbind
+
+# unset, so that I can use it as duplicate line in emacs
+keybind = cmd+d=unbind
+# unset, so that I can use it to grow pane size in tmux
+keybind = ctrl+8=unbind
+# --- tmux pane keys ------------------------------------------------------
+# A terminal cannot encode Shift on a control character (C-l is 0x0c, no bit
+# left for shift), so tmux cannot distinguish C-S-l from C-l and plain
+# `bind -n C-S-l` bindings never fire. tmux does negotiate the `extkeys`
+# feature with Ghostty, but Ghostty still replies with legacy encodings, so
+# the protocol route does not work. Send explicit private sequences instead
+# and match them in tmux with `user-keys` -- same trick as the cmd+ keys.
+#
+# Layout: j/l = left/right (Moonlander i/j/k/l arrow layer), y/, = up/down,
+# h = "home" / top of scrollback, i/k = page up/down.
+#
+# Unbinds come first, because these are all Ghostty DEFAULTS:
+#   ctrl+shift+j -> write_screen_file:paste,plain
+#   ctrl+shift+o -> new_split:right
+#   ctrl+shift+,  -> reload_config      (the "Reload the configuration" flash)
+#   ctrl+shift+i -> inspector:toggle
+# ctrl+, further down is a DIFFERENT key and stays mapped for Emacs.
+# ctrl+shift+l, ctrl+shift+y, ctrl+shift+h and ctrl+shift+k were already free.
+#
+# ctrl+shift+u is deliberately NOT used: GTK's gtk-im-context-simple claims
+# it for Unicode entry (the "U+" prompt) above Ghostty's keybinding layer, so
+# Ghostty never sees it. Routing GTK through fcitx5 would free it but caused
+# problems, so j took its place.
+#
+# Paired with tmux_omarchy.conf `set -s user-keys[0..6]` + `bind -n User0..6`.
+# Keep both sides in sync; a mismatch just makes the key do nothing.
+keybind = ctrl+shift+j=unbind
+keybind = ctrl+shift+o=unbind
+keybind = ctrl+shift+,=unbind
+keybind = ctrl+shift+i=unbind
+keybind = ctrl+shift+j=text:\x1b[124;9z
+keybind = ctrl+shift+l=text:\x1b[125;9z
+keybind = ctrl+shift+y=text:\x1b[126;9z
+keybind = ctrl+shift+,=text:\x1b[127;9z
+keybind = ctrl+shift+h=text:\x1b[128;9z
+keybind = ctrl+shift+i=text:\x1b[129;9z
+keybind = ctrl+shift+k=text:\x1b[130;9z
+
+# --- Cmd+Enter -> insert-line in Emacs ------------------------------------
+# keyd turns the physical Cmd key into Control, so Cmd+Enter arrives here as
+# ctrl+enter -- which Ghostty binds BY DEFAULT to toggle_fullscreen. That was
+# the surprise fullscreen; it never reached Emacs.
+#
+# Deliberately emits the SAME \x1b[111;9z as super+enter further down, so both
+# physical keys land on Emacs' [cmd-enter] -> insert-line. On macOS that same
+# config line fires from the real Cmd key via super+enter.
+# Decoded by init.el: (define-key input-decode-map "\e[111;9z" [cmd-enter])
+keybind = ctrl+enter=unbind
+keybind = ctrl+enter=text:\x1b[111;9z
+
+# Cmd+Shift+F -> Emacs "find in project" (my/project-grep-empty, a
+# consult-ripgrep rooted at the projectile project). Ghostty's default on
+# ctrl+shift+f is start_search, which swallowed it.
+#
+# Trade-off: this gives up Ghostty's own in-terminal search, which had no
+# other binding. Scrollback search is still available via tmux copy-mode
+# (prefix C-r, tmux_omarchy.conf), so nothing is really lost here.
+# Decoded by init.el: "\e[113;9z" -> [cmd-shift-f]
+keybind = ctrl+shift+f=unbind
+keybind = ctrl+shift+f=text:\x1b[113;9z
+
+# Same story for Cmd+Shift+Enter -> Emacs insert-line-above. Ghostty's default
+# on ctrl+shift+enter is toggle_split_zoom, which swallowed it.
+# Decoded by init.el: "\e[111;10z" -> [cmd-shift-enter]
+keybind = ctrl+shift+enter=unbind
+keybind = ctrl+shift+enter=text:\x1b[111;10z
+
+keybind = PageUp=text:\x1b[5~
+keybind = PageDown=text:\x1b[6~
+
+keybind = cmd+c=text:\x1b[118;9z
+keybind = "cmd+s=unbind"
+keybind = cmd+s=text:\x1b[119;9z
+
+keybind = cmd+x=text:\x1b[120;9z
+
+keybind = shift+PageUp=scroll_page_up
+keybind = shift+PageDown=scroll_page_down
+keybind = shift+home=scroll_to_top
+keybind = shift+end=scroll_to_bottom
+# Plain keys → send escapes to tmux
+keybind = home=text:\x1b[H
+keybind = end=text:\x1b[F
+
+# Prevent the default Cmd+J behavior if any
+keybind = "cmd+j=unbind"
+keybind = cmd+j=text:\x1b[114;9z
+
+# Prevent Cmd+Z from being handled by Ghostty itself
+keybind = "cmd+z=unbind"
+
+# Send ESC+z when Cmd+Z is pressed
+# The only way to get an actual command/super is to use GUI Emacs
+# We can't map to Esc as a prefix, because that is Alt's default mapping
+# So instead, we're going to map to a uniq charater string
+keybind = cmd+z=text:\x1b[108;9z
+keybind = "cmd+shift+z=unbind"
+keybind = cmd+shift+z=text:\x1b[109;9z
+keybind = cmd+d=text:\x1b[110;9z
+keybind = "cmd+enter=unbind"
+keybind = cmd+enter=text:\x1b[111;9z
+keybind = cmd+shift+enter=text:\x1b[111;10z
+keybind = cmd+shift+f=text:\x1b[113;9z
+keybind = cmd+e=text:\x1b[122;9z
+keybind = cmd+l=text:\x1b[123;9z
+
+keybind = "cmd+alt+up=unbind"
+keybind = cmd+alt+up=text:\x1b[115;9z
+keybind = "cmd+alt+down=unbind"
+keybind = cmd+alt+down=text:\x1b[116;9z
+
+keybind = ctrl+shift+backspace=text:\x1b[117;9z
+
+# Some shaders can be found in this repo, they're usually uploaded to discord
+# https://github.com/hackrmomo/ghostty-shaders
+# custom-shader = shaders/animated-gradient-shader.glsl
+# custom-shader = shaders/bettercrt.glsl
+# custom-shader = shaders/bloom.glsl
+# custom-shader = shaders/bloom1.glsl
+# custom-shader = shaders/bloom075.glsl
+# custom-shader = shaders/bloom060.glsl
+# custom-shader = shaders/bloom050.glsl
+# custom-shader = shaders/bloom025.glsl
+# custom-shader = shaders/bloom050.glsl
+# custom-shader = shaders/bloom060.glsl
+# custom-shader = shaders/bloom075.glsl
+# custom-shader = /Users/michaelschneider/.config/ghostty/shaders/bloom.glsl
+# custom-shader = shaders/bloom1.glsl
+# custom-shader = shaders/crt.glsl
+# custom-shader = shaders/cubes.glsl
+# custom-shader = shaders/dither.glsl
+# custom-shader = shaders/drunkard.glsl
+# custom-shader = shaders/fireworks-rockets.glsl
+# custom-shader = shaders/fireworks.glsl
+# custom-shader = shaders/gears-and-belts.glsl
+# custom-shader = shaders/glitchy.glsl
+# custom-shader = shaders/glow-rgbsplit-twitchy.glsl
+# custom-shader = shaders/gradient-background.glsl
+# custom-shader = shaders/inside-the-matrix.glsl
+# custom-shader = shaders/just-snow.glsl
+# custom-shader = shaders/matrix-hallway.glsl
+# custom-shader = shaders/negative.glsl
+# custom-shader = shaders/retro-terminal.glsl
+# custom-shader = shaders/smoke-and-ghost.glsl
+# custom-shader = shaders/sparks-from-fire.glsl
+# custom-shader = shaders/spotlight.glsl
+# custom-shader = shaders/starfield-colors.glsl
+# custom-shader = shaders/starfield.glsl
+# custom-shader = shaders/tft.glsl
+# custom-shader = shaders/underwater.glsl
+# custom-shader = shaders/water.glsl
+# custom-shader = shaders/cursor_blaze.glsl
+# custom-shader = shaders/cursor_blaze_no_trail.glsl
+# custom-shader = /Users/michaelschneider/.config/ghostty/shaders/spotlight.glsl
+# custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playground/shaders/cursor_frozen.glsl
+# custom-shader = /home/michael/.config/ghostty/shaders/cursor_blaze.glsl
+# custom-shader = /home/michael/.config/ghostty/shaders/cursor_smear.glsl
+custom-shader = /home/michael/.config/ghostty/shaders/chad_frozen.glsl
+
+# The following command checks if tmux is installed.
+# If tmux is installed, it automatically attaches to an existing tmux session.
+# If no tmux session exists, a new one is created.
+# If tmux is not installed, it simply starts zsh without tmux.
+#
+# For this to work properly, you need to make sure that your shell is configured
+# for homebrew, so you should have this line:
+# eval "$(/opt/homebrew/bin/brew shellenv)"
+# In your ~/.zprofile file
+# If you don't have that line, or if the file doesn't exist, run this:
+# echo '' >>~/.zprofile && echo '# Configure shell for brew' >>~/.zprofile && echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile && eval "$(/opt/homebrew/bin/brew shellenv)"
+#
+# This assumes you installed tmux through brew if using macos
+# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then tmux attach || tmux; else zsh; fi"
+# command = zsh --login -c "if command -v tmux >/dev/null 2>&1; then $HOME/github/dotfiles-latest/tmux/tools/prime/tmux-sessionizer.sh $HOME/github/dotfiles-latest || (tmux attach 2>/dev/null || tmux); else exec zsh; fi"
+
+# other options: tabs, native, transparent
+macos-titlebar-style = hidden
+theme = Hardcore
+
+window-padding-x = 4,2
+window-padding-y = 40
+window-padding-y = 6,0
+
+font-family = "Inconsolata LGC Nerd Font Mono"
+# font-family = "FiraMono Nerd Font Mono"
+# font-family = "CaskaydiaCove Nerd Font Mono"
+# font-family = "JetBrainsMono Nerd Font Mono"
+font-style = bold
+font-size = 12
+
+confirm-close-surface = false
+
+quick-terminal-animation-duration = 0.08
+
+keybind = super+i=inspector:toggle
+keybind = super+r=reload_config
+
+macos-icon = official
+
+# On macOS, background opacity is disabled when the terminal enters native
+# fullscreen. This is because the background becomes gray and it can cause
+# widgets to show through which isn't generally desirable.
+background-opacity = 0.65
+# background-image = /Users/michaelschneider/Desktop/ai-generated-space-starscape-clouds-and-stars-in-pink-purple-blue-free-photo.jpg
+unfocused-split-opacity = 0.7
