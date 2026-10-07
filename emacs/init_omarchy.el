@@ -222,5 +222,9 @@ Installed as `interprogram-cut-function', so it runs on every kill."
 
 (setq interprogram-cut-function #'omarchy/clipboard-set-text)
 
+(with-eval-after-load 'move-text
+  (global-set-key (kbd "C-M-<up>")   #'move-text-up)
+  (global-set-key (kbd "C-M-<down>") #'move-text-down))
+
 (provide 'init_omarchy)
 ;;; init_omarchy.el ends here

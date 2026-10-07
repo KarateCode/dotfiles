@@ -16,8 +16,7 @@ alias wm='workmux'
 # open an existing worktree, resuming claude's last conversation there
 alias wmo='workmux open --continue'
 # alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
-alias jdev='mb-jira-cli --toggleview="column" --filter="Dev Review"'
-alias jme='mb-jira-cli --toggleview="table" --filter="Me"'
+alias jme='jdev --toggleview="table" --filter="Me"'
 alias ntc='~/dotfiles/scripts/npm-test-concurrent.sh'
 
 alias nr='npm run'
