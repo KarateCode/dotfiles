@@ -304,3 +304,9 @@ for _, motion in ipairs(swap_motions) do
         hl.dsp.window.swap({ direction = motion.direction })
     )
 end
+
+o.bind(
+    "SUPER + SHIFT + ALT + D",
+    "Open newest download",
+    (os.getenv("HOME") or "") .. "/dotfiles/scripts/open_recent_download.sh"
+)
