@@ -71,15 +71,136 @@ if (( $# == 0 )); then
     exit 2
 fi
 
-# Outside tmux, or if tmux cannot tell us where we are, degrade to a plain
-# exec. Better to run the suite with no notification than to not run it.
-if [[ -z "${TMUX_PANE:-}" ]] || ! whence tmux >/dev/null; then
+# ---------------------------------------------------------------------------
+# RESOURCE CONFINEMENT
+# ---------------------------------------------------------------------------
+# Measured on this machine (15.5G RAM, 15.5G zram at priority 100 plus a 15.5G
+# disk swapfile at priority 0): a full run drove available memory from 5.5G
+# down to 575M and pushed swap from 6.5G to 14.5G -- 91% of zram. The disk
+# swapfile then started taking pages. Once swap lands on the NVMe instead of
+# compressed RAM the whole desktop stalls, because the compositor and the
+# browser have to fault their own pages back in.
+#
+# Chromium alone had 2.4G reclaimed out from under it during that run, which
+# is why the desktop stays unusable for a while even after the suites finish.
+#
+# So the four suites run inside ONE shared slice with an aggregate budget,
+# not four independent caps -- what hurts the desktop is the total, and four
+# separate limits would just multiply by four.
+#
+# Why these four properties:
+#   MemoryHigh     soft brake. Above it the kernel throttles THIS cgroup and
+#                  reclaims from it. Nothing is killed; the suites just slow
+#                  down instead of the desktop doing so.
+#   MemoryMax      hard stop, deliberately well above the 7.3G measured peak
+#                  so a normal run never trips it. This is the runaway catch
+#                  (the old puppeteer leak), not the everyday limit.
+#   MemorySwapMax  the load-bearing one. MemoryMax caps RAM only -- a cgroup
+#                  with memory.swap.max unlimited happily spills gigabytes
+#                  into swap and thrashes the machine anyway. Verified: a
+#                  runaway under MemoryMax alone wedged this box for minutes,
+#                  and the same runaway under MemoryMax+MemorySwapMax died in
+#                  12 seconds with no visible impact.
+#   CPUWeight      relative share, only consulted under contention. Costs
+#                  nothing when the machine is otherwise idle, and yields to
+#                  the compositor when it is not.
+#
+# Tune without editing this file:
+#   NTC_MEM_HIGH=4G NTC_MEM_MAX=8G NTC_SWAP_MAX=1G NTC_CPU_WEIGHT=10 ntc
+# Opt out entirely:
+#   NTC_LIMITS=0 ntc
+NTC_SLICE="${NTC_SLICE:-ntc.slice}"
+NTC_MEM_HIGH="${NTC_MEM_HIGH:-6G}"
+NTC_MEM_MAX="${NTC_MEM_MAX:-10G}"
+NTC_SWAP_MAX="${NTC_SWAP_MAX:-2G}"
+NTC_CPU_WEIGHT="${NTC_CPU_WEIGHT:-20}"
+
+# Run the real command, confined when we can be and unconfined when we cannot.
+#
+# The limits are (re)applied here rather than in npm-test-concurrent.sh
+# because the normal way to re-run is up-arrow + Enter inside an existing
+# pane, which calls this script directly and never touches the launcher. If
+# the budget lived only in the launcher, every re-run after the first would
+# be uncapped -- the exact situation this is meant to prevent.
+#
+# --runtime keeps the drop-in in /run, so it evaporates on logout rather than
+# accumulating in ~/.config/systemd. set-property is idempotent, so the four
+# panes all racing to set the same values is harmless.
+ntc_run() {
+    if [[ "${NTC_LIMITS:-1}" == "0" ]] || ! whence systemd-run >/dev/null; then
+        "$@"
+        return $?
+    fi
+
+    if ntc_apply_limits; then
+        # --scope (not --unit): runs synchronously in this pane, keeps the tty
+        # so progress bars and colour still work, and propagates the real exit
+        # status. Both verified.
+        systemd-run --user --slice="$NTC_SLICE" --scope --quiet -- "$@"
+        return $?
+    fi
+
+    # ----------------------------------------------------------------------
+    # Applying the limits failed. There are two very different reasons for
+    # that and they must NOT be handled the same way.
+    #
+    # This distinction is not hypothetical. An earlier version of this
+    # function fell straight through to an unconfined run whenever
+    # set-property failed. A single bad value (`MemoryHigh=max`, which systemd
+    # rejects -- the keyword is `infinity`) was therefore enough to silently
+    # disable the limits, and the very next command, a runaway allocator, took
+    # the machine down hard enough for the kernel OOM killer to close the
+    # terminal. A safety net whose failure mode is removing the safety is
+    # worse than no safety net, because it is trusted.
+    #
+    # So: probe whether confinement works AT ALL with a value systemd cannot
+    # object to. If it does, the environment is fine and the supplied numbers
+    # are the problem -- refuse to run, because running the suite unconfined
+    # is exactly the outcome this wrapper exists to prevent. Only when even
+    # the probe fails (no cgroup delegation, non-systemd box) is falling back
+    # to an unconfined run the right call.
+    # ----------------------------------------------------------------------
+    if systemctl --user set-property --runtime "$NTC_SLICE" CPUWeight=100 >/dev/null 2>&1; then
+        systemctl --user revert "$NTC_SLICE" >/dev/null 2>&1
+        print -u2 "ntc-slot: refusing to run unconfined -- one or more resource limits were rejected."
+        # Pinpoint the offender rather than making the reader bisect four
+        # values by hand. Only on the error path, so the extra calls cost
+        # nothing in the normal case.
+        local kv probe="ntc-validate.slice"
+        for kv in "MemoryHigh=$NTC_MEM_HIGH" "MemoryMax=$NTC_MEM_MAX" \
+                  "MemorySwapMax=$NTC_SWAP_MAX" "CPUWeight=$NTC_CPU_WEIGHT"; do
+            systemctl --user set-property --runtime "$probe" "$kv" >/dev/null 2>&1 \
+                || print -u2 "    rejected: $kv"
+        done
+        systemctl --user revert "$probe" >/dev/null 2>&1
+        print -u2 "  sizes are systemd syntax: 6G, 512M, infinity  (there is no 'max')"
+        print -u2 "  fix the value, or opt out deliberately with NTC_LIMITS=0"
+        return 78   # EX_CONFIG
+    fi
+
+    print -u2 "ntc-slot: cgroup limits unavailable here (no delegation?); running unconfined"
     "$@"
+}
+
+# Returns non-zero if systemd rejects any of the requested values.
+ntc_apply_limits() {
+    systemctl --user set-property --runtime "$NTC_SLICE" \
+        MemoryHigh="$NTC_MEM_HIGH" \
+        MemoryMax="$NTC_MEM_MAX" \
+        MemorySwapMax="$NTC_SWAP_MAX" \
+        CPUWeight="$NTC_CPU_WEIGHT" >/dev/null 2>&1
+}
+
+# Outside tmux, or if tmux cannot tell us where we are, degrade to a plain
+# run. Better to run the suite with no notification than to not run it.
+# Still confined: the memory budget matters more than the ding does.
+if [[ -z "${TMUX_PANE:-}" ]] || ! whence tmux >/dev/null; then
+    ntc_run "$@"
     exit $?
 fi
 window=$(tmux display-message -p -t "$TMUX_PANE" '#{window_id}' 2>/dev/null) || window=""
 if [[ -z "$window" ]]; then
-    "$@"
+    ntc_run "$@"
     exit $?
 fi
 
@@ -115,7 +236,7 @@ rename_window "$GLYPH_PENDING"
 # right after the suite finishes -- no .exit file, no notification, and the
 # error buried under whatever the test runner just printed. `zsh -n` does not
 # catch it; only running it does.
-"$@"
+ntc_run "$@"
 rc=$?
 
 print -r -- "$rc" > "$rundir/$slot.exit"

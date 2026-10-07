@@ -155,3 +155,53 @@ tmux set-window-option -t "$p1" synchronize-panes on >/dev/null
 
 print "Started 4 test panes in '$WINDOW_NAME' (synchronize-panes ON, M-s toggles)"
 print "Tab shows $GLYPH_PENDING while running; ding + notification when all four finish. Mute with NTC_DING=0"
+
+# Report the resource budget the panes will actually run under. ntc-slot.sh
+# owns applying it (so up-arrow re-runs are capped too, see the long comment
+# there); this is purely so the numbers in force are visible at a glance
+# rather than having to be remembered or read out of a script.
+if [[ "${NTC_LIMITS:-1}" == "0" ]]; then
+    print "Resource limits: OFF (NTC_LIMITS=0)"
+else
+    print "Shared budget for all 4 panes: mem ${NTC_MEM_HIGH:-6G} soft / ${NTC_MEM_MAX:-10G} hard, swap ${NTC_SWAP_MAX:-2G}, cpu.weight ${NTC_CPU_WEIGHT:-20}"
+    print "  override: NTC_MEM_HIGH/NTC_MEM_MAX/NTC_SWAP_MAX/NTC_CPU_WEIGHT   disable: NTC_LIMITS=0"
+fi
+
+# --- stale puppeteer browser warning --------------------------------------
+# Puppeteer specs that fail to close their browser leave the whole Chrome
+# process tree behind, reparented to systemd, alive indefinitely. Measured
+# here: 6 runs' worth accumulated to 77 processes / 715 MB PSS, the oldest 17
+# hours old. They are invisible in `ps` unless you know the fingerprint, and
+# they quietly eat the headroom the next run needs.
+#
+# Warn only -- no automatic sweep. The underlying leak is fixed on a branch,
+# so this should stop happening once that merges, and a sweep would risk
+# killing a browser belonging to a run in progress in another window.
+#
+# `[p]uppeteer` rather than `puppeteer`: pgrep -f matches against full command
+# lines, and the pattern would otherwise match the pgrep (or any shell command
+# containing it) as well. The bracket makes the regex match "puppeteer" while
+# the literal text on the command line reads "[p]uppeteer", which does not.
+#
+# PSS, not RSS: these are ~14 processes per leaked browser sharing most of
+# their pages, so summing RSS overstates the real cost by roughly 2.5x. One
+# awk over every smaps_rollup at once, rather than per-pid, so this stays
+# imperceptible at launch.
+typeset -a stale_pup
+stale_pup=( ${(f)"$(pgrep -f '[p]uppeteer_dev_chrome_profile' 2>/dev/null)"} )
+if (( ${#stale_pup} )); then
+    typeset -a rollups
+    for _p in $stale_pup; do
+        [[ -r /proc/$_p/smaps_rollup ]] && rollups+=(/proc/$_p/smaps_rollup)
+    done
+    stale_mb=0
+    (( ${#rollups} )) && stale_mb=$(awk '/^Pss:/{s+=$2} END{printf "%d", s/1024}' $rollups 2>/dev/null)
+    msg="${#stale_pup} stale puppeteer Chrome processes (~${stale_mb} MB) from earlier runs"
+    print "⚠ $msg"
+    print "  kill \$(pgrep -f '[p]uppeteer_dev_chrome_profile')"
+    # The launcher's stdout is in the pane you came FROM -- new-window has
+    # already moved you to the grid -- so the terminal copy above is easy to
+    # miss. Notify as well, but only when there is actually something to act
+    # on, so this never becomes noise on a clean machine.
+    notify-send -a ntc -u low "ntc: leaked browsers" "$msg" 2>/dev/null || true
+fi
