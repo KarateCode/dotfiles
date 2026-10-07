@@ -10,9 +10,7 @@ worktree_dir: ../envoy-web__worktrees
 worktree_naming: basename
 
 files:
-  # Symlink config directories (point to base repo's symlinks which go to ~/code/claude)
   symlink:
-    - .claude
     - .opencode
 
   # Copy files that may need per-worktree modifications
@@ -21,5 +19,6 @@ files:
 
 # Commands to run after creating a new worktree
 post_create:
+  - '[ -e .claude ] && [ ! -L .claude ] && { echo "refusing: .claude is a real directory, not a symlink" >&2; exit 1; }; ln -sfn "$HOME/code/claude" .claude'
   - mise install
   - npm run install-dev
