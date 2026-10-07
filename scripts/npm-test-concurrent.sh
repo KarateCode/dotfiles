@@ -42,7 +42,7 @@ GLYPH_PENDING=$'\Uf051b'
 # notification body reads in the same order as the grid.
 CMD_TOP_LEFT="npm run test:server"
 CMD_TOP_RIGHT="npm run test:client"
-CMD_BOTTOM_RIGHT="npm run lint"
+CMD_BOTTOM_RIGHT="${NTC_LINT_CMD:-${${0:A:h}/#$HOME/~}/ntc-lint.sh}"
 CMD_BOTTOM_LEFT="npm run test:shared"
 
 SLOT_TOP_LEFT=server
