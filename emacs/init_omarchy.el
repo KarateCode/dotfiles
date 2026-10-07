@@ -226,5 +226,80 @@ Installed as `interprogram-cut-function', so it runs on every kill."
   (global-set-key (kbd "C-M-<up>")   #'move-text-up)
   (global-set-key (kbd "C-M-<down>") #'move-text-down))
 
+;; ===================================================================
+;; 6. Stray "u" when typing shift+space after popping out of Claude
+;; ===================================================================
+;; SYMPTOM: open Emacs from inside Claude Code (C-g -> $EDITOR ->
+;; emacs-editor.sh -> emacsclient -nw) and shift+space inserts the
+;; letter "u" instead of a space.  Everywhere else shift+space is a
+;; perfectly ordinary space.
+;;
+;; THE CHAIN, each link verified rather than assumed:
+;;
+;; 1. Claude turns on enhanced keyboard reporting.  Captured straight off
+;;    its pane with `tmux pipe-pane':
+;;        ESC [ > 5 u      push kitty keyboard flags (1|4)
+;;        ESC [ > 4 ; 2 m  modifyOtherKeys level 2
+;;    It pops these on exit, but NOT before handing the terminal to
+;;    $EDITOR -- so Emacs inherits a terminal in enhanced mode.
+;;
+;; 2. In that mode the terminal stops folding shift+space into a plain
+;;    0x20 and reports it as a distinct modified key.
+;;
+;; 3. tmux re-encodes it for the pane.  `extended-keys' is on and
+;;    `extended-keys-format' is csi-u, so Emacs receives
+;;        ESC [ 3 2 ; 2 u          (32 = space, 2 = shift)
+;;
+;; 4. Emacs has NO support for the kitty/CSI-u key encoding -- the only
+;;    occurrence of "kitty" anywhere in Emacs 31's lisp is an OSC52
+;;    clipboard regexp in term/xterm.el.  So it eats "ESC [ 3 2 ; 2",
+;;    fails to recognise the final "u", and self-inserts it.
+;;
+;; WHY THE FIX IS HERE AND NOT IN emacs-editor.sh:
+;; Resetting the modes in the wrapper before exec'ing emacsclient does
+;; not survive -- Emacs re-requests modifyOtherKeys itself during
+;; terminal setup, after the wrapper has run.  Tested; still produced
+;; the stray "u".  Teaching Emacs to decode the sequence is the only
+;; layer that actually holds.
+;;
+;; Switching tmux to `extended-keys-format xterm' does not help either:
+;; Emacs then inserts "2~" instead of "u".  Also tested.
+;;
+;; C-SPC MATTERED MORE THAN SHIFT+SPACE: the same encoding covers
+;; ctrl+space, so `set-mark-command' was silently typing a "u" too.
+;; Both are handled below.
+;;
+;; Modifier numbering is 1 + (shift 1 | alt 2 | ctrl 4).
+;; If OTHER keys start emitting stray characters in this situation, the
+;; general answer is the `kkp' package (full kitty-protocol support)
+;; rather than extending this table indefinitely.
+
+;; `input-decode-map' is TERMINAL-LOCAL, which matters here because this
+;; is a daemon: defining the entries once at load time binds them to
+;; whatever terminal happens to be current, and every `emacsclient -nw'
+;; frame afterwards gets a fresh one without them.  Verified the hard
+;; way -- a one-shot `dolist' here fixed the daemon but new frames still
+;; typed "u".  Hence `tty-setup-hook', which runs once per new tty.
+
+(defun omarchy/decode-csi-u-space ()
+  "Teach this terminal the CSI-u encodings of space with modifiers.
+See the commentary above section 6 for why Emacs needs this at all."
+  (dolist (pair '((2 . [?\s])         ; shift+space        -> space
+                  (3 . [?\M-\s])      ; alt+space          -> M-SPC
+                  (4 . [?\M-\s])      ; shift+alt+space    -> M-SPC
+                  (5 . [?\C-@])       ; ctrl+space         -> set-mark
+                  (6 . [?\C-@])       ; ctrl+shift+space   -> set-mark
+                  (7 . [?\C-\M-@])    ; ctrl+alt+space     -> C-M-SPC
+                  (8 . [?\C-\M-@])))  ; ctrl+alt+shift+spc -> C-M-SPC
+    (define-key input-decode-map
+                (format "\e[32;%du" (car pair)) (cdr pair))))
+
+(add-hook 'tty-setup-hook #'omarchy/decode-csi-u-space)
+
+;; Cover the terminal this file is being loaded from, if it is one --
+;; `tty-setup-hook' has already fired for it by now.
+(when (eq (framep (selected-frame)) t)
+  (omarchy/decode-csi-u-space))
+
 (provide 'init_omarchy)
 ;;; init_omarchy.el ends here
