@@ -37,10 +37,7 @@ WINDOW_NAME="Test Suite"
 # nf-md-timer_sand. Verified present in the Nerd Font actually in use.
 GLYPH_PENDING=$'\Uf051b'
 
-# Pane commands, clockwise from the top left. SLOT_* names are the keys
-# ntc-slot.sh records results under, and double as the pane titles, so the
-# notification body reads in the same order as the grid.
-CMD_TOP_LEFT="npm run test:server"
+CMD_TOP_LEFT="env TEST_WORKERS=${NTC_TEST_WORKERS:-2} npm run test:server"
 CMD_TOP_RIGHT="npm run test:client"
 CMD_BOTTOM_RIGHT="${NTC_LINT_CMD:-${${0:A:h}/#$HOME/~}/ntc-lint.sh}"
 CMD_BOTTOM_LEFT="npm run test:shared"

@@ -13,7 +13,7 @@ hl.config({
 --     -- Use a specific keyboard variant if needed (e.g. intl for international keyboards).
 --     kb_variant = "intl",
 --
-       repeat_delay = 1000,
+       repeat_delay = 250,
        repeat_rate = 40,
 --
 --     -- Start with numlock on by default.
