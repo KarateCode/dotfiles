@@ -10,6 +10,10 @@ mode: session
 # Session to return to when a workmux session is closed or removed.
 # default_session: main
 
+# Sidebar configuration
+sidebar:
+  width: 100
+
 # Single window, two panes, both cd'd into the worktree:
 #   left  = plain shell (focused)
 #   right = claude
