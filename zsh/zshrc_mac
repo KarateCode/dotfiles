@@ -30,6 +30,10 @@ setopt HIST_REDUCE_BLANKS     # Removes extra blanks from history entries
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+# mise (version manager for node, python, etc.)
+# Must come AFTER PATH setup so mise shims take precedence over homebrew
+eval "$(mise activate zsh)"
 export XDG_CONFIG_HOME="$HOME/.config"
 export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
 
@@ -38,3 +42,4 @@ bindkey -r "^H"
 # nvm use default
 
 source ~/dotfiles/snippets/engine.sh
+source ~/dotfiles/envoy_scripts.sh
