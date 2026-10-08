@@ -1,0 +1,103 @@
+# Ghostty config for macOS
+# Symlinked: ~/Library/Application Support/com.mitchellh.ghostty/config -> ~/dotfiles/ghostty/config_macos
+
+# Show toast when config reloads (default, but explicit for clarity)
+app-notifications = clipboard-copy,config-reload
+
+background = "#000000"
+
+cursor-style = bar
+cursor-style-blink = true
+cursor-color = #ff8800
+adjust-cursor-thickness = 2
+
+
+
+# ===========================
+# Keybindings
+# ===========================
+# Using \x1b[N;9z byte strings for custom sequences that emacs decodes.
+# These pass through tmux without needing user-keys configuration.
+
+keybind = ctrl+,=text:\x1b[121;9z
+
+# --- Tmux window/pane navigation (F-keys for tmux compatibility) ---
+# cmd+k → clear screen + history (F1)
+keybind = cmd+k=text:\x1bOP
+# cmd+alt+left → previous window (F2)
+keybind = cmd+alt+left=text:\x1bOQ
+# cmd+alt+right → next window (F3)
+keybind = cmd+alt+right=text:\x1bOR
+# cmd+v → paste (F4, handled specially by tmux.conf)
+keybind = cmd+v=text:\x1bOS
+keybind = cmd+shift+v=paste_from_clipboard
+
+# --- Emacs commands (byte strings) ---
+keybind = cmd+c=text:\x1b[118;9z
+keybind = cmd+s=unbind
+keybind = cmd+s=text:\x1b[119;9z
+keybind = cmd+x=text:\x1b[120;9z
+keybind = cmd+j=unbind
+keybind = cmd+j=text:\x1b[114;9z
+keybind = cmd+z=unbind
+keybind = cmd+z=text:\x1b[108;9z
+keybind = cmd+shift+z=unbind
+keybind = cmd+shift+z=text:\x1b[109;9z
+keybind = cmd+d=unbind
+keybind = cmd+d=text:\x1b[110;9z
+keybind = cmd+enter=unbind
+keybind = cmd+enter=text:\x1b[111;9z
+keybind = cmd+shift+enter=text:\x1b[111;10z
+keybind = cmd+shift+f=text:\x1b[113;9z
+keybind = cmd+e=text:\x1b[122;9z
+keybind = cmd+l=text:\x1b[123;9z
+keybind = cmd+alt+up=unbind
+keybind = cmd+alt+up=text:\x1b[115;9z
+keybind = cmd+alt+down=unbind
+keybind = cmd+alt+down=text:\x1b[116;9z
+keybind = ctrl+shift+backspace=text:\x1b[117;9z
+
+# --- Scrolling ---
+keybind = PageUp=text:\x1b[5~
+keybind = PageDown=text:\x1b[6~
+keybind = shift+PageUp=scroll_page_up
+keybind = shift+PageDown=scroll_page_down
+keybind = shift+home=scroll_to_top
+keybind = shift+end=scroll_to_bottom
+keybind = home=text:\x1b[H
+keybind = end=text:\x1b[F
+
+# --- Tmux pane resize (unbind Ghostty defaults) ---
+keybind = ctrl+8=unbind
+
+# --- Ghostty functions ---
+keybind = super+i=inspector:toggle
+keybind = super+r=reload_config
+
+# ===========================
+# Appearance
+# ===========================
+macos-titlebar-style = hidden
+theme = Hardcore
+
+window-padding-x = 4,2
+window-padding-y = 6,0
+
+font-family = "JetBrainsMono Nerd Font Mono"
+font-style = bold
+font-size = 14
+
+confirm-close-surface = false
+quick-terminal-animation-duration = 0.08
+
+macos-icon = retro
+
+background-opacity = 0.65
+unfocused-split-opacity = 0.7
+
+# ===========================
+# Shaders
+# ===========================
+custom-shader = /Users/michaelschneider/.config/ghostty/shaders/cursor_blaze.glsl
+custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playground/shaders/cursor_smear.glsl
+custom-shader = /Users/michaelschneider/.config/ghostty/ghostty-shader-playground/shaders/chad_frozen.glsl

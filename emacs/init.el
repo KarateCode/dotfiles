@@ -885,7 +885,7 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 Safe to run more than once on the same terminal."
   (define-key input-decode-map "\e[111;9z"  [cmd-enter])
   (define-key input-decode-map "\e[111;10z" [cmd-shift-enter])
-  (define-key input-decode-map "\e[20~"     [cmd-d])
+  (define-key input-decode-map "\e[110;9z"  [cmd-d])
   (define-key input-decode-map "\e[24~"     [cmd-j])
   (define-key input-decode-map "\e[119;9z"  [cmd-s])
   (define-key input-decode-map "\e[21~"     [cmd-e])
