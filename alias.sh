@@ -26,7 +26,7 @@ alias nrs='npm run test:server'
 alias nru='npm run test:utilities'
 alias nrc='npm run test:client'
 
-alias cod='git checkout develop'
+alias cod='git checkout develop --ignore-other-worktrees'
 alias pd='git pull origin develop'
 alias ns='cd ~/code/envoy-web/server && ./bin/run-dev-server'
 alias o='~/dotfiles/scripts/next_rebase_file.sh'
