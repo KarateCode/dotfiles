@@ -69,6 +69,12 @@ keybind = end=text:\x1b[F
 
 # --- Tmux pane resize (unbind Ghostty defaults) ---
 keybind = ctrl+8=unbind
+keybind = ctrl+shift+j=unbind
+keybind = ctrl+shift+j=text:\x1b[124;9z
+keybind = ctrl+shift+l=text:\x1b[125;9z
+keybind = ctrl+shift+y=text:\x1b[126;9z
+keybind = ctrl+shift+,=unbind
+keybind = ctrl+shift+,=text:\x1b[127;9z
 
 # --- Ghostty functions ---
 keybind = super+i=inspector:toggle
