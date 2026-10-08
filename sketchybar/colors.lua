@@ -12,9 +12,9 @@ return {
 
   bar = {
     -- The first two digits after '0x' are the opacity value
-    bg = 0x80000000,
+    bg = 0x00000000,
     -- bg = 0x802c2e34,
-    border = 0xff2c2e34,
+    border = 0x00000000,
   },
   popup = {
     bg = 0xc02c2e34,

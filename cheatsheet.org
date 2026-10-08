@@ -213,6 +213,7 @@ workmux list
 wm dashboard
 wm sidebar
 wmo # workmux open --continue
+workmux merge feature/forecasting-css # when cd'd into base feature branch was a bust! Still merged into develop!
 * Superfile
 TUI replacement for Finder!
 * Yassnippets
