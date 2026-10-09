@@ -1,4 +1,5 @@
 const WORKMUX = "/Users/michaelschneider/.cargo/bin/workmux";
+const DING = "/Users/michaelschneider/dotfiles/scripts/ding.sh";
 
 export default {
   id: 'workmux-status',
@@ -35,6 +36,11 @@ export default {
           proc.stdin.end();
         }
         await proc.exited;
+
+        // Play ding sound on status change
+        if (status === "done" || status === "waiting") {
+          Bun.spawn([DING, status], { stdout: "pipe", stderr: "pipe" });
+        }
       } catch {
         // Ignore status update failures
       }
