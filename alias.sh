@@ -16,6 +16,7 @@ alias wm='workmux'
 # open an existing worktree, resuming claude's last conversation there
 alias wmo='workmux open --continue'
 alias wms='workmux sidebar off; sleep 1; workmux sidebar on --width 38'
+alias wmrm='workmux remove --keep-branch'
 # alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
 alias jme='jdev --toggleview="table" --filter="Me"'
 alias ntc='~/dotfiles/scripts/npm-test-concurrent.sh'
@@ -118,5 +119,12 @@ alias fcode='fzf | cut -d ":" -f 1 | xargs code'
 alias gt="~/dotfiles/scripts/colorize_go_tests.bash"
 alias gtr="~/dotfiles/scripts/colorize_go_test_run.bash"
 alias lastc='git log -p -1'
+
+# opencode wrapper that auto-registers with workmux sidebar
+oc() {
+  # Register with workmux after opencode starts (background with delay)
+  (sleep 1 && workmux register-agent 2>/dev/null) &
+  opencode "$@"
+}
 
 # alias emacs='emacs -nw'
