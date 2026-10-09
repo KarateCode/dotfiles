@@ -1,7 +1,8 @@
 # Ghostty config for macOS
 # Symlinked: ~/Library/Application Support/com.mitchellh.ghostty/config -> ~/dotfiles/ghostty/config_macos
 
-# Show toast when config reloads (default, but explicit for clarity)
+# Enable macOS system notifications for config reload, clipboard, etc.
+desktop-notifications = true
 app-notifications = clipboard-copy,config-reload
 
 background = "#000000"

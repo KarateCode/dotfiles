@@ -1,7 +1,8 @@
 #!/bin/zsh
 
-# Read JSON from stdin
-json_input=$(cat)
+# Read JSON from stdin and sanitize control characters that break jq
+# tr removes ASCII 0x00-0x08, 0x0B, 0x0C, 0x0E-0x1F (preserving tab, newline, carriage return)
+json_input=$(cat | tr -d '\000-\010\013\014\016-\037')
 
 # Read collection name from hardcoded temp file
 collection_name=$(< /tmp/mongo_collection_name)
@@ -18,12 +19,14 @@ if [ -z "$DATABASE_NAME" ]; then
 fi
 
 # Extract _id from JSON
+# MongoDB extended JSON format has _id as {"$oid": "..."}, plain format has _id as string
+# Use printf to avoid echo adding newlines that break jq parsing
 # First try to get _id directly (if input is an object)
-_id=$(echo $json_input | jq -r '._id // empty' 2>/dev/null)
+_id=$(printf '%s' "$json_input" | jq -r '._id | if type == "object" then .["$oid"] // . else . end // empty' 2>/dev/null)
 echo "_id: $_id"
 # If that fails or is empty, try to get first element's _id (if input is an array)
 if [ -z "$_id" ]; then
-    _id=$(echo "$json_input" | jq -r '.[0]._id // empty' 2>/dev/null)
+    _id=$(printf '%s' "$json_input" | jq -r '.[0]._id | if type == "object" then .["$oid"] // . else . end // empty' 2>/dev/null)
 fi
 
 # If still no _id, error out

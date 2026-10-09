@@ -64,8 +64,8 @@ automatically-unhide-macos-hidden-apps = false
     outer.bottom =     10
     # outer.top =        8
     outer.top = [
-        { monitor."built-in" = 8 }, # Gap for the built-in (laptop) monitor
-        { monitor.main = 40 },     # Gap for the main external monitor
+        { monitor."built-in" = 13 }, # Gap for the built-in (laptop) monitor
+        { monitor.main = 45 },     # Gap for the main external monitor
         { monitor.auxiliary = 80 }, # Example gap for another specific monitor (adjust name as needed)
         100                           # Default value for any other monitors
     ]
@@ -79,6 +79,7 @@ automatically-unhide-macos-hidden-apps = false
 [mode.main.binding]
 
     alt-r = 'reload-config'
+    # cmd-r = []  # Unbind default so Ghostty can use it
     ctrl-shift-alt-s = 'exec-and-forget open -a Slack'
     ctrl-shift-alt-g = 'exec-and-forget open -a Ghostty'
     ctrl-shift-alt-f = 'exec-and-forget open -a Finder'
