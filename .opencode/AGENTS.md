@@ -48,6 +48,7 @@ Use `~/.config/` convention where possible. Many configs are symlinked from this
 
 ### Emacs
 - Vanilla emacs (not Spacemacs) at `~/.config/emacs/`
+- **Always runs in terminal** (never GUI) - connects via Ghostty
 - Runs as daemon via `van` alias
 - Uses `--init-directory` flag on macOS
 - Restart: `pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon`

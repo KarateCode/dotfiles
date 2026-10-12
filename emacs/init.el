@@ -388,10 +388,10 @@
 	"Face for partially checked (indeterminate) Org checkbox lines."
 )
 
-;; Set org checkbox faces using theme colors (must be after defface and theme load)
-(set-face-attribute 'my/org-checkbox-done-face nil :foreground (doom-color 'green))
-(set-face-attribute 'my/org-checkbox-empty-face nil :foreground (doom-color 'fg))
-(set-face-attribute 'my/org-checkbox-partial-face nil :foreground (doom-color 'red))
+;; Set org checkbox faces using terminal colors (so they follow terminal theme)
+(set-face-attribute 'my/org-checkbox-done-face nil :foreground "green")
+(set-face-attribute 'my/org-checkbox-empty-face nil :foreground "white")
+(set-face-attribute 'my/org-checkbox-partial-face nil :foreground "red")
 
 (defun delete-current-line (arg)
 	"If there's a selection, delete it, otherwise delete current line"
@@ -690,7 +690,7 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 (setq-default truncate-lines t)
 ;; Replace ugly '$' truncation indicator with a cleaner colored ellipsis
 (defface my/truncation-face
-  '((t :foreground "#ff79c6"))  ;; pink
+  '((t :foreground "magenta"))  ;; uses terminal's magenta color
   "Face for the truncation indicator.")
 (set-display-table-slot standard-display-table 'truncation
                         (make-glyph-code ?… 'my/truncation-face))
@@ -732,11 +732,19 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 ; ====================
 ; ORG Mode
 ; ====================
+;; Pretty heading bullets
+(use-package org-superstar
+  :ensure t
+  :hook (org-mode . org-superstar-mode)
+  :config
+  (setq org-superstar-headline-bullets-list '("◉" "○" "▷" "◇" "•")))
+
 (with-eval-after-load 'org
   (my/org-checkbox-pretty-and-colored)
+  ;; Use terminal colors for TODO/DONE keywords
   (setq org-todo-keyword-faces
-        `(("TODO" . (:foreground ,(doom-color 'fg) :weight bold))
-          ("DONE" . (:foreground ,(doom-color 'green) :weight bold))))
+        '(("TODO" . (:foreground "white" :weight bold))
+          ("DONE" . (:foreground "green" :weight bold))))
 
   ;; Fix mouse scroll wheel in org-mode (org overrides these)
   (define-key org-mode-map (kbd "<mouse-4>") 'scroll-down-line)

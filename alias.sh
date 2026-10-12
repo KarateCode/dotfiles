@@ -116,6 +116,9 @@ alias pop='git stash pop; git reset HEAD .; git status'
 alias rmautodump='rm auto_dump_*.tar.gz; rm -rf auto_dump_*'
 alias fcode='fzf | cut -d ":" -f 1 | xargs code'
 
+alias zoomStandup='open "https://www.google.com/url?q=https://us02web.zoom.us/j/82805374636?pwd%3DNwXUUX2gzxKnGS3RPbtkajA8XbPO9P.1&sa=D&source=calendar&ust=1788267953010219&usg=AOvVaw0Owhubit6EB_ckCfPn6HEH"'
+alias zoomSprintPlanning='open "https://www.google.com/url?q=https://us02web.zoom.us/j/81579226907?pwd%3DRlNOV29VVGZiV0ppbWJjc2FvMVphQT09&sa=D&source=calendar&ust=1788267954294587&usg=AOvVaw3WLdfPmsW4MeX5m7_6dhnQ"'
+
 alias gt="~/dotfiles/scripts/colorize_go_tests.bash"
 alias gtr="~/dotfiles/scripts/colorize_go_test_run.bash"
 alias lastc='git log -p -1'
