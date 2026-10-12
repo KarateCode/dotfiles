@@ -22,15 +22,14 @@ adjust-cursor-thickness = 2
 
 keybind = ctrl+,=text:\x1b[121;9z
 
-# --- Tmux window/pane navigation (F-keys for tmux compatibility) ---
-# cmd+k → clear screen + history (F1)
-keybind = cmd+k=text:\x1bOP
-# cmd+alt+left → previous window (F2)
-keybind = cmd+alt+left=text:\x1bOQ
-# cmd+alt+right → next window (F3)
-keybind = cmd+alt+right=text:\x1bOR
-# cmd+v → paste (F4, handled specially by tmux.conf)
-keybind = cmd+v=text:\x1bOS
+# --- Tmux window/pane navigation ---
+# cmd+k → clear screen + history
+keybind = cmd+k=text:\x1b[131;9z
+# cmd+alt+left/right → previous/next window
+keybind = cmd+alt+left=text:\x1b[132;9z
+keybind = cmd+alt+right=text:\x1b[133;9z
+# cmd+v → paste (tmux intercepts and handles)
+keybind = cmd+v=text:\x1b[134;9z
 keybind = cmd+shift+v=paste_from_clipboard
 
 # --- Emacs commands (byte strings) ---
