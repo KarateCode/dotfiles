@@ -1,7 +1,14 @@
 local settings = require("settings")
 local colors = require("colors")
 
-local cal = sbar.add("item", {
+-- Detect if built-in display has a notch (MacBook Pro 14"/16" from 2021+)
+-- Built-in display is typically display 1
+local function is_notch_display(display_id)
+  -- Display 1 is usually the built-in display on MacBooks
+  return display_id == 1
+end
+
+local cal = sbar.add("item", "calendar", {
   icon = {
     color = colors.white,
     padding_left = 8,
@@ -20,7 +27,7 @@ local cal = sbar.add("item", {
       style = settings.font.style_map["Black"],
     },
   },
-  position = "center",
+  position = "e",  -- Start at "e" (right of notch) - works on all displays
   update_freq = 30,
   padding_left = 1,
   padding_right = 1,
@@ -33,7 +40,7 @@ local cal = sbar.add("item", {
 })
 
 -- Double border for calendar using a single item bracket
-sbar.add("bracket", { cal.name }, {
+local cal_bracket = sbar.add("bracket", { cal.name }, {
   background = {
     color = colors.transparent,
     height = 30,

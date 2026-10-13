@@ -230,6 +230,30 @@
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
 )
 
+;; Forge: GitHub/GitLab integration for Magit
+;; Pull requests, issues, and notifications directly in Magit
+(use-package forge
+  :ensure t
+  :after magit
+  :config
+  ;; Use ~/.authinfo for credentials (machine api.github.com login USER^forge password TOKEN)
+  (setq auth-sources '("~/.authinfo" "~/.authinfo.gpg"))
+
+  ;; Show PR diff against its base branch - no prompts, just do the right thing
+  (defun forge-diff-pullreq ()
+    "Show diff of the current pull request against its base branch."
+    (interactive)
+    (if-let* ((pr (forge-current-topic))
+              ((forge-pullreq-p pr))
+              (base (oref pr base-ref))
+              (head (oref pr head-ref)))
+        (magit-diff-range (format "%s...%s" base head))
+      (user-error "No pull request at point")))
+
+  ;; Bind to 'v' for "view diff" in PR buffers
+  (define-key forge-topic-mode-map (kbd "v") #'forge-diff-pullreq)
+)
+
 ;; Remove directories from exec-path that don't actually exist on disk.
 ;; This prevents the "Doing vfork" error in 2026 macOS environments.
 (setq exec-path (seq-filter #'file-directory-p exec-path))
