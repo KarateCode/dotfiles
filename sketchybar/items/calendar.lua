@@ -54,3 +54,32 @@ cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
 
     cal:set({ icon = os.date("%a %b %d"), label = time_no_zero })
 end)
+
+-- Adjust position based on display (built-in display has notch)
+local function update_position(display_id)
+    if display_id == 1 then
+      -- External display - center it
+      cal:set({ position = "center" })
+    else
+      -- Built-in display with notch - position right of notch
+      cal:set({ position = "e" })
+    end
+end
+
+cal:subscribe({ "display_change" }, function(env)
+    local display_id = tonumber(env.INFO) or 1
+    update_position(display_id)
+end)
+
+-- Check display count on startup/wake - if only one display, assume it's the notched built-in
+cal:subscribe({ "forced", "system_woke" }, function(env)
+    -- Get display count by checking how many displays exist
+    local handle = io.popen("system_profiler SPDisplaysDataType 2>/dev/null | grep -c 'Resolution:'")
+    local display_count = tonumber(handle:read("*a")) or 1
+    handle:close()
+
+    if display_count == 1 then
+      -- Single display = built-in with notch
+      cal:set({ position = "e" })
+    end
+end)
