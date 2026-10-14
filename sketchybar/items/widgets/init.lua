@@ -1,4 +1,5 @@
 require("items.widgets.battery")
+require("items.widgets.nightshift")
 require("items.widgets.caffeine")
 require("items.widgets.volume")
 require("items.widgets.wifi")

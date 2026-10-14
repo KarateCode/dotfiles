@@ -97,6 +97,7 @@ automatically-unhide-macos-hidden-apps = false
     ]
     # ctrl-shift-alt-cmd-m = 'exec-and-forget open -a Studio\ 3T'
     ctrl-shift-alt-cmd-j = 'exec-and-forget ~/dotfiles/sketchybar/scripts/caffeine.sh toggle'
+    ctrl-cmd-n = 'exec-and-forget /opt/homebrew/bin/nightlight toggle && sketchybar --trigger forced'
 
     ctrl-shift-alt-1 = 'exec-and-forget pmset sleepnow'
 

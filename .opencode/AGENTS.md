@@ -31,7 +31,7 @@ Use `~/.config/` convention where possible. Many configs are symlinked from this
 
 ### Symlinked elsewhere
 - `emacs/init.el` → `~/.config/emacs/init.el`
-- `aerospace/aerospace.toml` → `~/.aerospace.toml` (macOS)
+- `aerospace.toml` → `~/.aerospace.toml` (macOS) - window manager and global hotkeys
 - `spotify-player/` → `~/.config/spotify-player/`
 
 ## Key Tools
