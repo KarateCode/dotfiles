@@ -575,6 +575,13 @@ tmuxinator replacement
 (integrates with zoxide)
 workplace and context awareness
 Can be triggered from Raycast
+* TUICR
+'r' to check a file as reviewed
+'c' to comment
+tuicr pr 30
+Capital 'C' is comment for file at large
+':submit' opens the push to github menu
+
 * Opencode
 opencode --continue
 opencode session list

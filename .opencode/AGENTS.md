@@ -52,6 +52,10 @@ Use `~/.config/` convention where possible. Many configs are symlinked from this
 - Runs as daemon via `van` alias
 - Uses `--init-directory` flag on macOS
 - Restart: `pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon`
+- **After modifying any emacs config**, bounce the daemon so changes take effect:
+  ```bash
+  pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon
+  ```
 
 ### Workmux
 - Manages git worktrees + tmux windows for parallel agent workflows

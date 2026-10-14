@@ -920,7 +920,7 @@ Safe to run more than once on the same terminal."
   (define-key input-decode-map "\e[110;9z"  [cmd-d])
   (define-key input-decode-map "\e[24~"     [cmd-j])
   (define-key input-decode-map "\e[119;9z"  [cmd-s])
-  (define-key input-decode-map "\e[21~"     [cmd-e])
+  (define-key input-decode-map "\e[122;9z"  [cmd-e])
   (define-key input-decode-map "\e[118;9z"  [cmd-c])
   (define-key input-decode-map "\e[120;9z"  [cmd-x])
   (define-key input-decode-map "\e[115;9z"  [cmd-ctrl-up])
