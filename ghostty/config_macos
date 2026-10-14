@@ -29,6 +29,7 @@ keybind = cmd+k=text:\x1b[131;9z
 keybind = cmd+alt+left=text:\x1b[132;9z
 keybind = cmd+alt+right=text:\x1b[133;9z
 # cmd+v → paste (tmux intercepts and handles)
+keybind = cmd+v=unbind
 keybind = cmd+v=text:\x1b[134;9z
 keybind = cmd+shift+v=paste_from_clipboard
 

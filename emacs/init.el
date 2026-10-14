@@ -928,7 +928,8 @@ Safe to run more than once on the same terminal."
   (define-key input-decode-map "\e[113;9z"  [cmd-shift-f])
   (define-key input-decode-map "\e[117;9z"  [C-S-backspace])
   (define-key input-decode-map "\e[108;9z"  [cmd-z])
-  (define-key input-decode-map "\e[19~"     [cmd-shift-z]))
+  (define-key input-decode-map "\e[19~"     [cmd-shift-z])
+  (define-key input-decode-map "\e[134;9z"  [cmd-v]))
 
 (add-hook 'tty-setup-hook #'my/ghostty-setup-input-decode-map)
 
@@ -958,6 +959,7 @@ Safe to run more than once on the same terminal."
 (global-set-key [C-S-backspace] #'delete-current-line)
 (global-set-key [cmd-z] 'undo)
 (global-set-key [cmd-shift-z] 'undo-redo)
+(global-set-key [cmd-v] 'my/clipboard-paste-as-single-undo)
 
 ;; cmd-v → Ghostty sends F4 (\x1bOS), bind to clean clipboard paste
 (global-set-key (kbd "<f4>") 'my/clipboard-paste-as-single-undo)
