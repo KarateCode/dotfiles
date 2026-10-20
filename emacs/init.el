@@ -982,8 +982,7 @@ Safe to run more than once on the same terminal."
 (global-set-key (kbd "M-<down>") 'custom-move-down-7-lines)
 (global-set-key (kbd "M-{") 'custom-move-up-7-lines)
 (global-set-key (kbd "M-}") 'custom-move-down-7-lines)
-(global-set-key (kbd "M-i") 'custom-move-up-7-lines)
-(global-set-key (kbd "M-k") 'custom-move-down-7-lines)
+
 
 (global-unset-key (kbd "M-z"))
 (global-set-key (kbd "M-z") #'my/comment-or-region)

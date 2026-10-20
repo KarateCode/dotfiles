@@ -80,11 +80,11 @@ automatically-unhide-macos-hidden-apps = false
 
     alt-r = 'reload-config'
     # cmd-r = []  # Unbind default so Ghostty can use it
-    ctrl-shift-alt-s = 'exec-and-forget open -a Slack'
-    ctrl-shift-alt-g = 'exec-and-forget open -a Ghostty'
-    ctrl-shift-alt-f = 'exec-and-forget open -a Finder'
+    ctrl-shift-alt-s = 'workspace 3'
+    ctrl-shift-alt-g = 'workspace 2'
+    ctrl-shift-alt-f = 'workspace 5'
     ctrl-shift-alt-z = 'exec-and-forget open -a zoom.us'
-    ctrl-shift-alt-c = 'exec-and-forget open -a Google\ Chrome'
+    ctrl-shift-alt-c = 'workspace 1'
     ctrl-shift-alt-v = 'exec-and-forget open -a Visual\ Studio\ Code'
     ctrl-shift-alt-d = "exec-and-forget zsh -c 'open ~/Downloads/*(om[1])'"
     ctrl-shift-alt-r = "exec-and-forget zsh -c ~/dotfiles/scripts/delete_recent_download_file.sh"
@@ -136,7 +136,7 @@ automatically-unhide-macos-hidden-apps = false
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
     alt-h = 'focus left'
     alt-j = 'focus down'
-    # alt-k = 'focus up'
+    alt-k = 'focus up'
     alt-l = 'focus right'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
@@ -185,15 +185,15 @@ automatically-unhide-macos-hidden-apps = false
     # alt-z = 'workspace Z'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-    alt-shift-1 = 'move-node-to-workspace 1'
-    alt-shift-2 = 'move-node-to-workspace 2'
-    alt-shift-3 = 'move-node-to-workspace 3'
-    alt-shift-4 = 'move-node-to-workspace 4'
-    alt-shift-5 = 'move-node-to-workspace 5'
-    alt-shift-6 = 'move-node-to-workspace 6'
-    alt-shift-7 = 'move-node-to-workspace 7'
-    alt-shift-8 = 'move-node-to-workspace 8'
-    alt-shift-9 = 'move-node-to-workspace 9'
+    alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
+    alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
+    alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
+    alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+    alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
+    alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
+    alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
+    alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
+    alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
     # alt-shift-a = 'move-node-to-workspace A'
     # alt-shift-b = 'move-node-to-workspace B'
     # alt-shift-c = 'move-node-to-workspace C'

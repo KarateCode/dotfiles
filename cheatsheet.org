@@ -214,6 +214,8 @@ wm dashboard
 wm sidebar
 wmo # workmux open --continue
 workmux merge feature/forecasting-css # when cd'd into base feature branch was a bust! Still merged into develop!
+* SLK:
+a # next unread channel
 * Superfile
 TUI replacement for Finder!
 * Yassnippets
@@ -242,6 +244,11 @@ Right-click localhost or select and Cmd+v
 where's the job runner? scripts/run-task-for-env.sh
 where do I drop files? /client/thorogood
 SUBPREFIX=thorogood-na LOCK_ALERT_TIME_MINUTES=60 LOCK_ID="Mike_run" ./run_one.sh ./docker-run-task.sh background-job-runner --integrationARN=$INTEGRATION_ARN
+
+* Test Server:
+ssh envoy-dev-na-cf-integration # all test environments are under the one dev server
+SUBPREFIX=bauer-test-na ~/scripts/docker-run-task background-job-runner --type="" ...
+SUBPREFIX=bauer-test-na ~/scripts/docker-run-task.sh background-job-runner --integrationARN=$INTEGRATION_ARN --ignoreJobInterval=true --type=PEAK_PRODUCT_IMPORT
 
 * Ghostty
 https://www.youtube.com/watch?v=enwDjM7pNNE (cursor trails)
