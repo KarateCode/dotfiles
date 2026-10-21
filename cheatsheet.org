@@ -297,6 +297,9 @@ mso "Client.deleteOne({code: 'faker-na'})"
 * cron
 sudo systemctl status crond
 
+* Docker:
+docker ps
+docker images
 * On integration server, to see the envoy-web codebase in docker
 docker run --env 'MONGO_CONNECTION_STRING=mongodb://appropos:0n3QvxZGIGqi@ip-10-0-3-141.ec2.internal/envoy-web?replicaSet=cid-resources-stag-na-cf&authSource=admin' --env AWS_REGION=us-east-1 --rm --mount type=bind,source=/client,target=/client -ti cid-resources-stag-na-cf:latest bash
 or use the $DOCKER_RUN_ONE to run commands like from cron

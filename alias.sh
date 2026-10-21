@@ -1,5 +1,11 @@
 alias ss='cd ~/.ssh'
 
+# Overrides Omarchy's `alias c='opencode --auto'` from
+# /usr/share/omarchy/default/bash/aliases (it ships c/cx/cy for opencode,
+# claude and codex). Both ~/.bashrc and ~/.zshrc source that file BEFORE this
+# one, so redefining `c` here wins in both shells.
+alias c='cd ~/.config'
+
 alias la='eza -l --icons --git -a'
 alias lt='eza --tree --level=2 --long --icons --git'
 alias b='cd -'
