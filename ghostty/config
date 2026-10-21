@@ -1,14 +1,13 @@
 # Ghostty config for the Omarchy (Linux) box.
-# Symlinked into place: ~/.config/ghostty/config -> ~/dotfiles/ghostty/config
 #
-# The Mac keeps its own copy at dotfiles/ghostty_config (copyConfigs.sh). The
-# two differ only in custom-shader paths; keybinds are identical.
+#   ln -s ~/dotfiles/ghostty/config ~/.config/ghostty/config
 #
-# Run `ghostty +show-config --default --docs` to view a list of
-# all available config options and their default values.
-#
-# Each config option is also explained in detail
-# on Ghostty's website, at https://ghostty.org/docs/config.
+# The Mac is a SEPARATE file, dotfiles/ghostty/config_macos, symlinked to
+# ~/Library/Application Support/com.mitchellh.ghostty/config.  The two are
+# deliberately NOT shared, and the split is not cosmetic -- see the keybind
+# section below: Cmd+K et al. must use different carrier sequences on each
+# box, so a single file cannot serve both.  Fonts differ too (this box runs
+# Inconsolata at 9, the Mac JetBrainsMono at 14), so sync nothing blindly.
 
 background = "#000000"
 # key-encoding = xterm
@@ -22,22 +21,37 @@ adjust-cursor-thickness = 2
 
 keybind = ctrl+,=text:\x1b[121;9z
 
-# These four emit real F-key sequences (F1-F4) rather than private \x1b[N;9z
-# ones. The original reason given -- "tmux can't handle random byte strings" --
-# is wrong: tmux matches arbitrary sequences via `user-keys`, which
-# tmux_omarchy.conf already does seven times over (user-keys[0..6]). The actual
-# constraint is upstream: keyd's [cmd:C] layer makes the physical Cmd key
-# arrive as plain Control, so Ghostty cannot tell cmd+k from capslock+k -- the
-# F-key is what makes the chord unique, not what makes tmux understand it.
-# Replacing it needs a different carrier (ctrl+alt+<letter> is free; Super is
-# not -- Omarchy binds SUPER+K and SUPER+V in Hyprland).
-# cmd+k → clear screen + history (tmux intercepts)
-keybind = "cmd+k=text:\x1b[131;9z"
-# cmd+alt+left/right → previous/next window (tmux intercepts)
-keybind = "cmd+alt+left=text:\x1b[132;9z"
-keybind = "cmd+alt+right=text:\x1b[133;9z"
-# cmd+v → paste (tmux intercepts and handles)
-keybind = "cmd+v=text:\x1b[134;9z"
+# Cmd+K -> clear screen + history (tmux intercepts). SAME CARRIER AS THE MAC:
+# \x1b[131;9z, matched by user-keys[30] in both tmux.conf and
+# tmux_omarchy.conf. Only the CHORD differs between the boxes, and only
+# because it has to:
+#
+#   Mac      Ghostty sees a real cmd+k          -> keybind = cmd+k
+#   Omarchy  keyd flattens Cmd into Control     -> keybind = ctrl+alt+k
+#
+# WHY OMARCHY CANNOT JUST BIND cmd+k: /etc/keyd/default.conf declares the
+# layer as `[cmd:C]', so the physical Cmd key arrives here as plain Control.
+# Ghostty therefore cannot tell Cmd+K from CapsLock+K (capslock =
+# rightcontrol, i.e. the REAL Ctrl). Binding ctrl+k would swallow genuine
+# Ctrl+K -- `kill-line' in both Emacs and zsh -- so keyd has to hand Ghostty
+# a chord nothing else produces. ~/.config/keyd/app.conf does that:
+#
+#     [com-mitchellh-ghostty]
+#     cmd.k = C-A-k
+#
+# ctrl+alt+k was picked because it is genuinely free: Ghostty binds nothing
+# to it by default, and Hyprland's only ctrl+alt bindings are DELETE, TAB and
+# Left/Right. Super is NOT free -- Omarchy binds SUPER+K and SUPER+V.
+#
+keybind = "ctrl+alt+k=text:\x1b[131;9z"
+# cmd+alt+left → F2, cmd+alt+right → F3. Mac-only in practice: only the Mac
+# tmux.conf binds F2/F3, tmux_omarchy.conf navigates with C-M-Left/Right.
+keybind = "cmd+alt+left=text:\x1bOQ"
+keybind = "cmd+alt+right=text:\x1bOR"
+# cmd+v → F4, for init.el's <f4> paste. Also Mac-only: here keyd sends
+# cmd.v = C-S-v straight to Ghostty's own paste_from_clipboard, and the only
+# other route (physical Ctrl = Super) is taken by Hyprland's SUPER+V.
+keybind = "cmd+v=text:\x1bOS"
 keybind = cmd+shift+v=paste_from_clipboard
 
 # --- tmux window (tab) navigation: Cmd+Alt+Left/Right ---------------------
@@ -249,7 +263,7 @@ font-family = "Inconsolata LGC Nerd Font Mono"
 # font-family = "CaskaydiaCove Nerd Font Mono"
 # font-family = "JetBrainsMono Nerd Font Mono"
 font-style = bold
-font-size = 12
+font-size = 9
 
 confirm-close-surface = false
 

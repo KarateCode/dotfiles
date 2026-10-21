@@ -13,5 +13,4 @@ if [[ "$(uname)" == "Linux" ]]; then
 fi
 
 cp ~/.config/tmux/tmux.conf tmux.conf
-cp ~/Library/Application\ Support/com.mitchellh.ghostty/config ghostty_config
 cp ~/.config/aerospace/aerospace.toml aerospace.toml
