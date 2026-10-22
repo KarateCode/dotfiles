@@ -84,6 +84,25 @@ if [[ "$(uname)" == "Linux" ]]; then
 
     alias sl='systemctl suspend'
 
+    # Bounce the Emacs daemon. Needed after editing anything under emacs/:
+    # the daemon reads init.el once at startup, so edits stay invisible until
+    # it restarts. (`emacsclient -e '(load ...)'` picks up most changes but
+    # NOT the startup path itself, so it can hide a broken init.)
+    #
+    # systemd owns the daemon here -- /usr/lib/systemd/user/emacs.service,
+    # ExecStart=/usr/bin/emacs --fg-daemon -- so this is NOT the
+    # `pkill -9 emacs; emacs --daemon` dance that works on the Mac. That would
+    # misfire two ways on this box:
+    #   1. Restart=on-failure means SIGKILL counts as a failure, so systemd
+    #      revives the daemon immediately -- then the manual `emacs --daemon`
+    #      races a SECOND daemon onto the same socket.
+    #   2. It would start outside the unit, losing the drop-in at
+    #      ~/.config/systemd/user/emacs.service.d/wayland-env.conf.
+    # `--init-directory` is not needed either: ~/.config/emacs is already the
+    # default on Linux. That flag is a macOS-only workaround (see
+    # scripts/emacs-editor.sh).
+    alias bounceEmacs='systemctl --user restart emacs'
+
     # GNU sed: -i takes no argument.
     alias fix_known_hosts="cd ~/.ssh; sed -i '/UserKnownHostsFile/d' config; cd -"
 else
@@ -95,6 +114,11 @@ else
     alias se='ls ~/code/tools-and-infrastructure/scripts/developer/environments | fzf | while read -r env; do select_env "$env"; done'
 
     alias sl='pmset sleepnow'
+
+    # Bounce the Emacs daemon -- same purpose as the Linux `eb', different
+    # mechanism: no systemd here, so kill and relaunch by hand. The
+    # --init-directory flag IS required on macOS (see scripts/emacs-editor.sh).
+    alias bounceEmacs='pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon'
 
     # BSD sed: -i requires an (empty) backup-suffix argument.
     alias fix_known_hosts="cd ~/.ssh; sed -i '' '/UserKnownHostsFile/d' config; cd -"

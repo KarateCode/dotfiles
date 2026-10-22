@@ -50,12 +50,27 @@ Use `~/.config/` convention where possible. Many configs are symlinked from this
 - Vanilla emacs (not Spacemacs) at `~/.config/emacs/`
 - **Always runs in terminal** (never GUI) - connects via Ghostty
 - Runs as daemon via `van` alias
-- Uses `--init-directory` flag on macOS
-- Restart: `pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon`
-- **After modifying any emacs config**, bounce the daemon so changes take effect:
-  ```bash
-  pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon
-  ```
+- Uses `--init-directory` flag on macOS (on Linux `~/.config/emacs` is already
+  the default, so the flag is unnecessary there)
+- **After modifying any emacs config**, bounce the daemon so changes take
+  effect — use the `eb` alias, which picks the right mechanism per platform:
+
+  | platform | mechanism |
+  |---|---|
+  | Linux (omarchy) | `systemctl --user restart emacs` |
+  | macOS | `pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon` |
+
+  Do **not** use the macOS command on omarchy. systemd owns the daemon there
+  (`/usr/lib/systemd/user/emacs.service`, `ExecStart=/usr/bin/emacs
+  --fg-daemon`) with `Restart=on-failure`, so `pkill -9` is treated as a
+  failure and systemd revives it instantly — the manual `emacs --daemon` then
+  races a second daemon onto the same socket. It also bypasses the drop-in at
+  `~/.config/systemd/user/emacs.service.d/wayland-env.conf`.
+
+- `emacsclient -e '(load "...")'` is NOT a substitute for bouncing. It picks up
+  most edits, but never exercises the startup path (`init.el` →
+  `after-init-hook` → `init_omarchy.el`), so it can mask an init that is
+  broken for every real restart.
 
 ### Workmux
 - Manages git worktrees + tmux windows for parallel agent workflows
@@ -75,6 +90,28 @@ Located in `scripts/`. Should be cross-platform where possible.
 - `emacs-editor.sh` - Cross-platform emacs launcher (`van` alias)
 - `ding.sh` - Sound notification (afplay on macOS, pw-play on Linux)
 - `editor.sh` - MongoDB document editor
+
+## Git
+
+**Git is the user's job. Do not run it, and do not offer to.**
+
+- Never `git add`, `commit`, `push`, `checkout`, `stash`, `reset`, `rebase`, or
+  `merge` — not even when a change is obviously finished, and not even when
+  asked "are we done?". Leave the working tree dirty and say so.
+- Do not end a turn by offering to stage or commit, and do not close with a
+  summary of which files were changed or added. `git status` already shows the
+  user that; repeating it is noise.
+- Read-only inspection (`git status`, `git log`, `git diff`) is fine and often
+  useful — e.g. confirming an edit landed, or checking whether a file is
+  tracked before treating it as disposable. Use it to inform your own work, not
+  to narrate back.
+
+## Scripts (additional notes)
+
+- `make-ghostty-256-terminfo.sh` builds the `xterm-ghostty-256` terminfo into
+  `~/.terminfo`, which is OUTSIDE this repo. `emacs-editor.sh` calls it
+  automatically when the entry is missing or stale, so a fresh clone heals
+  itself. Read that script's header before touching Emacs terminal colours.
 
 ## Style
 
