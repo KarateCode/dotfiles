@@ -103,6 +103,16 @@ if [[ "$(uname)" == "Linux" ]]; then
     # scripts/emacs-editor.sh).
     alias bounceEmacs='systemctl --user restart emacs'
 
+    # slk (Slack TUI) in its own Ghostty window, with a see-through background.
+    #
+    # The command itself lives in the script, NOT inline here, because the
+    # Omarchy menu entry (~/.config/omarchy/extensions/omarchy-menu.jsonc) has
+    # to run the same thing and cannot call an alias -- menu actions execute as
+    # non-interactive `bash -lc', where alias expansion is off and alias.sh is
+    # never even sourced. One file, three callers (alias, menu, and a Hyprland
+    # bind if one gets added). See the script for the full reasoning.
+    alias slkg='~/dotfiles/scripts/slkg.sh'
+
     # GNU sed: -i takes no argument.
     alias fix_known_hosts="cd ~/.ssh; sed -i '/UserKnownHostsFile/d' config; cd -"
 else
