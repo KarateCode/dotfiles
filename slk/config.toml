@@ -1,0 +1,7 @@
+[appearance]
+theme = "custom-theme"
+
+# Envoy
+[workspaces.envoy]
+version_ts = "1792666063"
+team_id = "T02ET4B6U"

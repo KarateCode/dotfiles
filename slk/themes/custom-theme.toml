@@ -1,0 +1,22 @@
+name = "My Theme"
+
+[colors]
+primary      = "#FF0000"
+# primary      = "#BD93F9"
+accent       = "#50FA7B"
+warning      = "#FFB86C"
+error        = "#FF5555"
+background   = ""
+surface      = "#343746"
+surface_dark = "#21222C"
+text         = "#F8F8F2"
+text_muted   = "#6272A4"
+border       = "#44475A"
+
+# Optional: separate sidebar/rail palette so the sidebar can be darker
+# than the message pane (Slack's default look). Falls back to
+# background/text/text_muted/surface_dark when omitted.
+sidebar_background = ""
+sidebar_text       = "#D1D2D3"
+sidebar_text_muted = "#9A9B9E"
+rail_background    = ""
