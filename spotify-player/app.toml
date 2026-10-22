@@ -1,9 +1,33 @@
 theme = "dracula"
 client_id = "35672e9a158d4e20b6f90c72a9f9f4e0"
-ncspot_only_get_endpoints = [
-    "me/playlists",
-    "playlists/",
-]
+
+# Route EVERY GET through the client_id above, including playlists.
+#
+# This list defaults to ["me/playlists", "playlists/"] -- i.e. spotify-player
+# sends exactly those two endpoints to ncspot's BUILT-IN client ID
+# (d420a117a32841c2b3474932e49fb54b) no matter what client_id you configure.
+# Spelling the default out here, as this file used to, changes nothing.
+#
+# That built-in ID is shared by every spotify-player/ncspot user who has not
+# set their own, so its quota is permanently exhausted. The symptom is very
+# specific and looks like a bug rather than throttling: playback works (custom
+# client), the library list loads from cache, but opening any playlist sits on
+# "Loading..." forever while the log fills with 429s and the UI keeps retrying.
+#
+# Measured against both tokens in ~/.cache/spotify-player, same endpoints, same
+# minute -- the ONLY variable is which client ID is used:
+#
+#   client                        me/playlists   playlists/<id>
+#   35672e9a... (ours)            200            200
+#   d420a117... (ncspot shared)   429            429  retry-after: 24
+#
+# So the exclusion is pure downside here: our own app has its own quota and
+# serves these fine. Empty list = no endpoint is forced onto ncspot.
+#
+# Keep in mind spotify-player still falls back to ncspot on any 4xx from the
+# custom client, so this is not a hard cutover -- if our app ever loses access
+# to an endpoint, it degrades to the shared client instead of failing outright.
+ncspot_only_get_endpoints = []
 client_port = 8080
 login_redirect_uri = "http://127.0.0.1:8989/login"
 playback_format = """
