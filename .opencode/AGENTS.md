@@ -118,3 +118,16 @@ Located in `scripts/`. Should be cross-platform where possible.
 - No trailing spaces in code or shell scripts
 - Match surrounding code style and patterns
 - Comments only where behavior isn't obvious from code
+
+### Comments — keep them short
+
+Default to no comment. The code should carry it.
+
+- **No paragraphs.** If something is genuinely non-obvious, one line. Not a
+  block, not a section header, not an indented example.
+- **Never write history.** No "this used to be X", no "changed from Y", no
+  explaining why a previous approach failed, no "verified the hard way". That
+  belongs in commit messages, not the file.
+- **Describe what it does now**, never how it got here.
+- A one-liner is worth it only when it saves real ramp-up time later — an
+  unobvious constraint, a non-intuitive flag. Otherwise leave it out.

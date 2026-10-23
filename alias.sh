@@ -1,9 +1,6 @@
 alias ss='cd ~/.ssh'
 
-# Overrides Omarchy's `alias c='opencode --auto'` from
-# /usr/share/omarchy/default/bash/aliases (it ships c/cx/cy for opencode,
-# claude and codex). Both ~/.bashrc and ~/.zshrc source that file BEFORE this
-# one, so redefining `c` here wins in both shells.
+# Overrides Omarchy's `c' (opencode); its aliases file is sourced before this one.
 alias c='cd ~/.config'
 
 alias la='eza -l --icons --git -a'
@@ -84,33 +81,12 @@ if [[ "$(uname)" == "Linux" ]]; then
 
     alias sl='systemctl suspend'
 
-    # Bounce the Emacs daemon. Needed after editing anything under emacs/:
-    # the daemon reads init.el once at startup, so edits stay invisible until
-    # it restarts. (`emacsclient -e '(load ...)'` picks up most changes but
-    # NOT the startup path itself, so it can hide a broken init.)
-    #
-    # systemd owns the daemon here -- /usr/lib/systemd/user/emacs.service,
-    # ExecStart=/usr/bin/emacs --fg-daemon -- so this is NOT the
-    # `pkill -9 emacs; emacs --daemon` dance that works on the Mac. That would
-    # misfire two ways on this box:
-    #   1. Restart=on-failure means SIGKILL counts as a failure, so systemd
-    #      revives the daemon immediately -- then the manual `emacs --daemon`
-    #      races a SECOND daemon onto the same socket.
-    #   2. It would start outside the unit, losing the drop-in at
-    #      ~/.config/systemd/user/emacs.service.d/wayland-env.conf.
-    # `--init-directory` is not needed either: ~/.config/emacs is already the
-    # default on Linux. That flag is a macOS-only workaround (see
-    # scripts/emacs-editor.sh).
+    # Required after editing emacs/ -- the daemon only reads init.el at startup.
+    # systemd owns it here, so do not pkill (Restart=on-failure would race a second daemon).
     alias bounceEmacs='systemctl --user restart emacs'
 
-    # slk (Slack TUI) in its own Ghostty window, with a see-through background.
-    #
-    # The command itself lives in the script, NOT inline here, because the
-    # Omarchy menu entry (~/.config/omarchy/extensions/omarchy-menu.jsonc) has
-    # to run the same thing and cannot call an alias -- menu actions execute as
-    # non-interactive `bash -lc', where alias expansion is off and alias.sh is
-    # never even sourced. One file, three callers (alias, menu, and a Hyprland
-    # bind if one gets added). See the script for the full reasoning.
+    # slk in a transparent Ghostty window. Shared with the Omarchy menu entry,
+    # which runs in non-interactive bash and so cannot call an alias.
     alias slkg='~/dotfiles/scripts/slkg.sh'
 
     # GNU sed: -i takes no argument.
@@ -125,9 +101,7 @@ else
 
     alias sl='pmset sleepnow'
 
-    # Bounce the Emacs daemon -- same purpose as the Linux `eb', different
-    # mechanism: no systemd here, so kill and relaunch by hand. The
-    # --init-directory flag IS required on macOS (see scripts/emacs-editor.sh).
+    # No systemd here, so kill and relaunch. --init-directory is required on macOS.
     alias bounceEmacs='pkill -9 emacs; emacs --init-directory="$HOME/.config/emacs" --daemon'
 
     # BSD sed: -i requires an (empty) backup-suffix argument.

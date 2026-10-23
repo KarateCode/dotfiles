@@ -302,71 +302,13 @@ See the commentary above section 6 for why Emacs needs this at all."
   (omarchy/decode-csi-u-space))
 
 ;; -------------------------------------------------------------------
-;; 7. Syntax highlighting randomly dying (all-black / all-grey buffers)
+;; 7. Pin the background mode
 ;; -------------------------------------------------------------------
-;; SYMPTOM: a buffer that was correctly highlighted loses its colours --
-;; org todo lists go flat black, JS goes uniformly grey -- typically
-;; noticed right after switching Hyprland workspaces.  Nothing is wrong
-;; with font-lock: the TEXT PROPERTIES are still there, it is the FACE
-;; DEFINITIONS underneath them that have been recomputed wrongly.
-;;
-;; CAUSE: `frame--current-background-mode' (frame.el) decides, per frame,
-;; whether this display has a light or a dark background, and faces are
-;; then resolved against that.  doom-horizon is a DARK theme, so a frame
-;; tagged `light' resolves every `((background dark) ...)' face spec down
-;; its light branch -- dark-on-dark, i.e. unreadable.
-;;
-;; On a GUI frame Emacs just reads the real background colour.  On a TTY
-;; frame -- which is every frame here, since `van' is `emacsclient -nw' --
-;; it cannot, so term/xterm.el ASKS the terminal with an OSC 11 query
-;; ("\e]11;?") and waits `xterm-query-timeout' (2s) for the answer.
-;;
-;;   reply arrives in time -> real background colour -> `dark'   (correct)
-;;   reply times out       -> fall back to the heuristic below   (wrong)
-;;
-;; and that fallback is a hardcoded regexp match on $TERM:
-;;
-;;     (if (or (window-system frame)
-;;             (and tty-type
-;;                  (string-match "^\\(xterm\\|rxvt\\|dtterm\\|eterm\\)"
-;;                                tty-type)))
-;;         'light
-;;       'dark)
-;;
-;; Ghostty sets TERM=xterm-ghostty, which matches `^xterm', so the
-;; fallback is `light' -- a guess dating from when a bare xterm really
-;; did default to a white background.
-;;
-;; That is the whole bug, and it explains the workspace connection: a
-;; Ghostty window on an inactive Hyprland workspace is not drawing, so it
-;; services the OSC 11 query late or not at all.  Switch away at the
-;; wrong moment and the query times out, the frame is retagged `light',
-;; and `frame-set-background-mode' recomputes every face spec for it.
-;;
-;; EVIDENCE -- the live daemon, mid-bug, had frames disagreeing with each
-;; other, which is only possible because this is decided per-frame:
-;;
-;;     ("F11" "xterm-ghostty"  light 16777216)   ; ^xterm -> guessed
-;;     ("F10" "tmux-256color"  dark      256)    ; no match -> defaulted
-;;     ("F9"  "xterm-ghostty"  light 16777216)   ; ^xterm -> guessed
-;;
-;; tmux is immune for an accidental reason: TERM=tmux-256color does not
-;; match the regexp, so its fallback is already `dark'.
-;;
-;; FIX: `frame-terminal-default-bg-mode' checks `frame-background-mode'
-;; FIRST, ahead of both the OSC 11 reply and the $TERM heuristic, so
-;; setting it pins the answer and the race disappears.  This box is dark
-;; themed in every terminal, so there is nothing to lose by fixing it.
-;;
-;; Set here rather than in init.el because it is specific to this
-;; machine's terminal (Ghostty); the Mac is unaffected.  Frames are
-;; created long after `after-init-hook', so load order is not a concern.
+;; On a TTY frame Emacs guesses light/dark from $TERM, and xterm-ghostty
+;; matches its hardcoded `^xterm' light rule -- which resolves a dark theme's
+;; faces down their light branch.  Setting this short-circuits the guess.
 (setq frame-background-mode 'dark)
 
-;; Repair any frames that already exist.  Only relevant when re-loading
-;; this file into a running daemon -- at normal startup the frame list is
-;; just the invisible F1 -- but it saves a daemon restart, and
-;; `frame-set-background-mode' is a no-op on frames already tagged dark.
 (dolist (frame (frame-list))
   (frame-set-background-mode frame))
 

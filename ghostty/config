@@ -1,13 +1,7 @@
 # Ghostty config for the Omarchy (Linux) box.
-#
 #   ln -s ~/dotfiles/ghostty/config ~/.config/ghostty/config
-#
-# The Mac is a SEPARATE file, dotfiles/ghostty/config_macos, symlinked to
-# ~/Library/Application Support/com.mitchellh.ghostty/config.  The two are
-# deliberately NOT shared, and the split is not cosmetic -- see the keybind
-# section below: Cmd+K et al. must use different carrier sequences on each
-# box, so a single file cannot serve both.  Fonts differ too (this box runs
-# Inconsolata at 9, the Mac JetBrainsMono at 14), so sync nothing blindly.
+# The Mac uses a separate file, ghostty/config_macos; keybind carriers and
+# fonts differ, so do not sync them.
 
 background = "#000000"
 # key-encoding = xterm
@@ -21,28 +15,8 @@ adjust-cursor-thickness = 2
 
 keybind = ctrl+,=text:\x1b[121;9z
 
-# Cmd+K -> clear screen + history (tmux intercepts). SAME CARRIER AS THE MAC:
-# \x1b[131;9z, matched by user-keys[30] in both tmux.conf and
-# tmux_omarchy.conf. Only the CHORD differs between the boxes, and only
-# because it has to:
-#
-#   Mac      Ghostty sees a real cmd+k          -> keybind = cmd+k
-#   Omarchy  keyd flattens Cmd into Control     -> keybind = ctrl+alt+k
-#
-# WHY OMARCHY CANNOT JUST BIND cmd+k: /etc/keyd/default.conf declares the
-# layer as `[cmd:C]', so the physical Cmd key arrives here as plain Control.
-# Ghostty therefore cannot tell Cmd+K from CapsLock+K (capslock =
-# rightcontrol, i.e. the REAL Ctrl). Binding ctrl+k would swallow genuine
-# Ctrl+K -- `kill-line' in both Emacs and zsh -- so keyd has to hand Ghostty
-# a chord nothing else produces. ~/.config/keyd/app.conf does that:
-#
-#     [com-mitchellh-ghostty]
-#     cmd.k = C-A-k
-#
-# ctrl+alt+k was picked because it is genuinely free: Ghostty binds nothing
-# to it by default, and Hyprland's only ctrl+alt bindings are DELETE, TAB and
-# Left/Right. Super is NOT free -- Omarchy binds SUPER+K and SUPER+V.
-#
+# Cmd+K -> clear pane. keyd's [cmd:C] layer makes plain Cmd+K arrive as Ctrl+K,
+# so keyd remaps it to ctrl+alt+k; tmux matches the sequence as user-keys[30].
 keybind = "ctrl+alt+k=text:\x1b[131;9z"
 # cmd+alt+left → F2, cmd+alt+right → F3. Mac-only in practice: only the Mac
 # tmux.conf binds F2/F3, tmux_omarchy.conf navigates with C-M-Left/Right.

@@ -28,21 +28,8 @@
   // fields are kept unless overridden.
   // "about": {"icon":"","label":"About","action":"omarchy-launch-or-focus-tui \"zsh -c 'fastfetch; read -k 1'\""},
 
-  // The slk TUI, in its own Ghostty window with a see-through background.
-  //
-  // Labelled "slk", NOT "Slack", and given Omarchy's terminal glyph (U+F489,
-  // the same one "install.tui" uses) rather than the Slack logo -- ON PURPOSE.
-  // The real Slack desktop app (/usr/share/applications/slack.desktop,
-  // Name=Slack) shows up in THIS SAME MENU via the "apps" provider, so a
-  // matching label or icon would give two rows that cannot be told apart.
-  // Huddles only work in the real app, so picking the wrong one matters.
-  // For the same reason there is deliberately no "slack" search alias here:
-  // it would pull this row up alongside the desktop app.
-  //
-  // Same entry point as the `slkg' shell alias -- both exec the script, which
-  // is the only way to share them: menu actions run as non-interactive
-  // `bash -lc', where alias expansion is off and alias.sh is never sourced,
-  // so "action":"slkg" would silently do nothing.
+  // Labelled "slk" with the TUI glyph, not the Slack logo: the real Slack app
+  // appears in this same menu via the "apps" provider. Huddles need that one.
   "slk": {
     "icon": "",
     "label": "slk",
