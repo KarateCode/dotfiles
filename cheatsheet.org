@@ -591,7 +591,10 @@ Can be triggered from Raycast
 tuicr pr 30
 Capital 'C' is comment for file at large
 ':submit' opens the push to github menu
-
+* spotify_player
+g s # to search internet for a song
+C-h # to "like" s song
+C-space # to open context menu to add to playlist
 * Opencode
 opencode --continue
 opencode session list

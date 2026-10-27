@@ -65,3 +65,11 @@ hl.config({
 --     column_width = 0.97,
 --   },
 -- })
+
+-- Omarchy's default sets this to 1, which recentres the pointer on every
+-- workspace switch. 0 leaves it where you parked it.
+hl.config({
+  cursor = {
+    warp_on_change_workspace = 0,
+  },
+})
