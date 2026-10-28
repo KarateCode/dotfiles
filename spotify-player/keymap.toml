@@ -1,0 +1,3 @@
+[[keymaps]]
+command = "ClosePopup"
+key_sequence = "C-g"

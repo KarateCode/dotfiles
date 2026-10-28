@@ -3,5 +3,5 @@ theme = "custom-theme"
 
 # Envoy
 [workspaces.envoy]
-version_ts = "1792681052"
+version_ts = "1793212058"
 team_id = "T02ET4B6U"
