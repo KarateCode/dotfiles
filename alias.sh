@@ -93,6 +93,11 @@ if [[ "$(uname)" == "Linux" ]]; then
     # misses Homebrew's PATH, where tmux lives on the mac.
     alias m3ssh="ssh m3 -t 'zsh -lc \"tmux attach -t dev-env\"'"
 
+    # Leaked puppeteer browsers from older prod versions. Only kills ones whose
+    # parent died; an in-progress test run is left alone.
+    alias pupOrphans='~/dotfiles/scripts/puppeteer-orphans.sh'
+    alias pupKill='~/dotfiles/scripts/puppeteer-orphans.sh kill'
+
     # GNU sed: -i takes no argument.
     alias fix_known_hosts="cd ~/.ssh; sed -i '/UserKnownHostsFile/d' config; cd -"
 else
