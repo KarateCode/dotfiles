@@ -43,3 +43,4 @@ bindkey -r "^H"
 
 source ~/dotfiles/snippets/engine.sh
 source ~/dotfiles/envoy_scripts.sh
+source ~/dotfiles/alias.sh
