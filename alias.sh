@@ -97,6 +97,7 @@ if [[ "$(uname)" == "Linux" ]]; then
     # parent died; an in-progress test run is left alone.
     alias pupOrphans='~/dotfiles/scripts/puppeteer-orphans.sh'
     alias pupKill='~/dotfiles/scripts/puppeteer-orphans.sh kill'
+    alias uncommit='git reset --soft HEAD~1'
 
     # GNU sed: -i takes no argument.
     alias fix_known_hosts="cd ~/.ssh; sed -i '/UserKnownHostsFile/d' config; cd -"

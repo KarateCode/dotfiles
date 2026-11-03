@@ -310,3 +310,15 @@ o.bind(
     "Open newest download",
     (os.getenv("HOME") or "") .. "/dotfiles/scripts/open_recent_download.sh"
 )
+
+-- SUPER + CTRL + C opens the calendar widget instead of the capture menu.
+--
+-- Default was "omarchy-menu toggle capture" (see
+-- $OMARCHY_PATH/default/hypr/bindings/utilities.lua). The capture menu is still
+-- reachable from the Omarchy menu, and PRINT / ALT + PRINT still take
+-- screenshots and screenrecordings directly.
+--
+-- omarchy.clock is the bar's clock/calendar dropdown. It stays bound to its
+-- default SUPER + CTRL + ALT + D as well, so both keys open it.
+hl.unbind("SUPER + CTRL + C")
+o.bind("SUPER + CTRL + C", "Calendar", "omarchy-shell shell toggle omarchy.clock")

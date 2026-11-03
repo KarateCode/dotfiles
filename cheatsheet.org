@@ -115,8 +115,11 @@ z k drop stash
 How do I set a todo? Appears to be only in ** precursed things
 C-c C-c toggles checkboxes
 * Omarchy:
+Super + Alt + -/+ shrink/grow window
 Super + c/v # Copy/paste everywhere!
 Super + Control + v # search clipboard
+Super + Control + a # Audio widget
+Super + Control + c # Calendar widget
 Hold Super + mouse # drags windows around
 Super + l # toggles windows between tiling and scrolling
 Super + f # fullscreen
@@ -355,6 +358,7 @@ msa "ShipMethod.find({})" | jq '.[] | {code: .code, desc: .languages[].descripti
 * YQ:
 yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_status.251202010530.csv
 yq -p=csv '.[] |= "\"" + .key + "\"" | join(", ")'
+ms "Client.find({code: 'wwwinc-us'})" | yq -y '.[] |= (pick(.name, .code, .brands) | .brands[] |= pick(.name, .code, .segments))' # Mitul script for displaying segmentation examples
 
 * op: (1pass CLI)
 op signin
@@ -595,6 +599,7 @@ Capital 'C' is comment for file at large
 g s # to search internet for a song
 C-h # to "like" s song
 C-space # to open context menu to add to playlist
+
 * Opencode
 opencode --continue
 opencode session list
