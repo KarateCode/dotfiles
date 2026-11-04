@@ -23,8 +23,8 @@
 bindkey -e
 # End of lines configured by zsh-newuser-install
 
-# C-w stops at periods (zsh's default WORDCHARS counts `.' as part of a word).
-WORDCHARS="${WORDCHARS//./}"
+# C-w stops at `-', `.' and `/', which zsh's default WORDCHARS counts as word chars.
+WORDCHARS="${WORDCHARS//[-.\/]/}"
 
 # --- History -------------------------------------------------------------
 # zsh-newuser-install did not write any history config, and zsh's defaults are

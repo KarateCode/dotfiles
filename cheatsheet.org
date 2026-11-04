@@ -360,6 +360,10 @@ yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_s
 yq -p=csv '.[] |= "\"" + .key + "\"" | join(", ")'
 ms "Client.find({code: 'wwwinc-us'})" | yq -y '.[] |= (pick(.name, .code, .brands) | .brands[] |= pick(.name, .code, .segments))' # Mitul script for displaying segmentation examples
 
+* bat:
+bat -l csv WWW20261103.CATALOG # Tell bat which syntax highlighting to use when it can't be inferred from the file extension
+bat -l yaml --style=plain # pipe to it from yq
+
 * op: (1pass CLI)
 op signin
 op whoami

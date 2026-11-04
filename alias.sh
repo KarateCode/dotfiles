@@ -47,7 +47,7 @@ alias reseed='npm run db:seed -- --email michael.schneider@envoyplatform.com'
 alias ptq='npm run task process-tasks-queue'
 alias task='AWS_PROFILE=appropos npm run task'
 alias tasks='npm run tasks'
-alias job='cd ~/code/envoy-web/server; env AWS_PROFILE=appropos APPROPOS_ENV=local ./bin/run-node bin/task-runner.js background-job-runner --integrationARN="arn:aws:sns:us-east-1:506597054164:appropos-integration-local-error" --ignoreJobInterval=true'
+alias job='env AWS_PROFILE=appropos APPROPOS_ENV=local ./server/bin/run-node server/bin/task-runner.js background-job-runner --integrationARN="arn:aws:sns:us-east-1:506597054164:appropos-integration-local-error" --ignoreJobInterval=true'
 alias cemacs="xargs sh -c 'emacs $@ < /dev/tty' emacs"
 alias preview="fzf --preview 'bat --style=numbers --color=always {}'"
 alias ms="~/dotfiles/scripts/mongo_shell_inline.sh"
@@ -55,6 +55,7 @@ alias msf="~/dotfiles/scripts/mongo_shell_file.sh"
 alias mt='~/dotfiles/scripts/mongo_tui_launch.sh'
 alias editor='~/dotfiles/scripts/editor.sh'
 alias deleteMany='~/dotfiles/scripts/select_from_table.sh'
+alias colorCsv='bat -l yaml --style=plain'
 
 alias ds='node ~/code/tools-and-infrastructure/webdev-tools/menu.js'
 alias onering='~/code/tools-and-infrastructure/scripts/developer/one-ring/onering.sh'

@@ -13,6 +13,21 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
 fi
 ```
 
+## Shell
+
+The interactive shell is **zsh**. Bash is the login shell only: Omarchy
+bootstraps `OMARCHY_PATH` and `PATH` through `~/.bashrc`, whose last line is
+`exec zsh`.
+
+- `$SHELL`, `getent passwd`, and `ps` all report **bash**. They are wrong about
+  what the user is typing into. Assume zsh.
+- Interactive shell changes go in `zsh/zshrc_omarchy` (Linux) or `zsh/zshrc_mac`
+  (macOS) — not `bash/bashrc_omarchy`, which only prepares the environment.
+- Aliases and functions do not survive the `exec zsh` handoff, so zsh re-sources
+  them; exported vars do survive.
+- `nushell/` is legacy. The user is pivoting away from it — do not extend it or
+  propose nushell for new work unless asked for it by name.
+
 ## Config Locations
 
 Use `~/.config/` convention where possible. Many configs are symlinked from this repo into `~/.config/`.
