@@ -929,7 +929,19 @@ Safe to run more than once on the same terminal."
   (define-key input-decode-map "\e[117;9z"  [C-S-backspace])
   (define-key input-decode-map "\e[108;9z"  [cmd-z])
   (define-key input-decode-map "\e[19~"     [cmd-shift-z])
-  (define-key input-decode-map "\e[134;9z"  [cmd-v]))
+  (define-key input-decode-map "\e[134;9z"  [cmd-v])
+  ;; CSI-u encoding for space with modifiers (shift+space -> space, etc.)
+  ;; Fixes stray "u" when shift+space is pressed in terminals with kitty
+  ;; keyboard protocol enabled (e.g., after exiting Claude/opencode).
+  (dolist (pair '((2 . [?\s])         ; shift+space        -> space
+                  (3 . [?\M-\s])      ; alt+space          -> M-SPC
+                  (4 . [?\M-\s])      ; shift+alt+space    -> M-SPC
+                  (5 . [?\C-@])       ; ctrl+space         -> set-mark
+                  (6 . [?\C-@])       ; ctrl+shift+space   -> set-mark
+                  (7 . [?\C-\M-@])    ; ctrl+alt+space     -> C-M-SPC
+                  (8 . [?\C-\M-@])))  ; ctrl+alt+shift+spc -> C-M-SPC
+    (define-key input-decode-map
+                (format "\e[32;%du" (car pair)) (cdr pair))))
 
 (add-hook 'tty-setup-hook #'my/ghostty-setup-input-decode-map)
 
