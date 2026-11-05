@@ -36,7 +36,7 @@ if [ -z "$_id" ]; then
 fi
 
 # Query MongoDB and save to temp file
-temp_file=$(mktemp).json
+temp_file=$(mktemp --suffix=.json)
 result=$(mongosh --quiet "mongodb://localhost:27017/$DATABASE_NAME" --eval "
     const doc = db.getCollection('$collection_name').findOne({ _id: ObjectId('$_id') });
     if (doc) {
@@ -45,22 +45,45 @@ result=$(mongosh --quiet "mongodb://localhost:27017/$DATABASE_NAME" --eval "
 ")
 
 if [ -n "$result" ]; then
-    echo "$result" > "$temp_file"
+    # printf, not echo: zsh's echo expands \n and \t, which corrupts string
+    # literals in the document (printjson emits them escaped inside quotes)
+    printf '%s\n' "$result" > "$temp_file"
     $EDITOR "$temp_file" < /dev/tty
 
     # Read the updated file and update MongoDB
     updated_doc=$(< "$temp_file")
 
-    mongosh --quiet "mongodb://localhost:27017/$DATABASE_NAME" --eval "
-        const updatedDoc = $updated_doc;
-        db.getCollection('$collection_name').replaceOne(
-            { _id: ObjectId('$_id') },
-            updatedDoc
-        );
-        print('\n\\x1b[32m  Document updated successfully\\x1b[0m');
-    "
+    # Pass the update script as a file rather than --eval: Linux caps a single
+    # argv entry at 128 KiB (MAX_ARG_STRLEN), which large documents exceed.
+    script_file=$(mktemp --suffix=.js)
+    cat > "$script_file" <<EOF
+const updatedDoc = $updated_doc;
+try {
+    const res = db.getCollection('$collection_name').replaceOne(
+        { _id: ObjectId('$_id') },
+        updatedDoc
+    );
+    if (res.matchedCount === 0) {
+        print('\n\x1b[31m  No document matched _id $_id\x1b[0m');
+        quit(1);
+    }
+    print('\n\x1b[32m  Document updated successfully\x1b[0m');
+} catch (err) {
+    print('\n\x1b[31m  Update failed: ' + err.message + '\x1b[0m');
+    quit(1);
+}
+EOF
 
-    # Clean up temp file
+    mongosh --quiet "mongodb://localhost:27017/$DATABASE_NAME" "$script_file"
+    rc=$?
+    rm -f "$script_file"
+
+    # Keep the edited document around if the write failed
+    if [ $rc -ne 0 ]; then
+        echo "Edits preserved at: $temp_file" >&2
+        exit $rc
+    fi
+
     rm -f "$temp_file"
 else
     echo "No document found with _id: $_id"
