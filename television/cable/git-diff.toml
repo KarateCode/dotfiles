@@ -7,11 +7,21 @@ description = "View staged and unstaged git changes"
 command = "git ls-files --modified --others --exclude-standard"
 
 [preview]
-# Shows git diff for tracked files, bat for untracked files
-command = "bash -c 'if git ls-files --error-unmatch \"$1\" >/dev/null 2>&1; then git diff --color=always -- \"$1\"; else bat --color=always --style=numbers \"$1\"; fi' -- {}"
+# Tracked files go through delta in side-by-side view; untracked use bat.
+# tv does not export the preview panel width, and delta falls back to 80
+# columns when its output is not a terminal, so compute the width here. The
+# portrait layout below makes the preview span the full terminal:
+#   inner = cols - 4   (2 borders + padding + scrollbar)
+command = "bash -c 'w=$(tput cols 2>/dev/null || echo 160); w=$(( ${w:-160} - 4 )); if git ls-files --error-unmatch \"$1\" >/dev/null 2>&1; then git diff --color=always -- \"$1\" | delta --side-by-side --paging=never --width=\"$w\"; else bat --color=always --style=numbers \"$1\"; fi' -- {}"
 
 [ui]
-preview_panel = { "size" = 65, "scrollbar" = true }
+# Horizontal bar split: results on top, diff underneath, so the side-by-side
+# view gets the full terminal width. Channel prototypes spell this `layout`,
+# while the global config.toml uses `orientation` -- they are separate keys.
+layout = "portrait"
+# In portrait, size is a percentage of HEIGHT: the results list keeps a
+# quarter and the diff gets the remaining three quarters.
+preview_panel = { "size" = 75, "scrollbar" = true }
 
 [keybindings]
 alt-a = ["actions:stage", "reload_source"]

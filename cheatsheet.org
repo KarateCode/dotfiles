@@ -514,6 +514,8 @@ https://www.youtube.com/watch?v=iBkDhtjqXhA
 * TODO lazysql (TUI app for sqlite)
 
 * TV television:
+C-h # toggle help menu
+C-d C-u scroll up/down halfpage
 tv list-channels
 # fzf can preview files, but this can preview ANYTHING you configure it to
 # Guess I need ideas:
