@@ -119,6 +119,7 @@ Super + Alt + -/+ shrink/grow window
 Super + c/v # Copy/paste everywhere!
 Super + Control + v # search clipboard
 Super + Control + a # Audio widget
+Right click widget to mute/unmute speaker and microphone together
 Super + Control + c # Calendar widget
 Hold Super + mouse # drags windows around
 Super + l # toggles windows between tiling and scrolling
