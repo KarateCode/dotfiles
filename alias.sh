@@ -90,6 +90,9 @@ if [[ "$(uname)" == "Linux" ]]; then
     # which runs in non-interactive bash and so cannot call an alias.
     alias slkg='~/dotfiles/scripts/slkg.sh'
 
+    # fzf picker for the audio output; '*' marks the one in use.
+    alias audio='~/dotfiles/scripts/audio_output_fzf.sh'
+
     # -t forces a TTY (tmux needs one); zsh -lc because non-interactive ssh
     # misses Homebrew's PATH, where tmux lives on the mac.
     alias m3ssh="ssh m3 -t 'zsh -lc \"tmux attach -t dev-env\"'"
