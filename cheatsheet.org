@@ -114,6 +114,9 @@ z k drop stash
 ** ORG mode
 How do I set a todo? Appears to be only in ** precursed things
 C-c C-c toggles checkboxes
+
+** sudo
+sudoedit /etc/hosts # `sudo van /etc/hosts` and `sudo emacs /etc/hosts` doesn't work
 * Omarchy:
 Super + Alt + -/+ shrink/grow window
 Super + c/v # Copy/paste everywhere!
