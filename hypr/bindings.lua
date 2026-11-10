@@ -322,3 +322,42 @@ o.bind(
 -- default SUPER + CTRL + ALT + D as well, so both keys open it.
 hl.unbind("SUPER + CTRL + C")
 o.bind("SUPER + CTRL + C", "Calendar", "omarchy-shell shell toggle omarchy.clock")
+
+-- Fine-grained horizontal resize on ALT + -/= (no SUPER, no SHIFT).
+--
+-- Defaults were SUPER + ALT + code:20/21 (see
+-- $OMARCHY_PATH/default/hypr/bindings/tiling.lua); both are unbound below.
+-- The "a lot" (SUPER + CTRL) and full-step (SUPER) variants are untouched.
+--
+-- NOTE the direction is also flipped from the Omarchy default, which had
+-- minus EXPAND and equal SHRINK. Here minus shrinks and equal grows, so the
+-- sign matches the key. Resize amounts (x = +/-25) are the stock "a little".
+--
+-- code:20 / code:21 are the physical -/= keys, which is how Omarchy spells
+-- these. Binding the keycode rather than "MINUS"/"EQUAL" is what makes the
+-- unshifted "=" work: Hyprland matches the modmask exactly, so ALT + code:21
+-- fires on Alt+= and deliberately does NOT fire on Alt+Shift+= (Alt plus).
+--
+-- keyd is not involved: it only rewrites chords that go through the [cmd]
+-- layer (leftmeta) and plain ALT is passed straight through.
+--
+-- CONFLICT: a Hyprland bind grabs the key at the compositor before any app
+-- sees it, so this shadows Emacs' M-- (negative-argument) and M-=
+-- (count-words-region) everywhere, plus the equivalent Alt+-/Alt+= escape
+-- sequences in terminals. Neither is bound in ~/dotfiles/emacs/init.el, so
+-- only the stock Emacs behaviour is affected. If that bites, these can be
+-- scoped to non-Emacs windows with the same enable/disable-on-focus trick
+-- used by the Chromium tab binds above.
+hl.unbind("SUPER + ALT + code:20")
+hl.unbind("SUPER + ALT + code:21")
+
+o.bind(
+    "ALT + code:20",
+    "Shrink window left a little",
+    hl.dsp.window.resize({ x = 25, y = 0, relative = true })
+)
+o.bind(
+    "ALT + code:21",
+    "Expand window left a little",
+    hl.dsp.window.resize({ x = -25, y = 0, relative = true })
+)
