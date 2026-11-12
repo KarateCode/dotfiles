@@ -5,6 +5,7 @@ alias c='cd ~/.config'
 
 alias la='eza -l --icons --git -a'
 alias lt='eza --tree --level=2 --long --icons --git'
+alias models='fd -t f --format "{/}" . server/models/core server/models/b2b server/models/integration server/models/publish | cut -d "." -f 1 | sd "\-model" ""'
 alias b='cd -'
 alias e='cd ~/code/envoy-web-base'
 alias weather='curl wttr.in/Belmont,Michigan'
