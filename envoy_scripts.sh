@@ -17,6 +17,7 @@
 
 ENVOY_CODE="${ENVOY_CODE:-$HOME/code}"
 ENVOY_WEB="${ENVOY_WEB:-$ENVOY_CODE/envoy-web}"
+ENVOY_WEB_BASE="${ENVOY_WEB_BASE:-$ENVOY_CODE/envoy-web-base}"
 ENVOY_WORKTREES="${ENVOY_WORKTREES:-$ENVOY_CODE/envoy-web__worktrees}"
 ENVOY_TOOLS="${ENVOY_TOOLS:-$ENVOY_CODE/tools-and-infrastructure}"
 ENVOY_ENV_DIR="${ENVOY_ENV_DIR:-$ENVOY_TOOLS/scripts/developer/environments}"
@@ -234,8 +235,8 @@ symEnvoyWeb() {
         printf '%ssymEnvoyWeb: fzf not found%s\n' "$red" "$reset" >&2
         return 1
     fi
-    if [ ! -d "$ENVOY_CODE/envoy-web-base" ]; then
-        printf '%sError:%s %s not found\n' "$red" "$reset" "$ENVOY_CODE/envoy-web-base" >&2
+    if [ ! -d "$ENVOY_WEB_BASE" ]; then
+        printf '%sError:%s %s not found\n' "$red" "$reset" "$ENVOY_WEB_BASE" >&2
         return 1
     fi
 
@@ -256,7 +257,7 @@ symEnvoyWeb() {
     fi
 
     if [ "$selected" = "envoy-web-base" ]; then
-        target="$ENVOY_CODE/envoy-web-base"
+        target="$ENVOY_WEB_BASE"
     else
         target="$ENVOY_WORKTREES/$selected"
     fi
@@ -293,4 +294,102 @@ symEnvoyWeb() {
     # Plain cd, not cd -P: staying on the logical ~/code/envoy-web path is the
     # point of the symlink, and bounceEnv's `cd ~/code/envoy-web` relies on it.
     cd "$ENVOY_WEB" || return 1
+}
+
+# --- startFeatureBranch --------------------------------------------------
+# The whole "start a ticket" routine in one command: refresh develop in the
+# main checkout, run `ds start-feature-branch` to pick a Jira ticket and cut
+# the branch, then hand that branch to workmux for its own worktree and tmux
+# session. Optionally takes an EP number (`startFeatureBranch EP-1234`), which
+# menu.js uses to skip the ticket picker when exactly one ticket matches.
+#
+# Three things here are not obvious.
+#
+# `ds` is an ALIAS (alias.sh), and aliases are NOT expanded inside function
+# bodies, so this has to invoke menu.js through node itself.
+#
+# The new branch name is read back with `git rev-parse` instead of from the
+# script's output. ds start-feature-branch is interactive -- an fzf ticket
+# picker plus inquirer prompts -- so capturing its stdout would starve those
+# prompts of the terminal they need. Capturing is also unnecessary: its last
+# git action is `git checkout -b <branch>`, roughly 80 lines before it exits
+# (webdev-tools/scripts/start-feature-branch.js), so once it returns, HEAD in
+# this repo IS the branch name.
+#
+# Returning to develop afterwards is a hard requirement, not tidiness. git
+# refuses to check a branch out in two places at once, so `workmux add` would
+# die with "fatal: '<branch>' is already checked out" if the main repo were
+# still sitting on the branch the worktree is being created for.
+startFeatureBranch() {
+    local base_branch="${ENVOY_BASE_BRANCH:-develop}"
+    local menu="$ENVOY_TOOLS/webdev-tools/menu.js"
+    local branch cmd
+    local yellow="" red="" green="" cyan="" reset=""
+    if [ -t 1 ]; then
+        yellow=$'\033[33m'; red=$'\033[31m'; green=$'\033[32m'
+        cyan=$'\033[36m';   reset=$'\033[0m'
+    fi
+
+    # Same reasoning as _envoy_check: fail before anything has been created.
+    # fzf and gh are in here even though menu.js checks for them too, so a
+    # missing one costs nothing instead of a checkout and a pull.
+    for cmd in node git fzf gh workmux; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            printf '%sstartFeatureBranch:%s required command not found: %s\n' \
+                "$red" "$reset" "$cmd" >&2
+            return 1
+        fi
+    done
+
+    # The main checkout, deliberately NOT $ENVOY_WEB: that symlink may well be
+    # pointing at a worktree, and worktrees cannot be the base for new ones.
+    if [ ! -d "$ENVOY_WEB_BASE" ]; then
+        printf '%sError:%s %s not found\n' "$red" "$reset" "$ENVOY_WEB_BASE" >&2
+        return 1
+    fi
+    if [ ! -f "$menu" ]; then
+        printf '%sError:%s webdev-tools menu not found at %s\n' "$red" "$reset" "$menu" >&2
+        return 1
+    fi
+
+    cd "$ENVOY_WEB_BASE" || return 1
+
+    printf '%sRefreshing %s in %s...%s\n' "$cyan" "$base_branch" "$ENVOY_WEB_BASE" "$reset"
+    git checkout "$base_branch" || return 1
+    git pull || return 1
+    printf '\n'
+
+    # No `cd` wrapper and no subshell: menu.js inherits this terminal so fzf
+    # and inquirer can drive it.
+    if ! node "$menu" start-feature-branch "$@"; then
+        printf '\n%sstartFeatureBranch:%s start-feature-branch did not complete -- skipping workmux.\n' \
+            "$red" "$reset" >&2
+        printf '  %s is left on branch: %s\n' \
+            "$ENVOY_WEB_BASE" "$(git rev-parse --abbrev-ref HEAD 2>/dev/null)" >&2
+        return 1
+    fi
+
+    branch=$(git rev-parse --abbrev-ref HEAD) || return 1
+
+    # Belt and braces for the case where the script somehow exits 0 without
+    # cutting a branch. Everything it creates is feature/EP-xxxxx-..., so
+    # anything else means there is nothing worth building a worktree for.
+    case "$branch" in
+        feature/*) ;;
+        *)
+            printf '\n%sstartFeatureBranch:%s expected a feature/* branch, but HEAD is "%s".\n' \
+                "$red" "$reset" "$branch" >&2
+            printf '  No new branch to hand to workmux.\n' >&2
+            return 1
+            ;;
+    esac
+
+    printf '\n%sNew branch:%s %s%s%s\n' "$green" "$reset" "$cyan" "$branch" "$reset"
+
+    printf '%sReturning %s to %s so the worktree can claim the branch...%s\n' \
+        "$yellow" "$ENVOY_WEB_BASE" "$base_branch" "$reset"
+    git checkout "$base_branch" || return 1
+
+    printf '%sHanding %s to workmux...%s\n' "$cyan" "$branch" "$reset"
+    workmux add "$branch"
 }
