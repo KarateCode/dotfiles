@@ -19,6 +19,8 @@ alias tkill='if pids=$(lsof -t -i :27018); then echo "$pids" | xargs kill && ech
 alias van='~/dotfiles/scripts/emacs-editor.sh'
 # spotify_player opens but Enter plays nothing -- rebuild the Connect state
 alias healthySpotify='~/dotfiles/scripts/spotify_fix_playback.sh'
+# live queue view, for a pane beside spotify_player
+alias queueSpotify='~/dotfiles/scripts/spotify_queue.sh'
 alias wm='workmux'
 # open an existing worktree, resuming claude's last conversation there
 alias wmo='workmux open --continue'
