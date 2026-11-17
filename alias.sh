@@ -5,7 +5,8 @@ alias c='cd ~/.config'
 
 alias la='eza -l --icons --git -a'
 alias lt='eza --tree --level=2 --long --icons --git'
-alias models='fd -t f --format "{/}" . server/models/core server/models/b2b server/models/integration server/models/publish | cut -d "." -f 1 | sd "\-model" ""'
+alias models='fd -t f --format "{/}" . server/models/core server/models/b2b server/models/integration server/models/publish | sd "\-model" "" | sd ".ts" "" | sort'
+alias jobs='mongosh $DATABASE_NAME --quiet --eval "JSON.stringify(db.JobLog.find().toArray())" | yq -r ".[].type" | sort'
 alias b='cd -'
 alias e='cd ~/code/envoy-web-base'
 alias weather='curl wttr.in/Belmont,Michigan'
@@ -16,6 +17,8 @@ alias hss='~/dotfiles/scripts/ssh_fzf.sh'
 alias tssh='~/dotfiles/scripts/tunnel_ssh.sh'
 alias tkill='if pids=$(lsof -t -i :27018); then echo "$pids" | xargs kill && echo "Tunnel killed"; else echo "No tunnel active"; fi'
 alias van='~/dotfiles/scripts/emacs-editor.sh'
+# spotify_player opens but Enter plays nothing -- rebuild the Connect state
+alias healthySpotify='~/dotfiles/scripts/spotify_fix_playback.sh'
 alias wm='workmux'
 # open an existing worktree, resuming claude's last conversation there
 alias wmo='workmux open --continue'

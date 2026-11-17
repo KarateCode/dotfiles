@@ -360,6 +360,8 @@ jq "[.products[].skus[].props.qtyOpen] | add"
 msa "ShipMethod.find({})" | jq '.[] | {code: .code, desc: .languages[].description}'
 
 * YQ:
+yq -y # gives you yaml style output
+yq -r # is for 'raw'. Get's rid of the "---" between rows
 yq --input-format=csv --output-format=json '.[] | ."Open_Qty"' hockey_na_sales_status.251202010530.csv
 yq -p=csv '.[] |= "\"" + .key + "\"" | join(", ")'
 ms "Client.find({code: 'wwwinc-us'})" | yq -y '.[] |= (pick(.name, .code, .brands) | .brands[] |= pick(.name, .code, .segments))' # Mitul script for displaying segmentation examples
