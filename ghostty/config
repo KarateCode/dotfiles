@@ -45,8 +45,33 @@ keybind = cmd+shift+v=paste_from_clipboard
 keybind = ctrl+alt+arrow_left=unbind
 keybind = ctrl+alt+arrow_right=unbind
 
-# unset, so that I can use it as duplicate line in emacs
-keybind = cmd+d=unbind
+# --- Mac-style chords that keyd would otherwise flatten onto a real Ctrl key.
+#
+# keyd's [cmd:C] layer turns Cmd+<key> into Ctrl+<key>, which collides with the
+# CapsLock Ctrl. Each of these would otherwise be indistinguishable from the
+# CapsLock chord that must keep its classic Emacs meaning:
+#   Cmd+D vs CapsLock+D -> C-d  `my/delete-or-region'
+#   Cmd+E vs CapsLock+E -> C-e  `move-end-of-line'
+#   Cmd+S vs CapsLock+S -> C-s  `isearch-forward'
+#   Cmd+X vs CapsLock+X -> C-x  the Control-X PREFIX KEYMAP
+# keyd is the last layer that can still see WHICH physical key was pressed, so
+# app.conf rewrites these to ctrl+alt+<key> and they are decoded back here into
+# the private sequences init.el maps to [cmd-d] / [cmd-e] / [cmd-s] / [cmd-x].
+# Same carrier pattern as ctrl+alt+k (Cmd+K) above.
+#
+# Inside tmux each one also needs its user-keys entry in tmux_omarchy.conf
+# (user-keys[12], [24], [21] and [22]) or tmux eats the sequence halfway.
+keybind = ctrl+alt+d=text:\x1b[110;9z
+keybind = ctrl+alt+e=text:\x1b[122;9z
+keybind = ctrl+alt+s=text:\x1b[119;9z
+keybind = ctrl+alt+x=text:\x1b[120;9z
+keybind = ctrl+alt+z=text:\x1b[108;9z
+keybind = ctrl+alt+shift+z=text:\x1b[109;9z
+
+# NB there is no `cmd+d=unbind` here any more: the cmd+d/cmd+e lines in the
+# \x1b[...] block further down are LATER, and Ghostty keeps the last binding
+# for a trigger, so an unbind at this point is dead config. See the note there
+# for what those super+ bindings actually do.
 # unset, so that I can use it to grow pane size in tmux
 keybind = ctrl+8=unbind
 # --- tmux pane keys ------------------------------------------------------
@@ -154,6 +179,15 @@ keybind = cmd+shift+enter=text:\x1b[111;10z
 keybind = cmd+shift+f=text:\x1b[113;9z
 keybind = cmd+e=text:\x1b[122;9z
 keybind = cmd+l=text:\x1b[123;9z
+
+# What `cmd+...` means on THIS box: Ghostty normalises cmd -> super
+# (`ghostty +list-keybinds` prints them as super+d, super+e, ...), and keyd
+# maps the physical Ctrl key to Super. So these fire from the physical CTRL
+# key, NOT from the Cmd-position key -- Cmd+D/Cmd+E come in as ctrl+alt+d/e
+# from app.conf and are handled at the top of this file.
+# They are harmless duplicate routes to the same sequences, but they are LIVE,
+# not dead config: cmd+d here overrides the earlier unbind, which is why that
+# unbind was removed.
 
 keybind = "cmd+alt+up=unbind"
 keybind = cmd+alt+up=text:\x1b[115;9z

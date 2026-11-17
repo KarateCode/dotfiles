@@ -928,7 +928,12 @@ Safe to run more than once on the same terminal."
   (define-key input-decode-map "\e[113;9z"  [cmd-shift-f])
   (define-key input-decode-map "\e[117;9z"  [C-S-backspace])
   (define-key input-decode-map "\e[108;9z"  [cmd-z])
-  (define-key input-decode-map "\e[19~"     [cmd-shift-z])
+  ;; Was "\e[19~" (F8), and nothing has ever sent that -- so [cmd-shift-z]
+  ;; (undo-redo) was dead on BOTH machines, the same stale-F-key bug the
+  ;; cmd-d binding had. Ghostty sends \x1b[109;9z for cmd+shift+z in both
+  ;; ghostty/config and ghostty/config_macos, matching the \x1b[108;9z it
+  ;; already sends for cmd+z.
+  (define-key input-decode-map "\e[109;9z"  [cmd-shift-z])
   (define-key input-decode-map "\e[134;9z"  [cmd-v])
   ;; CSI-u encoding for space with modifiers (shift+space -> space, etc.)
   ;; Fixes stray "u" when shift+space is pressed in terminals with kitty

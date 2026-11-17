@@ -51,82 +51,44 @@
 (advice-add 'suspend-frame :override #'omarchy/no-suspend)
 
 ;; ===================================================================
-;; 2. C-z = undo, C-x = cut
+;; 2. C-z = undo.  (cua-mode RETIRED -- see below)
 ;; ===================================================================
-;; On the Mac, Ghostty turns cmd+z / cmd+x into private escape sequences
-;; that init.el binds to undo and cut.  Linux has no cmd modifier (and
-;; keyd puts Ctrl where cmd lives on the Mac), so the muscle memory lands
-;; on C-z and C-x.
+;; HISTORY, because deleting a whole subsystem deserves a note:
 ;;
-;; C-x CANNOT simply be rebound -- it is *the* Emacs prefix key, and
-;; init.el leans on C-x C-s, C-x k, C-x f, C-x C-c.  `cua-mode' is the
-;; supported way to get "C-x cuts when a region is active, stays a prefix
-;; otherwise", and it hands over C-z = undo at the same time.
-
-(require 'cua-base)
-
-(setq cua-enable-cua-keys t          ; C-x cut / C-z undo without needing S-<move>
-      cua-remap-control-z t          ; C-z -> undo
-      cua-remap-control-v nil        ; leave C-v / M-v alone: init.el binds them
-                                     ; to my/scroll-half-page-{down,up}
-      cua-keep-region-after-copy nil
-      cua-prefix-override-inhibit-delay 0.2
-      cua-delete-selection t)        ; typing with a region active replaces it
-
-(cua-mode 1)
-
-;; -------------------------------------------------------------------
-;; KNOW THIS ABOUT C-x: the 0.2s ambiguity
-;; -------------------------------------------------------------------
-;; With a region ACTIVE, pressing C-x starts a 0.2s timer:
-;;   * another key within 0.2s  -> C-x acted as a prefix (C-x C-s saves)
-;;   * timer expires            -> C-x CUT the region, and your next key
-;;                                 runs standalone (so C-s = isearch, not save)
-;; With no region active, C-x is an ordinary prefix and none of this applies.
+;; This section used to enable `cua-mode'.  The reasoning was that on the
+;; Mac, Ghostty turns cmd+z / cmd+x into private escape sequences bound to
+;; undo and cut, while "Linux has no cmd modifier (and keyd puts Ctrl where
+;; cmd lives on the Mac), so the muscle memory lands on C-z and C-x".  cua
+;; was the supported way to get "C-x cuts when a region is active, stays a
+;; prefix otherwise", and it supplied C-z = undo in the same breath.
 ;;
-;; Escape hatch that WORKS IN A TERMINAL:  C-x C-x <key>
-;;   Double-tapping the prefix hits `cua--prefix-repeat-handler', which
-;;   cancels the timer and arms C-x as a plain prefix with no time limit.
-;;   To save deliberately while a region is live:  C-x C-x C-s
+;; THAT PREMISE IS GONE.  keyd now rewrites the Cmd-position chords to
+;; ctrl+alt+<key> carriers (see ~/dotfiles/keyd/app.conf), Ghostty turns
+;; those into the same private sequences the Mac uses, tmux passes them
+;; through as user-keys, and init.el decodes them:
 ;;
-;; Escape hatch that does NOT work in a terminal:  S-C-x
-;;   cua binds S-C-x to `cua--shift-control-x-prefix', but a terminal
-;;   cannot encode shift on a control character (C-x is the byte 0x18;
-;;   there is no bit left for shift).  GUI frames only.
+;;   Cmd+X       -> \x1b[120;9z -> [cmd-x]       -> custom-cut-line-or-region
+;;   Cmd+Z       -> \x1b[108;9z -> [cmd-z]       -> undo
+;;   Cmd+Shift+Z -> \x1b[109;9z -> [cmd-shift-z] -> undo-redo
 ;;
-;; If 0.2s is too tight, raise `cua-prefix-override-inhibit-delay' above.
-;; If it is not worth the trouble at all, delete this whole section and
-;; use the one-liner  (global-set-key (kbd "C-z") #'undo)  -- that is all
-;; the C-z problem actually needs.  Cut already exists on C-w
-;; (`smart-kill-region-or-word' in init.el).
+;; So cua had nothing left to do, and it was charging rent: with a region
+;; ACTIVE it made C-x ambiguous for 0.2s (cut vs. prefix), which meant
+;; C-x C-s could silently cut instead of save if you typed it slowly.  It
+;; also needed ~20 lines of keymap surgery to stop it eating C-c, since
+;; init.el hangs C-c p, C-c l l, C-c l a, C-c y and C-c - off that prefix.
+;;
+;; Retiring it restores C-x and C-c to PURE Emacs prefixes, no timers.
+;;
+;; All that is left is the one-liner the old section recommended as its own
+;; fallback: "that is all the C-z problem actually needs."  Section 1 above
+;; unsets C-z to stop `suspend-frame'; this puts undo there instead, which
+;; is exactly what cua-remap-control-z used to provide.
+;;
+;; Cut still exists on C-w (`smart-kill-region-or-word' in init.el), and
+;; copy on M-w -- section 4 routes every kill to the Wayland clipboard via
+;; `interprogram-cut-function', so neither needs a cmd key.
 
-;; Untouched by cua-mode, confirmed: C-y stays `my/yank-as-single-undo',
-;; C-w stays `smart-kill-region-or-word', C-d stays `my/delete-or-region',
-;; C-t stays `projectile-find-file' -- all as bound in init.el.
-;; C-<return> becomes cua-rectangle-mark-mode, which init.el leaves unbound.
-
-;; Keep C-c a PURE prefix.  init.el hangs a lot off it (C-c p, C-c l l,
-;; C-c l a, C-c y, C-c -), and cua would otherwise make every one of those
-;; timing-sensitive whenever a region happened to be active.  Set
-;; `omarchy/cua-keep-control-c-as-prefix' to nil if you decide you want
-;; C-c to copy after all.
-(defvar omarchy/cua-keep-control-c-as-prefix t
-  "When non-nil, prevent `cua-mode' from stealing C-c for copy.")
-
-(when omarchy/cua-keep-control-c-as-prefix
-  ;; Runs after `cua-mode', which populates these in cua--init-keymaps.
-  ;; boundp-guarded so an Emacs upgrade that renames these internals
-  ;; degrades to "C-c also copies" rather than breaking startup.
-  (when (boundp 'cua--cua-keys-keymap)
-    (define-key cua--cua-keys-keymap [(control c) timeout] nil))
-  (when (boundp 'cua--prefix-override-keymap)
-    (define-key cua--prefix-override-keymap [(control c)] nil))
-  (when (boundp 'cua--prefix-repeat-keymap)
-    (define-key cua--prefix-repeat-keymap [(control c) (control c)] nil)
-    (dolist (key '(up down left right next prior home end))
-      (define-key cua--prefix-repeat-keymap (vector '(control c) key) nil)))
-  (when (boundp 'cua--region-keymap)
-    (define-key cua--region-keymap [(shift control c)] nil)))
+(global-set-key (kbd "C-z") #'undo)
 
 ;; ===================================================================
 ;; 3. Clipboard paste -- pbpaste does not exist on Linux
@@ -225,6 +187,38 @@ Installed as `interprogram-cut-function', so it runs on every kill."
 (with-eval-after-load 'move-text
   (global-set-key (kbd "C-M-<up>")   #'move-text-up)
   (global-set-key (kbd "C-M-<down>") #'move-text-down))
+
+;; ===================================================================
+;; 5. Cmd+X cut -- pbcopy does not exist on Linux
+;; ===================================================================
+;; init.el's `custom-cut-line-or-region' shells out to the macOS-only
+;; `pbcopy'.  Once keyd/Ghostty/tmux started delivering [cmd-x] on this
+;; box (app.conf `cmd.x = C-A-x' -> \x1b[120;9z), the key finally reached
+;; the function and it died on the spot with
+;;     Searching for program: no such file or directory, pbcopy
+;;
+;; House rule applies: the body is copied from init.el in full, and only
+;; the clipboard write is swapped -- for `omarchy/clipboard-set-text'
+;; (section 4), which drives wl-copy and already works around wl-copy's
+;; forked-server stdout trap.  Re-copy this if the original changes.
+;;
+;; ONE DELIBERATE DEVIATION from init.el: the "Cut: region/line" message
+;; is computed BEFORE `delete-region'.  In the original it runs after, by
+;; which point the region no longer exists, so `use-region-p' is always
+;; nil and it reported "line" even when cutting a region.
+
+(defun custom-cut-line-or-region ()
+  "Cut region or current line to the system clipboard (not kill-ring).
+Linux counterpart of the `custom-cut-line-or-region' in init.el."
+  (interactive)
+  (let* ((regionp (use-region-p))
+         (start (if regionp (region-beginning) (line-beginning-position)))
+         (end   (if regionp (region-end) (line-beginning-position 2)))
+         (text  (buffer-substring-no-properties start end)))
+    (omarchy/clipboard-set-text text)
+    ;; Delete the text without touching kill-ring
+    (delete-region start end)
+    (message "Cut: %s" (if regionp "region" "line"))))
 
 ;; ===================================================================
 ;; 6. Stray "u" when typing shift+space after popping out of Claude
