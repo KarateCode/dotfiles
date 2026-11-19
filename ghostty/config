@@ -50,19 +50,30 @@ keybind = ctrl+alt+arrow_right=unbind
 # keyd's [cmd:C] layer turns Cmd+<key> into Ctrl+<key>, which collides with the
 # CapsLock Ctrl. Each of these would otherwise be indistinguishable from the
 # CapsLock chord that must keep its classic Emacs meaning:
+#   Cmd+A vs CapsLock+A -> C-a  the TMUX PREFIX, and `move-beginning-of-line'
 #   Cmd+D vs CapsLock+D -> C-d  `my/delete-or-region'
 #   Cmd+E vs CapsLock+E -> C-e  `move-end-of-line'
+#   Cmd+J vs CapsLock+J -> C-j  `electric-newline-and-maybe-indent' (and LF)
 #   Cmd+S vs CapsLock+S -> C-s  `isearch-forward'
 #   Cmd+X vs CapsLock+X -> C-x  the Control-X PREFIX KEYMAP
 # keyd is the last layer that can still see WHICH physical key was pressed, so
 # app.conf rewrites these to ctrl+alt+<key> and they are decoded back here into
-# the private sequences init.el maps to [cmd-d] / [cmd-e] / [cmd-s] / [cmd-x].
-# Same carrier pattern as ctrl+alt+k (Cmd+K) above.
+# the private sequences init.el maps to [cmd-a] / [cmd-d] / [cmd-e] / [cmd-j] /
+# [cmd-s] / [cmd-x]. Same carrier pattern as ctrl+alt+k (Cmd+K) above.
 #
 # Inside tmux each one also needs its user-keys entry in tmux_omarchy.conf
-# (user-keys[12], [24], [21] and [22]) or tmux eats the sequence halfway.
+# (user-keys[34], [12], [24], [16], [21] and [22]) or tmux eats the sequence
+# halfway.
+#
+# ctrl+alt+j reuses 114, the sequence the cmd+j line further down has always
+# sent; it is not a new allocation. Only the Cmd-position key needed a route.
+#
+# Cmd+A costs nothing here: Ghostty's select_all is on ctrl+shift+a on Linux,
+# not on cmd+a as it is on macOS, so both select-alls keep their own chord.
+keybind = ctrl+alt+a=text:\x1b[135;9z
 keybind = ctrl+alt+d=text:\x1b[110;9z
 keybind = ctrl+alt+e=text:\x1b[122;9z
+keybind = ctrl+alt+j=text:\x1b[114;9z
 keybind = ctrl+alt+s=text:\x1b[119;9z
 keybind = ctrl+alt+x=text:\x1b[120;9z
 keybind = ctrl+alt+z=text:\x1b[108;9z

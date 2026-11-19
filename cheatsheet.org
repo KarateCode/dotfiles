@@ -175,8 +175,9 @@ How do I toggle folder mode in FZF?
 FZF matches on build/ folder when I type "client standup"
     But isn't this okay? It's rg that I want to act like a project. fzf should fuzzy find any folder I cd into
 
-* Git
+* Git:
 git push --force-with-lease # a safe force push
+git status --porcelain # machine-like output, better for grepping
 
 * Tmux:
 prefix+n for next window
@@ -618,6 +619,7 @@ echo "llama-3-model" | sd '-model' '' # Output: llama-3
 g s # to search internet for a song
 C-h # to "like" s song
 C-space # to open context menu to add to playlist
+Enter on Liked track or Search results may be what's spawning bug. Use Z to queue instead
 
 * Opencode
 opencode --continue

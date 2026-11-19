@@ -917,8 +917,14 @@ In org-mode, skip auto-indentation to preserve original whitespace."
 Safe to run more than once on the same terminal."
   (define-key input-decode-map "\e[111;9z"  [cmd-enter])
   (define-key input-decode-map "\e[111;10z" [cmd-shift-enter])
+  (define-key input-decode-map "\e[135;9z"  [cmd-a])
   (define-key input-decode-map "\e[110;9z"  [cmd-d])
-  (define-key input-decode-map "\e[24~"     [cmd-j])
+  ;; Was "\e[24~" (F12), which nothing has ever sent -- so [cmd-j]
+  ;; (custom-join-lines) was dead on BOTH machines, the same mismatch the
+  ;; cmd-shift-z binding had. Ghostty has always sent \x1b[114;9z for cmd+j,
+  ;; in ghostty/config and ghostty/config_macos alike, and the Mac's tmux
+  ;; already carried it as user-keys[16]; only this line disagreed.
+  (define-key input-decode-map "\e[114;9z" [cmd-j])
   (define-key input-decode-map "\e[119;9z"  [cmd-s])
   (define-key input-decode-map "\e[122;9z"  [cmd-e])
   (define-key input-decode-map "\e[118;9z"  [cmd-c])
@@ -964,6 +970,11 @@ Safe to run more than once on the same terminal."
 ;; the \x1b[111;10z used by cmd-shift-enter.
 (global-set-key [cmd-enter] #'insert-line)
 (global-set-key [cmd-shift-enter] #'insert-line-above)
+;; Cmd+A = select all. Plain C-a is untouched and stays `move-beginning-of-line':
+;; keyd rewrites only the Cmd-position key (cmd.a = C-A-a), while CapsLock+A
+;; still emits a real C-a -- which inside tmux is the prefix, and reaches Emacs
+;; as C-a C-a via `bind C-a send-prefix'.
+(global-set-key [cmd-a] #'mark-whole-buffer)
 (global-set-key [cmd-d] #'duplicate-line)
 (global-set-key [cmd-j] 'custom-join-lines)
 (global-set-key [cmd-s]
