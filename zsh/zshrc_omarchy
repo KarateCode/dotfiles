@@ -23,8 +23,10 @@
 bindkey -e
 # End of lines configured by zsh-newuser-install
 
-# C-w stops at `-', `.' and `/', which zsh's default WORDCHARS counts as word chars.
-WORDCHARS="${WORDCHARS//[-.\/]/}"
+# Shared with the Mac: WORDCHARS (C-w boundaries) and anything else both
+# machines should agree on. See the file for why it is the intersection of the
+# two lists rather than either one.
+source ~/dotfiles/zsh/zshrc_shared
 
 # --- History -------------------------------------------------------------
 # zsh-newuser-install did not write any history config, and zsh's defaults are

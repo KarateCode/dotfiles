@@ -61,4 +61,8 @@ zstyle ':completion:*' menu select
 
 # source ~/.zshrc
 
-WORDCHARS='~!#$%^&*{}<>?+;_\|@`-'
+# Shared with Omarchy: WORDCHARS (C-w boundaries) and anything else both
+# machines should agree on. This replaced a hand-written per-machine list that
+# had drifted from the Linux one -- notably it still counted `-' as a word
+# char. See the file for the full comparison.
+source ~/dotfiles/zsh/zshrc_shared

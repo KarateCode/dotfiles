@@ -1,0 +1,33 @@
+# Interactive zsh settings shared by BOTH machines.
+#
+# Sourced from zsh/zshrc_omarchy (Linux) and zsh/zprofile_mac (macOS). Keep
+# anything machine-specific out of here -- paths, Homebrew, package managers
+# and plugin locations all differ and belong in the per-machine files.
+
+# --- C-w word boundaries --------------------------------------------------
+# WORDCHARS lists the punctuation that counts as part of a word, so C-w
+# (backward-kill-word) does NOT stop at those characters. Anything absent from
+# the list is a boundary and C-w stops there.
+#
+# This was set per-machine for a long time and the two had quietly drifted:
+#
+#   word char on macOS only      + - @ \ ` |
+#   word char on Linux only      ( ) [ ]
+#   already agreed on both       ! # $ % & * ; < > ? ^ _ { } ~
+#
+# The macOS list looked like the more considered of the two -- it was written
+# out in full rather than derived -- but it was also the OLDER one, and it
+# still counted `-' as a word char. Adopting it wholesale would have silently
+# undone the Oct/Nov 2026 Linux changes that deliberately made C-w stop at
+# `-', then `.' and `/', then `='.
+#
+# So this is the INTERSECTION of the two, not either one of them. The useful
+# property: every character that either machine already stopped at is still a
+# stopping point, so no existing stop is lost. The only behaviour change is
+# that each machine now also stops where the other one did -- macOS gains
+# + - @ \ ` | and Linux gains ( ) [ ].
+#
+# Written out explicitly rather than subtracting from zsh's default
+# (*?_-.[]~=/&;!#$%^(){}<>), so both machines land on an identical value
+# regardless of what default a future zsh ships.
+WORDCHARS='!#$%&*;<>?^_{}~'
