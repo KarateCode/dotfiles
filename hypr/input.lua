@@ -7,7 +7,15 @@ hl.config({
    input = {
 --     -- Use multiple keyboard layouts and switch between them with Left Alt + Right Alt.
        kb_layout = "us",
-       follow_mouse = 1,
+--
+--     -- Hovering a window no longer focuses it. Focus changes on click, or
+--     -- from the keyboard (ALT + H/J/K/L, SUPER + arrows, ALT + TAB).
+--     -- Omarchy's default is 1, plain focus-follows-mouse.
+       follow_mouse = 0,
+--
+--     -- Toggling a window between tiled and floating (SUPER + T) would
+--     -- otherwise hand focus to whatever happens to sit under the cursor.
+       float_switch_override_focus = 0,
 --     kb_options = "compose:caps,shift:both_capslock_cancel,grp:alts_toggle",
 --
 --     -- Use a specific keyboard variant if needed (e.g. intl for international keyboards).
@@ -44,6 +52,12 @@ hl.config({
 --       drag_3fg = 1,
      },
    },
+})
+
+hl.config({
+  misc = {
+    mouse_move_focuses_monitor = false,
+  },
 })
 
 -- App-specific touchpad scroll speeds.

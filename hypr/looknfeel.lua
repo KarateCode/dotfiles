@@ -66,11 +66,20 @@ hl.config({
 --   },
 -- })
 
--- Omarchy's default sets this to 1, which recentres the pointer on every
--- workspace switch. 0 leaves it where you parked it.
+-- Leave the pointer where it is, always.
+--
+-- warp_on_change_workspace: Omarchy's default sets this to 1, which recentres
+-- the pointer on every workspace switch. 0 leaves it where you parked it.
+--
+-- no_warps covers the rest of the cases Hyprland warps in -- chiefly moving
+-- focus from the keyboard (ALT + H/J/K/L, ALT + TAB, SUPER + arrows), which
+-- otherwise throws the cursor onto the newly focused window. Pairs with
+-- follow_mouse = 0 in hypr/input.lua: the pointer and the keyboard now move
+-- focus independently, and neither drags the other along.
 hl.config({
   cursor = {
     warp_on_change_workspace = 0,
+    no_warps = true,
   },
 })
 
