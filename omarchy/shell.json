@@ -1,40 +1,34 @@
 {
-  "version": 1,
-  "idle": {
-    "screensaver": 150,
-    "lock": 300
-  },
   "bar": {
-    "position": "top",
-    "transparent": false,
-    "centerAnchor": "omarchy.clock",
+    "background": "none",
     "layout": {
+      "center": [
+        {
+          "format": "dddd h:mm AP",
+          "formatAlt": "d MMMM 'W'ww yyyy",
+          "id": "omarchy.clock",
+          "verticalFormat": "HH\n—\nmm"
+        }
+      ],
+      "centerBegin": [
+        {
+          "id": "omarchy.indicators"
+        }
+      ],
+      "centerEnd": [
+        {
+          "id": "omarchy.weather"
+        },
+        {
+          "id": "omarchy.system-update"
+        }
+      ],
       "left": [
         {
           "id": "omarchy.menu"
         },
         {
           "id": "omarchy.workspaces"
-        }
-      ],
-      "center": [
-        {
-          "id": "omarchy.indicators"
-        },
-        {
-          "id": "omarchy.clock",
-          "format": "dddd h:mm AP",
-          "formatAlt": "d MMMM 'W'ww yyyy",
-          "verticalFormat": "HH\n—\nmm"
-        },
-        {
-          "id": "omarchy.keyboard-layout"
-        },
-        {
-          "id": "omarchy.weather"
-        },
-        {
-          "id": "omarchy.system-update"
         }
       ],
       "right": [
@@ -46,16 +40,19 @@
           ]
         },
         {
+          "id": "omarchy.keyboard-layout"
+        },
+        {
           "id": "omarchy.agents"
         },
         {
-          "id": "lazyvpn",
-          "type": "command",
           "exec": "~/.config/omarchy/bar/scripts/lazyvpn-status",
+          "id": "lazyvpn",
           "interval": 5,
+          "keepSpace": true,
           "onClick": "~/.config/omarchy/bar/scripts/lazyvpn-toggle",
           "onRightClick": "omarchy-launch-or-focus-tui lazyvpn",
-          "keepSpace": true
+          "type": "command"
         },
         {
           "id": "omarchy.bluetooth"
@@ -64,7 +61,7 @@
           "id": "omarchy.network"
         },
         {
-          "id": "omarchy.audio"
+          "id": "michael.audio"
         },
         {
           "id": "omarchy.monitor"
@@ -74,7 +71,13 @@
           "showPercentage": true
         }
       ]
-    }
+    },
+    "position": "top"
   },
-  "plugins": []
+  "idle": {
+    "lock": 300,
+    "screensaver": 150
+  },
+  "plugins": [],
+  "version": 1
 }

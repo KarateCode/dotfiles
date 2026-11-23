@@ -361,3 +361,21 @@ o.bind(
     "Expand window left a little",
     hl.dsp.window.resize({ x = -25, y = 0, relative = true })
 )
+
+-- Toggle the microphone on SUPER + ALT + M.
+--
+-- Omarchy binds this to XF86AudioMicMute by default (see
+-- $OMARCHY_PATH/default/hypr/bindings/media.lua), but this MacBook's keyboard
+-- has no mic-mute key, so there was no way to do it from the keyboard at all.
+--
+-- omarchy-audio-input-mute wraps `wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle`
+-- and additionally drives the OSD and the keyboard mute LED, so prefer it over
+-- calling wpctl directly.
+--
+-- M was the obvious letter but every easy chord was taken: SUPER + M is
+-- minimize, SUPER + SHIFT + M is Music and SUPER + SHIFT + ALT + M is Music
+-- TUI. SUPER + ALT + M was free. Note keyd maps leftcontrol = leftmeta, so
+-- this is physical Ctrl + Alt + M -- a one-hand chord, and SUPER-prefixed so
+-- it shadows nothing in Emacs (plain ALT + M would have taken M-m,
+-- back-to-indentation).
+o.bind("SUPER + ALT + M", "Mute microphone", "omarchy-audio-input-mute")

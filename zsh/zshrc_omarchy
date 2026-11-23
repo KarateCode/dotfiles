@@ -110,6 +110,7 @@ source <(fzf --zsh)
 # is the tmux prefix and tmux swallows it first. Harmless, and it still works
 # in a bare Ghostty window.
 export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border --bind "ctrl-a:select-all,ctrl-d:deselect-all"'
+export TMUXINATOR_CONFIG=/home/michael/code/tmuxinator-configs/configs
 
 # fd instead of find: it honours .gitignore and skips .git, which is what makes
 # C-t usable inside envoy-web rather than drowning in node_modules.

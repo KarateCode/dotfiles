@@ -24,7 +24,7 @@ alias queueSpotify='~/dotfiles/scripts/spotify_queue.sh'
 alias wm='workmux'
 # open an existing worktree, resuming claude's last conversation there
 alias wmo='workmux open --continue'
-alias wms='workmux sidebar off; sleep 1; workmux sidebar on --width 38'
+alias wms='workmux sidebar off; sleep 1; workmux sidebar --session --width 52'
 alias wmrm='workmux remove --keep-branch'
 # alias van='emacs --init-directory=/Users/michaelschneider/vanilla-emacs'
 alias jme='jdev --toggleview="table" --filter="Me"'
