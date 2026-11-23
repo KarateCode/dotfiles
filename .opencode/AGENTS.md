@@ -98,6 +98,37 @@ Use `~/.config/` convention where possible. Many configs are symlinked from this
 - Plugin uses `Bun.spawn` for shell commands (not `ctx.$` which is V1 API)
 - Full path to binaries required in plugins (PATH not available)
 
+### keyd (Linux)
+
+Remaps modifiers before Hyprland or any app sees them: `/etc/keyd/default.conf`,
+with per-window-class overrides in `keyd/app.conf`.
+
+| Physical key (MacBook) | Emits | Hyprland sees |
+|---|---|---|
+| Cmd-labelled | `layer(cmd)`; `[cmd:C]` maps `w = C-w`, `c = C-c`, … | `CTRL` |
+| Ctrl-labelled | `leftmeta` | `SUPER` |
+| CapsLock | `rightcontrol` | `CTRL` |
+
+So `SUPER + <key>` in `hypr/bindings.lua` is typed as **physical Ctrl**, and can
+never collide with a Cmd shortcut — those arrive as plain `Ctrl`.
+
+### Hyprland (Linux)
+
+Config and dispatchers are Lua. Classic `hyprctl dispatch <name> <args>` syntax
+fails; use `hyprctl eval` with the `hl` API, e.g. moving a specific window:
+
+```bash
+hyprctl eval 'hl.dispatch(hl.dsp.window.move({ workspace = "1", follow = false, window = "address:0x…" }))'
+```
+
+API stubs: `/usr/share/hypr/stubs/hl.meta.lua`. Validate edits with `hyprctl
+reload && hyprctl configerrors`.
+
+Workspaces 1,2,4-9 are `persistent` on the external monitor and 3 on `eDP-1`
+(`hypr/monitors.lua`). If the bar shows duplicates, windows are stranded on
+orphaned ids (`10 + n`) while the persistent ones were recreated empty — move
+them back rather than rebooting.
+
 ## Scripts
 
 Located in `scripts/`. Should be cross-platform where possible.

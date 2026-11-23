@@ -379,3 +379,8 @@ o.bind(
 -- it shadows nothing in Emacs (plain ALT + M would have taken M-m,
 -- back-to-indentation).
 o.bind("SUPER + ALT + M", "Mute microphone", "omarchy-audio-input-mute")
+o.bind("SUPER + W", "Weather", { panel = "omarchy.weather" })
+
+-- Omarchy's default here is notifications.act, which presses a card's lone
+-- action (e.g. Snooze) instead of dismissing it.
+o.rebind("SUPER + comma", "Dismiss notification", { ipc = "notifications.dismissOne" })
